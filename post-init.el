@@ -50,13 +50,13 @@
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 
-;; Windows 特定设置
-(when (eq system-type 'windows-nt)
-  ;; 使用系统回收站
-  (setq delete-by-moving-to-trash t)
-  ;; 优化 Windows 性能
-  (setq w32-pipe-read-delay 0)
-  (setq w32-get-true-file-attributes nil))
+;; ;; Windows 特定设置
+;; (when (eq system-type 'windows-nt)
+;;   ;; 使用系统回收站
+;;   (setq delete-by-moving-to-trash t)
+;;   ;; 优化 Windows 性能
+;;   (setq w32-pipe-read-delay 0)
+;;  (setq w32-get-true-file-attributes nil))
 
 ;; ;; 用户界面优化
 ;; (setq inhibit-startup-screen t)           ;; 禁用启动画面
@@ -76,9 +76,9 @@
 (electric-pair-mode 1)                    ;; 自动配对括号
 (delete-selection-mode 1)                 ;; 选中文本后输入会替换
 (global-auto-revert-mode 1)               ;; 自动刷新文件
-
+;; 对选中文本使用括号引号自动放入
 ;; 备份和自动保存
-(setq auto-save-default t)
+(setq auto-save-default nil)
 (setq auto-save-interval 300)
 (setq auto-save-timeout 30)
 (setq make-backup-files t)
@@ -103,15 +103,17 @@
   (when (display-graphic-p)
     ;; 英文字体
     (set-face-attribute 'default nil
-                        :height 160          ;; 14pt (Windows 上建议 140-160)
+                        :height 140          ;; 14pt (Windows 上建议 140-160)
                         :weight 'normal
-                        :family "Fira Code")
+                        :family "DejaVu Sans mono")
     
     ;; 中文字体 - 使用更通用的字体
     (dolist (charset '(kana han symbol cjk-misc bopomofo))
       (set-fontset-font t charset
-                        (font-spec :family "Microsoft YaHei"
-                                   :height 160)))))
+                        (font-spec :family "Sarasa Fixed CL"
+                                   :height 140)))))
+
+;;(add-to-list 'default-frame-alist '(undecorated . t))
 
 
 ;; 延迟加载字体设置
@@ -468,11 +470,11 @@
   :demand t
   :custom
   (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。")
-  (dashboard-startup-banner
-   (let ((images '("E:/Ingredient/ICON/miyamori300.png"
-                   "E:/Ingredient/ICON/shirobako.png"
-                   "E:/Ingredient/ICON/newgamenene.png")))
-     (seq-random-elt (seq-filter #'file-exists-p images))))
+  ;; (dashboard-startup-banner
+  ;;  (let ((images '("E:/Ingredient/ICON/miyamori300.png"
+  ;;                  "E:/Ingredient/ICON/shirobako.png"
+  ;;                  "E:/Ingredient/ICON/newgamenene.png")))
+  ;;    (seq-random-elt (seq-filter #'file-exists-p images))))
   (dashboard-items '((recents . 10)
                      (agenda . 5)
                      (bookmarks . 5)
@@ -487,7 +489,7 @@
 ;;==============================================================================
 
 (use-package avy
-  :bind (("C-;" . avy-goto-char)
+  :bind (("C-;" . avy-goto-char-timer)
          ("M-g l" . avy-goto-line)
          ("M-g w" . avy-goto-word-1)
          ("M-g k" . avy-kill-region)
@@ -610,5 +612,20 @@
 
 ;;==============================================================================
 
+
+;;==============================================================================
+;;; Terminal
+;;==============================================================================
+;; eat
+(use-package eat
+  )
+;; vterm
+(use-package vterm
+  :config
+  (add-hook 'vterm-mode-hook
+          (lambda ()
+            (setq-local global-hl-line-mode nil)))
+  )
+;;==============================================================================
 (provide 'post-init)
 ;;; post-init.el ends here
