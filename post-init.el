@@ -161,7 +161,31 @@
   :custom
   (org-log-done 'time)
   (org-return-follows-link t)
-  (org-hide-emphasis-markers t))
+  (org-hide-emphasis-markers t)
+  (setq org-return-follows-link t)
+  :config
+  ;org-export
+  (require 'ox-md)
+  ;;org-todo
+  ;; TODO states
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
+                    "BLOCKED(b@)" "|" "DONE(d!)" "CANCELED(C!)")))
+  ;; TODO colors
+(setq org-todo-keyword-faces
+      '(
+        ("TODO" . (:foreground "GoldenRod" :weight bold))
+        ("PLANNING" . (:foreground "DeepPink" :weight bold))
+        ("IN-PROGRESS" . (:foreground "Cyan" :weight bold))
+        ("BLOCKED" . (:foreground "Red" :weight bold))
+        ("DONE" . (:foreground "LimeGreen" :weight bold))
+        ("CANCELED" . (:foreground "LimeGreen" :weight bold))
+        ))
+  ;;org-agenda
+  (setq org-agenda-files '("~/Documents/orgnote/agenda/TODOs.org")))
+  ;;org-capture)
+
+
 
 ;;==============================================================================
 ;;; Markdown
@@ -281,32 +305,17 @@
 ;;; Projectile - 项目管理
 ;;==============================================================================
 (use-package projectile
-  
+  :demand t
   ;; 常用设置（可以根据需要增删）
   :custom
-;  (projectile-project-search-path '("~/projects/" "~/work/" "~/code/" "~/src/"))  ;; 你的项目根目录们
-  
-  ;; 可选：让 mode-line 显示更简洁（显示项目名）
-  (projectile-mode-line-function
-   (lambda () (format " P[%s]" (projectile-project-name))))
-  
-  ;; 可选：开启缓存（速度更快，尤其是大项目）
-  (projectile-enable-caching t)
-  
-  ;; 可选：使用 ripgrep / rg 作为默认搜索工具（强烈推荐）
-  ;; 前提是你系统已安装 rg 命令
-  (projectile-generic-command "rg --files --hidden --follow --glob '!.git'")
-
-  :bind-keymap
-  ;; 推荐的全局前缀键（最常用的是 C-c p）
-;  ("C-c p" . projectile-command-map)
-  
-  ;; macOS 用户很常用 s-p（command + p）
-  ;; ("s-p" . projectile-command-map)
-  
+  (projectile-project-search-path '("~/projects/" "~/work/" "~/playground" "~/Documents/"))
+  (projectile-files-command "ripgrep --files --hidden --follow --glob '!.git'") 
   :config
-  ;; 启动 projectile 全局模式
-  (projectile-mode +1))
+  (define-key projectile-mode-map (kbd "C-c C-p") 'projectile-command-map)
+  (global-set-key (kbd "C-c C-p") 'projectile-command-map)
+  
+  (projectile-mode +1)
+)
 ;;==============================================================================
 ;;; Embark - 上下文操作
 ;;==============================================================================
@@ -432,6 +441,8 @@
 ;;; 工作区管理 (Workspace Management)
 ;;==============================================================================
 
+
+
 (use-package tab-bar
   :ensure nil
   :demand t
@@ -470,31 +481,35 @@
   :demand t
   :custom
   (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。")
-  ;; (dashboard-startup-banner
-  ;;  (let ((images '("E:/Ingredient/ICON/miyamori300.png"
-  ;;                  "E:/Ingredient/ICON/shirobako.png"
-  ;;                  "E:/Ingredient/ICON/newgamenene.png")))
-  ;;    (seq-random-elt (seq-filter #'file-exists-p images))))
-  (dashboard-items '((recents . 10)
+  (dashboard-startup-banner
+   (let ((images '("~/Pictures/icon/miyamori300.png"
+                   "~/Pictures/icon/shirobako.png"
+                   "~/Pictures/icon/newgamenene.png")))
+     (seq-random-elt (seq-filter #'file-exists-p images))))
+
+  (dashboard-items '((recents . 8)
                      (agenda . 5)
                      (bookmarks . 5)
                      (projects . 5)))
   (dashboard-center-content t)
-  (dashboard-vertically-center-content t)
-  :config
-  (dashboard-setup-startup-hook))
+  (dashboard-vertically-center-content)
+   :config
+   (dashboard-setup-startup-hook))
 
 ;;==============================================================================
 ;;; 导航和编辑增强 (Navigation & Editing)
 ;;==============================================================================
 
 (use-package avy
-  :bind (("C-;" . avy-goto-char-timer)
+  :bind (
+         ;("M-g l" . avy-goto-char-timer)
          ("M-g l" . avy-goto-line)
+         ("C-;" . avy-goto-word-0)
          ("M-g w" . avy-goto-word-1)
          ("M-g k" . avy-kill-region)
          ("M-g K" . avy-kill-ring-save-region)
-         ("C-c C-j" . avy-resume))
+         ;("C-c C-j" . avy-resume)
+         )
   :custom
   (avy-timeout-seconds 0.3)
   (avy-style 'at-full)
@@ -515,8 +530,12 @@
   :config
   (amx-mode 1))
 
+(use-package pangu-spacing
+  :demand 0.2
+  :config
+  (global-pangu-spacing-mode +1)) 
 ;;==============================================================================
-;;; 编程支持 (Programming Support)
+;;; 编程支持 (Programming Support) 
 ;;==============================================================================
 
 (use-package flycheck
@@ -626,6 +645,48 @@
           (lambda ()
             (setq-local global-hl-line-mode nil)))
   )
+;;==============================================================================
+
+;;==============================================================================
+;;; Input method
+;;==============================================================================
+;; prim
+;; (use-package pyim
+;;   :config
+;;   (setq pyim-page-length 5)
+;;   (global-set-key (kbd "C-\\") 'toggle-input-method)
+;;   (setq pyim-cloudim 'baidu)
+;;   (pyim-default-scheme 'microsoft-shuangpin)
+;;   )
+
+;; (use-package prim-basedict
+;;   :config
+;;   (prim-basedict-enable))
+
+;; rime
+;; (use-package rime
+;;   :config
+;;   (setq rime-show-candidate 'minibuffer)
+;;   :custom
+;;   (default-input-method "rime")
+;;   )
+;; smart input
+
+;;==============================================================================
+;; mu4e
+
+;;==============================================================================
+;; scroll-screen
+
+;; (use-package golden-ratio-scroll-screen
+;;   :bind (("C-v" . golden-ratio-scroll-screen-up)
+;;          ("M-v" . golden-ratio-scroll-screen-down)))
+;;==============================================================================
+
+;;==============================================================================
+;; expand region
+(use-package expand-region
+  :bind ("C-=" . er/expand-region)) ;这个
 ;;==============================================================================
 (provide 'post-init)
 ;;; post-init.el ends here

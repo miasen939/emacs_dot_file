@@ -8,7 +8,7 @@
 ;; melpa 和 host
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
+(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/") t)
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3") ; 不加这一句可能有问题，建议读者尝试一下
 (setq url-proxy-services '(("no_proxy" . "^\\(192\\.168\\..*\\)")
               ("http" . "127.0.0.1:7897")
