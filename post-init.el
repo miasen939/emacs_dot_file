@@ -129,8 +129,16 @@
   (setq modus-themes-mixed-fonts t
         modus-themes-italic-constructs t)
   :config
+  (setq ef-owl-palette-overrides
+        '((bg-region "#1a3f4a")))
   (modus-themes-load-theme 'ef-owl))
 
+
+;; (use-package zenburn-theme
+;;   :demand t
+;;   :config
+;;   (load-theme 'zenburn t))
+;;(load-theme 'leuven-dark)               
 ;;==============================================================================
 ;;; 文档查看 (Document Viewers)
 ;;==============================================================================
@@ -139,7 +147,7 @@
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook (pdf-view-mode . pdf-view-roll-minor-mode)
   :config
-  (pdf-tools-install :no-query))
+  (Pdf-tools-install :no-query))
 
 ;;==============================================================================
 ;;; Org Mode
@@ -446,19 +454,23 @@
 (use-package tab-bar
   :ensure nil
   :demand t
-  :bind (("C-c v" . my/create-workspace)
+  :bind (
          ("C-c s" . tab-bar-switch-to-tab)
          ("C-c V" . tab-bar-close-tab)
-         ("C-c r" . my/save-workspace))
+         )
   :custom
-  (tab-bar-show 1)
+  (tab-bar-show nil)
   (tab-bar-tab-hints t)
-  (tab-bar-new-tab-choice "*scratch*")
+  (tab-bar-new-tab-choice "*dashboard*")
   :init
   (tab-bar-mode 1))
 
 (use-package burly
   :after tab-bar
+  :bind
+  (("C-c v" . my/create-workspace)
+   ("C-c r" . my/save-workspace)
+   )
   :config
   (defun my/create-workspace ()
     "创建新的工作区标签."
@@ -688,5 +700,10 @@
 (use-package expand-region
   :bind ("C-=" . er/expand-region)) ;这个
 ;;==============================================================================
+
+;;==============================================================================
+;; modeline
+;; 关掉标题栏
+;;
 (provide 'post-init)
 ;;; post-init.el ends here
