@@ -1,23 +1,28 @@
 
 # Table of Contents
 
-1.  [miamori](#org8f0121f)
-2.  [原则](#orgb0ddcef)
+1.  [img](#org7b5d3d9)
+2.  [原则](#org40bf0d7)
 
 fork自[minimal-emacs](https://github.com/jamescherti/minimal-emacs.d)
+
 试用过purcell/prelude/doomemacs,打算慢慢从上面偷配置
+
 版本: emacs30 使用该博客的方法编译: [Speed up Emacs with native elisp compilation](https://www.masteringemacs.org/article/speed-up-emacs-libjansson-native-elisp-compilation)
+
 OS: Ubuntu 24.04.3 LTS x86<sub>64</sub>
 
 
-<a id="org8f0121f"></a>
+<a id="org7b5d3d9"></a>
 
-# miamori
+# img
 
-![img](/home/yottae/Pictures/icon/miyamori300.png)
+![img](static/img/MPV-00_02_35.197-N0002.png)
+
+![img](static/img/screenshot1.png)
 
 
-<a id="orgb0ddcef"></a>
+<a id="org40bf0d7"></a>
 
 # 原则
 
