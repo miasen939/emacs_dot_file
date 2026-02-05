@@ -78,15 +78,16 @@
 (global-auto-revert-mode 1)               ;; 自动刷新文件
 ;; 对选中文本使用括号引号自动放入
 ;; 备份和自动保存
-(setq auto-save-default nil)
-(setq auto-save-interval 300)
-(setq auto-save-timeout 30)
-(setq make-backup-files t)
-(setq backup-directory-alist
-      `(("." . ,(expand-file-name "backups" user-emacs-directory))))
-(setq auto-save-file-name-transforms
-      `((".*" ,(expand-file-name "auto-saves/" user-emacs-directory) t)))
-
+;; (setq auto-save-default nil)
+;; (setq auto-save-interval 300)
+;; (setq auto-save-timeout 30)
+;; (setq make-backup-files t)
+;; (setq backup-directory-alist
+;;       `(("." . ,(expand-file-name "backups" user-emacs-directory))))
+;; (setq auto-save-file-name-transforms
+;;       `((".*" ,(expand-file-name "auto-saves/" user-emacs-directory) t)))
+(auto-save-visited-mode 1)
+(setq auto-save-timeout 20)
 ;; 历史记录
 (savehist-mode 1)
 (save-place-mode 1)
@@ -103,7 +104,7 @@
   (when (display-graphic-p)
     ;; 英文字体
     (set-face-attribute 'default nil
-                        :height 140          ;; 14pt (Windows 上建议 140-160)
+                        :height 130          ;; 14pt (Windows 上建议 140-160)
                         :weight 'normal
                         :family "DejaVu Sans mono")
     
@@ -149,6 +150,9 @@
   :config
   (Pdf-tools-install :no-query))
 
+(use-package nov
+  :mode ("\\.epub\\'" . nov-mode))
+
 ;;==============================================================================
 ;;; Org Mode
 ;;==============================================================================
@@ -174,11 +178,14 @@
   :config
   ;org-export
   (require 'ox-md)
+  ;; img
+  (setq org-startup-with-inline-images t)
   ;;org-todo
   ;; TODO states
   (setq org-todo-keywords
         '((sequence "TODO(t)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
-                    "BLOCKED(b@)" "|" "DONE(d!)" "CANCELED(C!)")))
+                    "BLOCKED(b@)" "|" "DONE(d!)" "CANCELED(c@!)")))
+    (setq org-log-done 'note) 
   ;; TODO colors
 (setq org-todo-keyword-faces
       '(
@@ -289,7 +296,7 @@
          ("M-g o" . consult-outline)
          ("M-g i" . consult-imenu)
          ;; M-s 前缀
-         ("M-s d" . consult-find)
+         ("M-s d" . consult-fd)
          ("M-s r" . consult-ripgrep)
          ("M-s l" . consult-line)
          :map isearch-mode-map
@@ -302,12 +309,14 @@
   :init
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
+  
   :config
   (consult-customize
    consult-theme :preview-key '(:debounce 0.2 any)
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file consult-xref
    :preview-key "M-.")
+  (setq consult-async-min-input 2)
   (setq consult-narrow-key "<"))
 ;;==============================================================================
 ;;; Projectile - 项目管理
@@ -526,11 +535,12 @@
   (avy-timeout-seconds 0.3)
   (avy-style 'at-full)
   (avy-all-windows t)
-  (avy-background t)
+  (avy-background nil)
   (avy-single-candidate-jump t)
   (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   :config
-  (define-key isearch-mode-map (kbd "C-'") 'avy-isearch))
+  (define-key isearch-mode-map (kbd "C-'") 'avy-isearch)
+  )
 
 (use-package ace-window
   :bind ("C-x o" . ace-window)
@@ -538,7 +548,7 @@
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
 (use-package amx
-  :demand t
+  :demand 0.2
   :config
   (amx-mode 1))
 
@@ -648,8 +658,8 @@
 ;;; Terminal
 ;;==============================================================================
 ;; eat
-(use-package eat
-  )
+;; (use-package eat
+;;   )
 ;; vterm
 (use-package vterm
   :config
@@ -694,7 +704,21 @@
 ;;   :bind (("C-v" . golden-ratio-scroll-screen-up)
 ;;          ("M-v" . golden-ratio-scroll-screen-down)))
 ;;==============================================================================
+;;==============================================================================
+;; ibuffer
+(use-package ibuffer
+  :ensure nil                  ; ibuffer 是 Emacs 内置，不需要从 MELPA 安装
+  :bind
+  ("C-x C-b" . ibuffer)        ; 覆盖默认 C-x C-b 的 list-buffers，用 ibuffer 代替
 
+  :custom
+  (ibuffer-default-sorting-mode 'major-mode)        ; 按 major-mode 排序
+  (ibuffer-show-empty-filter-groups nil)            ; 隐藏空分组
+
+  :hook
+  (ibuffer-mode . ibuffer-auto-mode)                ; 打开 ibuffer 时自动开启分组并实时更新
+  )
+;;==============================================================================
 ;;==============================================================================
 ;; expand region
 (use-package expand-region
