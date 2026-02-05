@@ -1,10 +1,10 @@
 *
+!static/
+!static/**
 !README.md
+!README.org
 !early-init.el
 !init.el
-!.github/
-!.LICENSE
 !post-init.el
 !pre-early-init.el
-!README.personal.md
 !.gitignore
