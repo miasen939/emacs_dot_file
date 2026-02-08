@@ -1,5 +1,4 @@
-;;; post-init.el --- Modern Emacs Configuration -*- lexical-binding: t; -*-
-
+;;; post-init.el --- Emacs Configuration -*- no-byte-compile: t; lexical-binding: t; -*-
 ;;; Commentary:
 ;; Optimized Emacs configuration for Windows GUI
 ;; 优化的 Windows GUI Emacs 配置文件
@@ -39,6 +38,7 @@
 ;; (require 'use-package)
 (setq use-package-always-ensure t)  ;; 默认自动安装包
 (setq use-package-always-defer t)   ;; 默认延迟加载
+
 
 ;;==============================================================================
 ;;; 基础设置 (Basic Settings)
@@ -98,6 +98,19 @@
 ;;==============================================================================
 ;;; 字体和主题 (Fonts & Theme)
 ;;==============================================================================
+(custom-set-faces
+ '(gnus-group-news-low ((t (:foreground "cyan"))))
+ '(gnus-group-news-low-empty ((t (:foreground "cyan" :weight normal)))))
+
+(use-package nerd-icons
+  ;; :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  )
+
+
 
 (defun my/setup-fonts ()
   "设置字体配置."
@@ -112,7 +125,7 @@
     (dolist (charset '(kana han symbol cjk-misc bopomofo))
       (set-fontset-font t charset
                         (font-spec :family "Sarasa Fixed CL"
-                                   :height 140)))))
+                                   :height 130)))))
 
 ;;(add-to-list 'default-frame-alist '(undecorated . t))
 
@@ -120,19 +133,44 @@
 ;; 延迟加载字体设置
 (add-hook 'after-init-hook #'my/setup-fonts)
 
-;; 主题配置
-(use-package ef-themes
+(use-package doom-themes
   :demand t
-  :bind (("<f5>" . modus-themes-rotate)
-         ("C-<f5>" . modus-themes-select)
-         ("M-<f5>" . modus-themes-load-random))
-  :init
-  (setq modus-themes-mixed-fonts t
-        modus-themes-italic-constructs t)
+  :custom
+  ;; Global settings (defaults)
+  (doom-themes-enable-bold t)   ; if nil, bold is universally disabled
+  (doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  ;; for treemacs users
+  (doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
   :config
-  (setq ef-owl-palette-overrides
-        '((bg-region "#1a3f4a")))
-  (modus-themes-load-theme 'ef-owl))
+;  (load-theme 'doom-one t)
+  (load-theme 'doom-nord t)
+ ;  (load-theme 'doom-solarized-light t)
+
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (nerd-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; or for treemacs users
+  (doom-themes-treemacs-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+
+(use-package doom-modeline
+  :init (doom-modeline-mode 1))
+
+;; 主题配置b
+;; (use-package ef-themes
+;;   :demand t
+;;   :bind (("<f5>" . modus-themes-rotate)
+;;          ("C-<f5>" . modus-themes-select)
+;;          ("M-<f5>" . modus-themes-load-random))
+;;   :init
+;;   (setq modus-themes-mixed-fonts t
+;;         modus-themes-italic-constructs t)
+;;   :config
+;;   (setq ef-owl-palette-overrides
+;;         '((bg-region "#1a3f4a")))
+;;   (modus-themes-load-theme 'ef-owl))
 
 
 ;; (use-package zenburn-theme
@@ -146,10 +184,10 @@
 
 (use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
-  :hook (pdf-view-mode . pdf-view-roll-minor-mode)
+  :hook ((pdf-view-mode . pdf-view-roll-minor-mode)
+         )
   :config
-  (Pdf-tools-install :no-query))
-
+  (pdf-tools-install :no-query))
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode))
 
@@ -440,6 +478,66 @@
   ;; 保存历史
   (with-eval-after-load 'savehist
     (add-to-list 'savehist-additional-variables 'corfu-history)))
+;; (use-package corfu
+;;   ;; Optional customizations
+;;   ;; :custom
+;;   ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+;;   ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+;;   ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+;;   ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+;;   ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+;;   ;; (corfu-on-exact-match 'insert) ;; Configure handling of exact matches
+;; 
+;;   ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+;;   ;; :hook ((prog-mode . corfu-mode)
+;;   ;;        (shell-mode . corfu-mode)
+;;   ;;        (eshell-mode . corfu-mode))
+;; 
+;;   :init
+;; 
+;;   ;; Recommended: Enable Corfu globally.  Recommended since many modes provide
+;;   ;; Capfs and Dabbrev can be used globally (M-/).  See also the customization
+;;   ;; variable `global-corfu-modes' to exclude certain modes.
+;;   (global-corfu-mode)
+;; 
+;;   ;; Enable optional extension modes:
+;;   ;; (corfu-history-mode)
+;;   ;; (corfu-popupinfo-mode)
+;;   )
+
+;; A few more useful configurations...
+;; (use-package emacs
+;;   :custom
+;;   ;; TAB cycle if there are only few candidates
+;;   ;; (completion-cycle-threshold 3)
+;; 
+;;   ;; Enable indentation+completion using the TAB key.
+;;   ;; `completion-at-point' is often bound to M-TAB.
+;;   (tab-always-indent 'complete)
+;; 
+;;   ;; Emacs 30 and newer: Disable Ispell completion function.
+;;   ;; Try `cape-dict' as an alternative.
+;;   (text-mode-ispell-word-completion nil)
+;; 
+;;   ;; Hide commands in M-x which do not apply to the current mode.  Corfu
+;;   ;; commands are hidden, since they are not used via M-x. This setting is
+;;   ;; useful beyond Corfu.
+;;   (read-extended-command-predicate #'command-completion-default-include-p))
+;; Optionally:
+(setq nerd-icons-corfu-mapping
+      '((array :style "cod" :icon "symbol_array" :face font-lock-type-face)
+        (boolean :style "cod" :icon "symbol_boolean" :face font-lock-builtin-face)
+        ;; You can alternatively specify a function to perform the mapping,
+        ;; use this when knowing the exact completion candidate is important.
+        ;; Don't pass `:face' if the function already returns string with the
+        ;; face property, though.
+        (file :fn nerd-icons-icon-for-file :face font-lock-string-face)
+        ;; ...
+        (t :style "cod" :icon "code" :face font-lock-warning-face)))
+;;         ;; If you add an entry for t, the library uses that as fallback.
+;;         ;; The default fallback (when it's not specified) is the ? symbol.
+
+;; The Custom interface is also supported for tuning the variable above.
 
 (use-package cape
   :init
@@ -453,6 +551,10 @@
          ("C-c p s" . cape-symbol)
          ("C-c p a" . cape-abbrev)
          ("C-c p l" . cape-line)))
+
+;; yasnippet ??TODO
+(use-package yasnippet)
+(use-package yasnippet-snippets)
 
 ;;==============================================================================
 ;;; 工作区管理 (Workspace Management)
@@ -535,7 +637,7 @@
   (avy-timeout-seconds 0.3)
   (avy-style 'at-full)
   (avy-all-windows t)
-  (avy-background nil)
+  (avy-background t)
   (avy-single-candidate-jump t)
   (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   :config
@@ -670,31 +772,6 @@
 ;;==============================================================================
 
 ;;==============================================================================
-;;; Input method
-;;==============================================================================
-;; prim
-;; (use-package pyim
-;;   :config
-;;   (setq pyim-page-length 5)
-;;   (global-set-key (kbd "C-\\") 'toggle-input-method)
-;;   (setq pyim-cloudim 'baidu)
-;;   (pyim-default-scheme 'microsoft-shuangpin)
-;;   )
-
-;; (use-package prim-basedict
-;;   :config
-;;   (prim-basedict-enable))
-
-;; rime
-;; (use-package rime
-;;   :config
-;;   (setq rime-show-candidate 'minibuffer)
-;;   :custom
-;;   (default-input-method "rime")
-;;   )
-;; smart input
-
-;;==============================================================================
 ;; mu4e
 
 ;;==============================================================================
@@ -724,10 +801,167 @@
 (use-package expand-region
   :bind ("C-=" . er/expand-region)) ;这个
 ;;==============================================================================
+(use-package sis
+  ;; :hook
+  ;; 为指定的缓冲区启用 /context/ 和 /inline region/ 模式
+  ;; (((text-mode prog-mode) . sis-context-mode)
+  ;;  ((text-mode prog-mode) . sis-inline-mode))
 
+  :config
+  ;; 用于 MacOS
+  (sis-ism-lazyman-config
+
+   ;; 英文输入源可能是："ABC"、"US" 或其他
+   ;; "com.apple.keylayout.ABC"
+   "com.apple.keylayout.US"
+
+   ;; 其他语言输入源："rime"、"sogou" 或其他
+   ;; "im.rime.inputmethod.Squirrel.Rime"
+   "com.sogou.inputmethod.sogou.pinyin")
+
+  ;; 启用 /光标颜色/ 模式
+  (sis-global-cursor-color-mode t)
+  ;; 启用 /respect/ 模式
+  (sis-global-respect-mode t)
+  ;; 为所有缓冲区启用 /context/ 模式
+  (sis-global-context-mode t)
+  ;; 为所有缓冲区启用 /inline english/ 模式
+  (sis-global-inline-mode t)
+  )
+;;==============================================================================
+;;解耦
+;; (add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory)) 
+;; (require 'init-ime)
+
+;;==============================================================================
+;;==============================================================================
+(use-package nerd-icons-dired
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
 ;;==============================================================================
 ;; modeline
 ;; 关掉标题栏
 ;;
+;; (use-package treemacs
+;;   :ensure t
+;;   :defer t
+;;   :init
+;;   (with-eval-after-load 'winum
+;;     (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+;;   :config
+;;   (progn
+;;     (setq treemacs-buffer-name-function            #'treemacs-default-buffer-name
+;;           treemacs-buffer-name-prefix              " *Treemacs-Buffer-"
+;;           treemacs-collapse-dirs                   (if treemacs-python-executable 3 0)
+;;           treemacs-deferred-git-apply-delay        0.5
+;;           treemacs-directory-name-transformer      #'identity
+;;           treemacs-display-in-side-window          t
+;;           treemacs-eldoc-display                   'simple
+;;           treemacs-file-event-delay                2000
+;;           treemacs-file-extension-regex            treemacs-last-period-regex-value
+;;           treemacs-file-follow-delay               0.2
+;;           treemacs-file-name-transformer           #'identity
+;;           treemacs-follow-after-init               t
+;;           treemacs-expand-after-init               t
+;;           treemacs-find-workspace-method           'find-for-file-or-pick-first
+;;           treemacs-git-command-pipe                ""
+;;           treemacs-goto-tag-strategy               'refetch-index
+;;           treemacs-header-scroll-indicators        '(nil . "^^^^^^")
+;;           treemacs-hide-dot-git-directory          t
+;;           treemacs-hide-dot-jj-directory           t
+;;           treemacs-indentation                     2
+;;           treemacs-indentation-string              " "
+;;           treemacs-is-never-other-window           nil
+;;           treemacs-max-git-entries                 5000
+;;           treemacs-missing-project-action          'ask
+;;           treemacs-move-files-by-mouse-dragging    t
+;;           treemacs-move-forward-on-expand          nil
+;;           treemacs-no-png-images                   nil
+;;           treemacs-no-delete-other-windows         t
+;;           treemacs-project-follow-cleanup          nil
+;;           treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+;;           treemacs-position                        'left
+;;           treemacs-read-string-input               'from-child-frame
+;;           treemacs-recenter-distance               0.1
+;;           treemacs-recenter-after-file-follow      nil
+;;           treemacs-recenter-after-tag-follow       nil
+;;           treemacs-recenter-after-project-jump     'always
+;;           treemacs-recenter-after-project-expand   'on-distance
+;;           treemacs-litter-directories              '("/node_modules" "/.venv" "/.cask")
+;;           treemacs-project-follow-into-home        nil
+;;           treemacs-show-cursor                     nil
+;;           treemacs-show-hidden-files               t
+;;           treemacs-silent-filewatch                nil
+;;           treemacs-silent-refresh                  nil
+;;           treemacs-sorting                         'alphabetic-asc
+;;           treemacs-select-when-already-in-treemacs 'move-back
+;;           treemacs-space-between-root-nodes        t
+;;           treemacs-tag-follow-cleanup              t
+;;           treemacs-tag-follow-delay                1.5
+;;           treemacs-text-scale                      nil
+;;           treemacs-user-mode-line-format           nil
+;;           treemacs-user-header-line-format         nil
+;;           treemacs-wide-toggle-width               70
+;;           treemacs-width                           35
+;;           treemacs-width-increment                 1
+;;           treemacs-width-is-initially-locked       t
+;;           treemacs-workspace-switch-cleanup        nil)
+;; 
+;;     ;; The default width and height of the icons is 22 pixels. If you are
+;;     ;; using a Hi-DPI display, uncomment this to double the icon size.
+;;     ;;(treemacs-resize-icons 44)
+;; 
+;;     (treemacs-follow-mode t)
+;;     (treemacs-filewatch-mode t)
+;;     (treemacs-fringe-indicator-mode 'always)
+;;     (when treemacs-python-executable
+;;       (treemacs-git-commit-diff-mode t))
+;; 
+;;     (pcase (cons (not (null (executable-find "git")))
+;;                  (not (null treemacs-python-executable)))
+;;       (`(t . t)
+;;        (treemacs-git-mode 'deferred))
+;;       (`(t . _)
+;;        (treemacs-git-mode 'simple)))
+;; 
+;;     (treemacs-hide-gitignored-files-mode nil))
+;;   :bind
+;;   (:map global-map
+;;         ("M-0"       . treemacs-select-window)
+;;         ("C-x t 1"   . treemacs-delete-other-windows)
+;;         ("C-x t t"   . treemacs)
+;;         ("C-x t d"   . treemacs-select-directory)
+;;         ("C-x t B"   . treemacs-bookmark)
+;;         ("C-x t C-t" . treemacs-find-file)
+;;         ("C-x t M-t" . treemacs-find-tag)))
+;; 
+;; (use-package treemacs-evil
+;;   :after (treemacs evil)
+;;   :ensure t)
+;; 
+;; (use-package treemacs-projectile
+;;   :after (treemacs projectile)
+;;   :ensure t)
+;; 
+;; (use-package treemacs-icons-dired
+;;   :hook (dired-mode . treemacs-icons-dired-enable-once)
+;;   :ensure t)
+;; 
+;; (use-package treemacs-magit
+;;   :after (treemacs magit)
+;;   :ensure t)
+;; 
+;; (use-package treemacs-persp ;;treemacs-perspective if you use perspective.el vs. persp-mode
+;;   :after (treemacs persp-mode) ;;or perspective vs. persp-mode
+;;   :ensure t
+;;   :config (treemacs-set-scope-type 'Perspectives))
+;; 
+;; (use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
+;;   :after (treemacs)
+;;   :ensure t
+;;   :config (treemacs-set-scope-type 'Tabs))
+;; 
+;; (treemacs-start-on-boot)
+
 (provide 'post-init)
 ;;; post-init.el ends here

@@ -24,6 +24,11 @@
 ;; 移除gnome的标题栏
 (add-to-list 'default-frame-alist '(undecorated . t))
 
+;(setq minimal-emacs-user-directory "~/projects/emacs_dot_file/")
+(add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory))
+
+
+
 (provide 'pre-early-init.el)
 
 ;;; pre-early-init.el ends here

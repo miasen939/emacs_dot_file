@@ -21,6 +21,7 @@
 
 ;;; Code:
 
+
 ;;; Load pre-init.el
 (if (fboundp 'minimal-emacs-load-user-init)
     (minimal-emacs-load-user-init "pre-init.el")
@@ -551,6 +552,7 @@
                            list-threads erase-buffer scroll-left
                            dired-find-alternate-file set-goal-column))
   (put cmd 'disabled nil))
+
 
 ;;; Load post init
 (when (fboundp 'minimal-emacs-load-user-init)
