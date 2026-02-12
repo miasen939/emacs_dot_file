@@ -1,41 +1,5 @@
 ;;; post-init.el --- Emacs Configuration -*- no-byte-compile: t; lexical-binding: t; -*-
-;;; Commentary:
-;; Optimized Emacs configuration for Windows GUI
-;; 优化的 Windows GUI Emacs 配置文件
 
-;;; Code:
-
-;; ;;==============================================================================
-;; ;;; 启动性能优化 (Performance Optimization)
-;; ;;==============================================================================
-;; 
-;; ;; 启动时临时增加 GC 阈值，加快启动速度
-;; (setq gc-cons-threshold most-positive-fixnum
-;;       gc-cons-percentage 0.6)
-;; 
-;; ;; 启动完成后恢复正常 GC 设置
-;; (add-hook 'emacs-startup-hook
-;;           (lambda ()
-;;             (setq gc-cons-threshold (* 16 1024 1024)
-;;                   gc-cons-percentage 0.1)))
-;; 
-;; ;; 减少启动时的文件处理器数量
-;; (defvar default-file-name-handler-alist file-name-handler-alist)
-;; (setq file-name-handler-alist nil)
-;; (add-hook 'emacs-startup-hook
-;;           (lambda ()
-;;             (setq file-name-handler-alist default-file-name-handler-alist)))
-;; 
-;; ;;==============================================================================
-;; ;;; Package 管理 (Package Management)
-;; ;;==============================================================================
-;; 
-;; ;; 确保 use-package 已安装
-;; (unless (package-installed-p 'use-package)
-;;   (package-refresh-contents)
-;;   (package-install 'use-package))
-;; 
-;; (require 'use-package)
 (setq use-package-always-ensure t)  ;; 默认自动安装包
 (setq use-package-always-defer t)   ;; 默认延迟加载
 
@@ -50,22 +14,6 @@
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 
-;; ;; Windows 特定设置
-;; (when (eq system-type 'windows-nt)
-;;   ;; 使用系统回收站
-;;   (setq delete-by-moving-to-trash t)
-;;   ;; 优化 Windows 性能
-;;   (setq w32-pipe-read-delay 0)
-;;  (setq w32-get-true-file-attributes nil))
-
-;; ;; 用户界面优化
-;; (setq inhibit-startup-screen t)           ;; 禁用启动画面
-;; (setq initial-scratch-message nil)        ;; 清空 scratch buffer 消息
-;; (tool-bar-mode -1)                        ;; 关闭工具栏
-;; (when (fboundp 'scroll-bar-mode)
-;;   (scroll-bar-mode -1))                   ;; 关闭滚动条
-;; (setq use-dialog-box nil)                 ;; 禁用对话框
-
 ;; 编辑体验
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)       ;; 使用空格而非 Tab
@@ -77,7 +25,7 @@
 (delete-selection-mode 1)                 ;; 选中文本后输入会替换
 (global-auto-revert-mode 1)               ;; 自动刷新文件
 (setq display-line-numbers-type 'relative)
-;(setq display-line-numbers 'relative);; 显示相对行号
+                                        ;(setq display-line-numbers 'relative);; 显示相对行号
 (global-display-line-numbers-mode 1)
 
 ;; 对选中文本使用括号引号自动放入
@@ -98,6 +46,23 @@
 (recentf-mode 1)
 (setq recentf-max-saved-items 100)
 (setq history-length 500)
+
+
+;;==============================================================================
+;;; 启动优化 (Startup Optimization)
+;;==============================================================================
+
+;; 启动全屏
+(add-hook 'emacs-startup-hook #'toggle-frame-maximized)
+
+;; 显示启动时间
+;; (add-hook 'emacs-startup-hook
+;;           (lambda ()
+;;             (message "Emacs 启动完成，用时 %.2f 秒，加载了 %d 个包"
+;;                      (float-time (time-subtract after-init-time before-init-time))
+;;                      (length package-activated-list))))
+
+;;==============================================================================
 
 ;;==============================================================================
 ;;; 字体和主题 (Fonts & Theme)
@@ -147,8 +112,8 @@
   (doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
   :config
   (load-theme 'doom-one t)
-;  (load-theme 'doom-nord t)
- ;  (load-theme 'doom-solarized-light t)
+                                        ;  (load-theme 'doom-nord t)
+                                        ;  (load-theme 'doom-solarized-light t)
 
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
@@ -181,7 +146,8 @@
 ;;   :demand t
 ;;   :config
 ;;   (load-theme 'zenburn t))
-;;(load-theme 'leuven-dark)               
+;;(load-theme 'leuven-dark)
+
 ;;==============================================================================
 ;;; 文档查看 (Document Viewers)
 ;;==============================================================================
@@ -218,7 +184,7 @@
   (org-hide-emphasis-markers t)
   (setq org-return-follows-link t)
   :config
-  ;org-export
+                                        ;org-export
   (require 'ox-md)
   ;; img
   (setq org-startup-with-inline-images t)
@@ -227,20 +193,20 @@
   (setq org-todo-keywords
         '((sequence "TODO(t)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
                     "BLOCKED(b@)" "|" "DONE(d!)" "CANCELED(c@!)")))
-    (setq org-log-done 'note) 
+  (setq org-log-done 'note) 
   ;; TODO colors
-(setq org-todo-keyword-faces
-      '(
-        ("TODO" . (:foreground "GoldenRod" :weight bold))
-        ("PLANNING" . (:foreground "DeepPink" :weight bold))
-        ("IN-PROGRESS" . (:foreground "Cyan" :weight bold))
-        ("BLOCKED" . (:foreground "Red" :weight bold))
-        ("DONE" . (:foreground "LimeGreen" :weight bold))
-        ("CANCELED" . (:foreground "LimeGreen" :weight bold))
-        ))
+  (setq org-todo-keyword-faces
+        '(
+          ("TODO" . (:foreground "GoldenRod" :weight bold))
+          ("PLANNING" . (:foreground "DeepPink" :weight bold))
+          ("IN-PROGRESS" . (:foreground "Cyan" :weight bold))
+          ("BLOCKED" . (:foreground "Red" :weight bold))
+          ("DONE" . (:foreground "LimeGreen" :weight bold))
+          ("CANCELED" . (:foreground "LimeGreen" :weight bold))
+          ))
   ;;org-agenda
   (setq org-agenda-files '("~/Documents/orgnote/agenda/TODOs.org")))
-  ;;org-capture)
+;;org-capture)
 
 
 
@@ -351,7 +317,7 @@
   :init
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
-  
+
   :config
   (consult-customize
    consult-theme :preview-key '(:debounce 0.2 any)
@@ -360,6 +326,7 @@
    :preview-key "M-.")
   (setq consult-async-min-input 2)
   (setq consult-narrow-key "<"))
+
 ;;==============================================================================
 ;;; Projectile - 项目管理
 ;;==============================================================================
@@ -372,9 +339,10 @@
   :config
   (define-key projectile-mode-map (kbd "C-c C-p") 'projectile-command-map)
   (global-set-key (kbd "C-c C-p") 'projectile-command-map)
-  
+
   (projectile-mode +1)
-)
+  )
+
 ;;==============================================================================
 ;;; Embark - 上下文操作
 ;;==============================================================================
@@ -556,6 +524,12 @@
          ("C-c p a" . cape-abbrev)
          ("C-c p l" . cape-line)))
 
+
+(use-package pangu-spacing
+  :demand 0.2
+  :config
+  (global-pangu-spacing-mode +1))
+
 ;; yasnippet ??TODO
 (use-package yasnippet)
 (use-package yasnippet-snippets)
@@ -593,7 +567,7 @@
     (tab-bar-new-tab)
     (let ((name (read-string "Workspace name: ")))
       (tab-bar-rename-tab name)))
-  
+
   (defun my/save-workspace ()
     "保存当前标签的窗口布局."
     (interactive)
@@ -620,8 +594,8 @@
                      (projects . 5)))
   (dashboard-center-content t)
   (dashboard-vertically-center-content)
-   :config
-   (dashboard-setup-startup-hook))
+  :config
+  (dashboard-setup-startup-hook))
 
 ;;==============================================================================
 ;;; 导航和编辑增强 (Navigation & Editing)
@@ -631,11 +605,11 @@
   :bind (
          ("M-g l" . avy-goto-char-timer)
          ("C-;" . avy-goto-line)
-;         ("C-;" . avy-goto-word-0)
+                                        ;         ("C-;" . avy-goto-word-0)
          ("M-g w" . avy-goto-word-1)
          ("M-g k" . avy-kill-region)
          ("M-g K" . avy-kill-ring-save-region)
-         ;("C-c C-j" . avy-resume)
+                                        ;("C-c C-j" . avy-resume)
          )
   :custom
   (avy-timeout-seconds 0.3)
@@ -649,7 +623,7 @@
   )
 
 (use-package ace-window
-  :bind ("c-x o" . ace-window)
+  :bind ("C-x o" . ace-window)
   :custom
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
@@ -658,10 +632,11 @@
   :config
   (amx-mode 1))
 
-(use-package pangu-spacing
-  :demand 0.2
-  :config
-  (global-pangu-spacing-mode +1)) 
+  ;; expand region
+(use-package expand-region
+  :bind ("C-=" . er/expand-region)) ;这个
+;;==============================================================================
+
 ;;==============================================================================
 ;;; 编程支持 (Programming Support) 
 ;;==============================================================================
@@ -680,7 +655,7 @@
   :hook
   ;; 最常用写法：在所有编程模式下自动启用（强烈推荐）
   (prog-mode . rainbow-delimiters-mode)
-  
+
   ;; 可选：如果你还想在某些非 prog-mode 的地方也启用，比如 REPL、org-src 等
   ;; (emacs-lisp-mode . rainbow-delimiters-mode)
   ;; (clojure-mode  . rainbow-delimiters-mode)
@@ -744,23 +719,6 @@
   (save-place-mode 1))
 
 ;;==============================================================================
-;;; 启动优化 (Startup Optimization)
-;;==============================================================================
-
-;; 启动全屏
-(add-hook 'emacs-startup-hook #'toggle-frame-maximized)
-
-;; 显示启动时间
-;; (add-hook 'emacs-startup-hook
-;;           (lambda ()
-;;             (message "Emacs 启动完成，用时 %.2f 秒，加载了 %d 个包"
-;;                      (float-time (time-subtract after-init-time before-init-time))
-;;                      (length package-activated-list))))
-
-;;==============================================================================
-
-
-;;==============================================================================
 ;;; Terminal
 ;;==============================================================================
 ;; eat
@@ -770,21 +728,11 @@
 (use-package vterm
   :config
   (add-hook 'vterm-mode-hook
-          (lambda ()
-            (setq-local global-hl-line-mode nil)))
+            (lambda ()
+              (setq-local global-hl-line-mode nil)))
   )
 ;;==============================================================================
 
-;;==============================================================================
-;; mu4e
-
-;;==============================================================================
-;; scroll-screen
-
-;; (use-package golden-ratio-scroll-screen
-;;   :bind (("C-v" . golden-ratio-scroll-screen-up)
-;;          ("M-v" . golden-ratio-scroll-screen-down)))
-;;==============================================================================
 ;;==============================================================================
 ;; ibuffer
 (use-package ibuffer
@@ -799,40 +747,7 @@
   :hook
   (ibuffer-mode . ibuffer-auto-mode)                ; 打开 ibuffer 时自动开启分组并实时更新
   )
-;;==============================================================================
-;;==============================================================================
-;; expand region
-(use-package expand-region
-  :bind ("C-=" . er/expand-region)) ;这个
-;;==============================================================================
-(use-package sis
-  ;; :hook
-  ;; 为指定的缓冲区启用 /context/ 和 /inline region/ 模式
-  ;; (((text-mode prog-mode) . sis-context-mode)
-  ;;  ((text-mode prog-mode) . sis-inline-mode))
 
-  :config
-  ;; 用于 MacOS
-  (sis-ism-lazyman-config
-
-   ;; 英文输入源可能是："ABC"、"US" 或其他
-   ;; "com.apple.keylayout.ABC"
-   "com.apple.keylayout.US"
-
-   ;; 其他语言输入源："rime"、"sogou" 或其他
-   ;; "im.rime.inputmethod.Squirrel.Rime"
-   "com.sogou.inputmethod.sogou.pinyin")
-
-  ;; 启用 /光标颜色/ 模式
-  (sis-global-cursor-color-mode t)
-  ;; 启用 /respect/ 模式
-  (sis-global-respect-mode t)
-  ;; 为所有缓冲区启用 /context/ 模式
-  (sis-global-context-mode t)
-  ;; 为所有缓冲区启用 /inline english/ 模式
-  (sis-global-inline-mode t)
-  )
-;;==============================================================================
 ;;解耦
 ;; (add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory)) 
 ;; (require 'init-ime)
@@ -843,8 +758,6 @@
   :hook
   (dired-mode . nerd-icons-dired-mode))
 ;;==============================================================================
-;; modeline
-;; 关掉标题栏
 ;;
 (use-package treemacs
   :ensure t
@@ -967,5 +880,46 @@
 ;; 
 ;; (treemacs-start-on-boot)
 
+;crux
+ ;;==============================================================================
+;;==============================================================================
+;; (use-package sis
+;;   ;; :hook
+;;   ;; 为指定的缓冲区启用 /context/ 和 /inline region/ 模式
+;;   ;; (((text-mode prog-mode) . sis-context-mode)
+;;   ;;  ((text-mode prog-mode) . sis-inline-mode))
+;; 
+;;   :config
+;;   ;; 用于 MacOS
+;;   (sis-ism-lazyman-config
+;; 
+;;    ;; 英文输入源可能是："ABC"、"US" 或其他
+;;    ;; "com.apple.keylayout.ABC"
+;;    "com.apple.keylayout.US"
+;; 
+;;    ;; 其他语言输入源："rime"、"sogou" 或其他
+;;    ;; "im.rime.inputmethod.Squirrel.Rime"
+;;    "com.sogou.inputmethod.sogou.pinyin")
+;; 
+;;   ;; 启用 /光标颜色/ 模式
+;;   (sis-global-cursor-color-mode t)
+;;   ;; 启用 /respect/ 模式
+;;   (sis-global-respect-mode t)
+;;   ;; 为所有缓冲区启用 /context/ 模式
+;;   (sis-global-context-mode t)
+;;   ;; 为所有缓冲区启用 /inline english/ 模式
+;;   (sis-global-inline-mode t)
+;;   )
+;; ;;===========================================  ===================================
+;;==============================================================================
+;; mu4e
+
+;;==============================================================================
+;; scroll-screen
+
+;; (use-package golden-ratio-scroll-screen
+;;   :bind (("C-v" . golden-ratio-scroll-screen-up)
+;;          ("M-v" . golden-ratio-scroll-screen-down)))
+;;==============================================================================
 (provide 'post-init)
 ;;; post-init.el ends here
