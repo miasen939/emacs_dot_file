@@ -1,6 +1,45 @@
 #+TITLE: emacs config
-这是 =post-init.el= 的文学编程配置.
+这是 =post-init.el= 和 =pre-early-init.el= 的文学编程配置.
  ~C-c C-v~ 系列快捷键来使用trangle的功能(比如 ~C-c C-v C-t~ 把本文件的代码写入.
+ 
+* pre-early-init.el
+
+#+begin_src emacs-lisp :tangle ./pre-early-init.el
+  ;;; FILENAME.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
+;(setq debug-on-error t)
+;; use-package
+(eval-when-compile
+  (require 'use-package))
+;;不验证签名，应该改动！
+(setq package-check-signature nil)
+;; melpa 和 host
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/") t)
+(setq url-proxy-services '(("no_proxy" . "^\\(192\\.168\\..*\\)")
+              ("http" . "127.0.0.1:7897")
+   ("https" . "127.0.0.1:7897")))
+
+
+;;; Reducing clutter in ~/.emacs.d by redirecting files to ~/.emacs.d/var/
+;; NOTE: This must be placed in 'pre-early-init.el'.
+(setq user-emacs-directory (expand-file-name "var/" minimal-emacs-user-directory))
+(setq package-user-dir (expand-file-name "elpa" user-emacs-directory))
+
+
+;; 移除gnome的标题栏
+(add-to-list 'default-frame-alist '(undecorated . t))
+
+;(setq minimal-emacs-user-directory "~/projects/emacs_dot_file/")
+;(add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory))
+
+
+
+(provide 'pre-early-init.el)
+
+;;; pre-early-init.el ends here
+#+end_src
+
 * 不使用package的设置
 #+begin_src emacs-lisp :tangle ./post-init.el
     ;;; post-init.el --- Emacs Configuration -*- no-byte-compile: t; lexical-binding: t; -*-
@@ -52,11 +91,11 @@
   (setq recentf-max-saved-items 100)
   (setq history-length 500)
 
-  
+
   ;;==============================================================================
   ;;; 启动优化 (Startup Optimization)
   ;;==============================================================================
-
+ 
   ;; 启动全屏
   (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
 
@@ -70,6 +109,7 @@
   ;;==============================================================================
 
 #+end_src
+
 * 字体 主题
 ** 字体
 字体一直让我有点头痛,dejavu倒是不错,但是这个sarasa实在是不是很好看,但是凑合用也够了.
@@ -969,8 +1009,8 @@ crux/easy-kill 似乎能优化编辑体验,可以试试.
 在emacs里处理电子邮件也没弄.
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-  ;crux
-   ;;==============================================================================
+                                          ;crux
+  ;;==============================================================================
   ;;==============================================================================
   ;; (use-package sis
   ;;   ;; :hook
@@ -999,9 +1039,7 @@ crux/easy-kill 似乎能优化编辑体验,可以试试.
   ;;   ;; 为所有缓冲区启用 /inline english/ 模式
   ;;   (sis-global-inline-mode t)
   ;;   )
-  ;; ;;===========================================  ===================================
-  ;;==============================================================================
-  ;; mu4e
+  ;; ;;==============================================================================
 
   ;;==============================================================================
   ;; scroll-screen
@@ -1010,6 +1048,37 @@ crux/easy-kill 似乎能优化编辑体验,可以试试.
   ;;   :bind (("C-v" . golden-ratio-scroll-screen-up)
   ;;          ("M-v" . golden-ratio-scroll-screen-down)))
   ;;==============================================================================
+#+end_src
+
+* 中文输入法
+配置了一小时。
+使用了雾凇拼音的词库。
+果然是有点小问题问题，emacs的快捷键完全不生效了，只能用pageup和pagedown来翻页。
+然后我想实现的光标改颜色也没有实现
+不过测试了一下估计百分之九十的输入情况不需要翻页，所以先这么用着吧。
+我顺带也把ubuntu的输入法也配置上雾凇了，在 =~/.config/ibus/rime/= 
+#+begin_src emacs-lisp :tangle ./post-init.el
+    (use-package rime
+    :demand 1.0
+    :custom
+    (default-input-method "rime")
+    :config
+    (setq rime-show-candidate 'posframe)
+    (setq rime-cursor "█")
+    (setq rime-cursor-face '((t (:foreground "#00ff00"))))
+    (setq rime-show-preedit t)
+    (setq rime-user-data-dir "~/.config/fcitx/Rime/")
+    ;; 默认值
+    (setq rime-translate-keybindings
+    '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
+    ) 
+
+#+end_src
+
+#+begin_src emacs-lisp :tangle ./post-init.el
+
   (provide 'post-init)
   ;;; post-init.el ends here
 #+end_src
+
+

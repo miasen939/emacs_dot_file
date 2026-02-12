@@ -881,7 +881,7 @@
 ;; (treemacs-start-on-boot)
 
 ;crux
- ;;==============================================================================
+;;==============================================================================
 ;;==============================================================================
 ;; (use-package sis
 ;;   ;; :hook
@@ -910,9 +910,7 @@
 ;;   ;; 为所有缓冲区启用 /inline english/ 模式
 ;;   (sis-global-inline-mode t)
 ;;   )
-;; ;;===========================================  ===================================
-;;==============================================================================
-;; mu4e
+;; ;;==============================================================================
 
 ;;==============================================================================
 ;; scroll-screen
@@ -921,5 +919,21 @@
 ;;   :bind (("C-v" . golden-ratio-scroll-screen-up)
 ;;          ("M-v" . golden-ratio-scroll-screen-down)))
 ;;==============================================================================
+
+(use-package rime
+:demand 1.0
+:custom
+(default-input-method "rime")
+:config
+(setq rime-show-candidate 'posframe)
+(setq rime-cursor "█")
+(setq rime-cursor-face '((t (:foreground "#00ff00"))))
+(setq rime-show-preedit t)
+(setq rime-user-data-dir "~/.config/fcitx/Rime/")
+;; 默认值
+(setq rime-translate-keybindings
+'("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
+)
+
 (provide 'post-init)
 ;;; post-init.el ends here
