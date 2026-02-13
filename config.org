@@ -5,39 +5,41 @@
 * pre-early-init.el
 
 #+begin_src emacs-lisp :tangle ./pre-early-init.el
-  ;;; FILENAME.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
-;(setq debug-on-error t)
-;; use-package
-(eval-when-compile
-  (require 'use-package))
-;;不验证签名，应该改动！
-(setq package-check-signature nil)
-;; melpa 和 host
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/") t)
-(setq url-proxy-services '(("no_proxy" . "^\\(192\\.168\\..*\\)")
-              ("http" . "127.0.0.1:7897")
-   ("https" . "127.0.0.1:7897")))
+    ;;; FILENAME.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
+  ;(setq debug-on-error t)
+  ;; use-package
+  (eval-when-compile
+    (require 'use-package))
+  ;;不验证签名，应该改动！
+  (setq package-check-signature nil)
+  ;; melpa 和 host
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/") t)
+  (setq url-proxy-services '(("no_proxy" . "^\\(192\\.168\\..*\\)")
+                ("http" . "127.0.0.1:7897")
+     ("https" . "127.0.0.1:7897")))
 
 
-;;; Reducing clutter in ~/.emacs.d by redirecting files to ~/.emacs.d/var/
-;; NOTE: This must be placed in 'pre-early-init.el'.
-(setq user-emacs-directory (expand-file-name "var/" minimal-emacs-user-directory))
-(setq package-user-dir (expand-file-name "elpa" user-emacs-directory))
+  ;;; Reducing clutter in ~/.emacs.d by redirecting files to ~/.emacs.d/var/
+  ;; NOTE: This must be placed in 'pre-early-init.el'.
+  (setq user-emacs-directory (expand-file-name "var/" minimal-emacs-user-directory))
+  (setq package-user-dir (expand-file-name "elpa" user-emacs-directory))
 
 
-;; 移除gnome的标题栏
-(add-to-list 'default-frame-alist '(undecorated . t))
+  ;; 移除gnome的标题栏
+  (add-to-list 'default-frame-alist '(undecorated . t))
 
-;(setq minimal-emacs-user-directory "~/projects/emacs_dot_file/")
-;(add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory))
+  ;(setq minimal-emacs-user-directory "~/projects/emacs_dot_file/")
+  ;(add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory))
 
 
 
-(provide 'pre-early-init.el)
+  (provide 'pre-early-init.el)
+                               
+                               
 
-;;; pre-early-init.el ends here
+  ;;; pre-early-init.el ends here
 #+end_src
 
 * 不使用package的设置
@@ -225,7 +227,7 @@
   (use-package nov
     :mode ("\\.epub\\'" . nov-mode))
 #+end_src
-* org和markdown
+* org和markdown 和 roam
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   ;;==============================================================================
@@ -274,8 +276,93 @@
     ;;org-agenda
     (setq org-agenda-files '("~/Documents/orgnote/agenda/TODOs.org")))
   ;;org-capture)
+#+end_src
+** org roam
+=org-id-get-create=
+=org-roam-alias-add=
 
+  (org-roam-completion-everywhere
+  ("C-M-i"    . completion-at-point))
+      (setq org-roam-dailies-directory "~/Documents/roamnote/roamdaily/")
+  #+begin_src emacs-lisp :tangle ./post-init.el
+    (use-package org-roam
+      :ensure t
+      :custom
+      (org-roam-directory (file-truename "~/Documents/roamnote/"))
+      (org-roam-capture-templates
+       '(    ("d" "default" plain "%?"
+              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
+              :unnarrowed t)
+             ("t" "textbook" plain "%?"
+              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                 "#+title: ${title}
+        ,#+date: %U
+        ,#+filetags: :textbook:${book}:Study:
+        ,#+book:${book}
 
+        ")
+              :unnarrowed t)
+              ("e" "Emacs" plain "%?"
+              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                 "#+title: ${title}
+        ,#+date: %U
+        ,#+filetags: :Emacs:
+
+        ")
+              :unnarrowed t)
+             ("c" "COD note" plain "%?"
+              :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                                 "#+title: ${title}
+    ,#+date: %U
+    ,#+filetags: :textbook:Computer Organization and Design MIPS Edition:Computer Architecture:Study:
+    ,#+book:Computer Organization and Design MIPS Edition
+    ,#+subject:Computer Architecture
+
+    ")
+              :unnarrowed t)))
+
+      :bind (("C-c n l" . org-roam-buffer-toggle)
+             ("C-c n f" . org-roam-node-find)
+             ("C-c n g" . org-roam-graph)
+             ("C-c n i" . org-roam-node-insert)
+             ("C-c n c" . org-roam-capture)
+             ("C-c n t" . org-roam-tag-add)
+             ;; Dailies
+             ("C-c n j" . org-roam-dailies-capture-today))
+      :bind-keymap
+      ("C-c n d" . org-roam-dailies-map)
+      :config
+      
+      
+      (setq org-id-locations-file "~/.emacs.d/var/.org-id-locations")
+      ;; If you're using a vertical completion framework, you might want a more informative completion interface
+      (setq org-roam-dailies-capture-templates
+            '(("d" "default" entry "* %<%I:%M %p>: %?"
+               :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
+      (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+      (org-roam-db-autosync-mode)
+      ;; If using org-roam-protocol
+      (require 'org-roam-protocol))
+
+  #+end_src
+
+  #+begin_src emacs-lisp :tangle ./post-init.el
+
+(use-package org-roam-ui
+    :after org-roam ;; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+;;  :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+
+  #+end_src
+** markdown
+#+begin_src emacs-lisp :tangle ./post-init.el
 
   ;;==============================================================================
   ;;; Markdown
@@ -480,7 +567,7 @@
     :init
     (which-key-mode))
 #+end_src
-* 代码补全
+* 代码补全ppp
 Corfu
 pangu 这个是用来给中英文之间自动加空格的.
 图标问题没解决

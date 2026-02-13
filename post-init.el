@@ -208,7 +208,76 @@
   (setq org-agenda-files '("~/Documents/orgnote/agenda/TODOs.org")))
 ;;org-capture)
 
+(use-package org-roam
+  :ensure t
+  :custom
+  (org-roam-directory (file-truename "~/Documents/roamnote/"))
+  (org-roam-capture-templates
+   '(    ("d" "default" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
+          :unnarrowed t)
+         ("t" "textbook" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}
+    #+date: %U
+    #+filetags: :textbook:${book}:Study:
+    #+book:${book}
 
+    ")
+          :unnarrowed t)
+          ("e" "Emacs" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}
+    #+date: %U
+    #+filetags: :Emacs:
+
+    ")
+          :unnarrowed t)
+         ("c" "COD note" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}
+#+date: %U
+#+filetags: :textbook:Computer Organization and Design MIPS Edition:Computer Architecture:Study:
+#+book:Computer Organization and Design MIPS Edition
+#+subject:Computer Architecture
+
+")
+          :unnarrowed t)))
+
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ("C-c n t" . org-roam-tag-add)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today))
+  :bind-keymap
+  ("C-c n d" . org-roam-dailies-map)
+  :config
+  
+  
+  (setq org-id-locations-file "~/.emacs.d/var/.org-id-locations")
+  ;; If you're using a vertical completion framework, you might want a more informative completion interface
+  (setq org-roam-dailies-capture-templates
+        '(("d" "default" entry "* %<%I:%M %p>: %?"
+           :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
+  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-db-autosync-mode)
+  ;; If using org-roam-protocol
+  (require 'org-roam-protocol))
+
+(use-package org-roam-ui
+    :after org-roam ;; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+;;  :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
 
 ;;==============================================================================
 ;;; Markdown
