@@ -64,6 +64,10 @@
 
 ;;==============================================================================
 
+;; steal from system crafter
+(setq large-file-warning-threshold nil)
+(column-number-mode 1)
+
 ;;==============================================================================
 ;;; 字体和主题 (Fonts & Theme)
 ;;==============================================================================
@@ -148,6 +152,14 @@
 ;;   (load-theme 'zenburn t))
 ;;(load-theme 'leuven-dark)
 
+;; (use-package emacs
+;;   :custom
+;;   (display-buffer-alist
+;;    '(("\\*\\(Help\\|Warnings\\|compilation\\|Backtrace\\|Messages\\|Occur\\)\\*"
+;;       (display-buffer-reuse-window display-buffer-pop-up-window))
+;;      (".*"
+;;       (display-buffer-reuse-window display-buffer-same-window))))    )
+
 ;;==============================================================================
 ;;; 文档查看 (Document Viewers)
 ;;==============================================================================
@@ -157,7 +169,8 @@
   :hook ((pdf-view-mode . pdf-view-roll-minor-mode)
          )
   :config
-  (pdf-tools-install :no-query))
+  (pdf-tools-install :no-query)
+  )
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode))
 
@@ -184,10 +197,11 @@
   (org-hide-emphasis-markers t)
   (setq org-return-follows-link t)
   :config
+  (setq org-startup-with-inline-images t)
+
                                         ;org-export
   (require 'ox-md)
   ;; img
-  (setq org-startup-with-inline-images t)
   ;;org-todo
   ;; TODO states
   (setq org-todo-keywords
@@ -208,64 +222,73 @@
   (setq org-agenda-files '("~/Documents/orgnote/agenda/TODOs.org")))
 ;;org-capture)
 
-(use-package org-roam
-  :ensure t
-  :custom
-  (org-roam-directory (file-truename "~/Documents/roamnote/"))
-  (org-roam-capture-templates
-   '(    ("d" "default" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
-          :unnarrowed t)
-         ("t" "textbook" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}
-    #+date: %U
-    #+filetags: :textbook:${book}:Study:
-    #+book:${book}
+(use-package casual
+  :after org
+  :bind (:map org-mode-map
+              ("M-m" . casual-org-tmenu)
+              :map org-table-fedit-map
+              ("M-m" . casual-org-table-fedit-tmenu)))
 
-    ")
-          :unnarrowed t)
-          ("e" "Emacs" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}
-    #+date: %U
-    #+filetags: :Emacs:
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((dot . t)))
 
-    ")
-          :unnarrowed t)
-         ("c" "COD note" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}
-#+date: %U
-#+filetags: :textbook:Computer Organization and Design MIPS Edition:Computer Architecture:Study:
-#+book:Computer Organization and Design MIPS Edition
-#+subject:Computer Architecture
+(defun org-roam-node-insert-immediate (arg &rest args)
+(interactive "P")
+(let ((args (cons arg args))
+      (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+                                                '(:immediate-finish t)))))
+  (apply #'org-roam-node-insert args)))
 
-")
-          :unnarrowed t)))
+  (use-package org-roam
+    :ensure t
+    :custom
+    (org-roam-directory (file-truename "~/Documents/roamnote/"))
+    (org-roam-capture-templates
+     '(    ("d" "default" plain "%?"
+            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
+            :unnarrowed t)
+           ("s" "Study" plain "%?"
+            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                               "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Study:
 
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
-         ("C-c n i" . org-roam-node-insert)
-         ("C-c n c" . org-roam-capture)
-         ("C-c n t" . org-roam-tag-add)
-         ;; Dailies
-         ("C-c n j" . org-roam-dailies-capture-today))
-  :bind-keymap
-  ("C-c n d" . org-roam-dailies-map)
-  :config
-  
-  
-  (setq org-id-locations-file "~/.emacs.d/var/.org-id-locations")
-  ;; If you're using a vertical completion framework, you might want a more informative completion interface
-  (setq org-roam-dailies-capture-templates
-        '(("d" "default" entry "* %<%I:%M %p>: %?"
-           :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
-  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-  (org-roam-db-autosync-mode)
-  ;; If using org-roam-protocol
-  (require 'org-roam-protocol))
+      ")
+            :unnarrowed t)
+            ("e" "Emacs" plain "%?"
+            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                               "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Emacs:
+
+      ")
+            :unnarrowed t)
+           ("c" "COD note" plain "%?"
+            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                               "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :textbook:Computer Organization and Design MIPS Edition:Computer Architecture:Study:\n\n#+book:Computer Organization and Design MIPS Edition
+  ")
+            :unnarrowed t)))
+
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ("C-c n t" . org-roam-tag-add)
+           ;; Dailies
+           ("C-c n j" . org-roam-dailies-capture-today)
+           ("C-c n i" . org-roam-node-insert-immediate))
+    :bind-keymap
+    ("C-c n d" . org-roam-dailies-map)
+    :config
+    
+    
+    (setq org-id-locations-file "~/.emacs.d/var/.org-id-locations")
+    ;; If you're using a vertical completion framework, you might want a more informative completion interface
+    (setq org-roam-dailies-capture-templates
+          '(("d" "default" entry "* %<%I:%M %p>: %?"
+             :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
+    (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+    (org-roam-db-autosync-mode)
+    ;; If using org-roam-protocol
+    (require 'org-roam-protocol))
 
 (use-package org-roam-ui
     :after org-roam ;; or :after org
@@ -672,7 +695,8 @@
 
 (use-package avy
   :bind (
-         ("M-g l" . avy-goto-char-timer)
+         ("C-." . avy-goto-char-timer)
+    ;     ("C-。". avy-goto-char-timer)
          ("C-;" . avy-goto-line)
                                         ;         ("C-;" . avy-goto-word-0)
          ("M-g w" . avy-goto-word-1)
@@ -948,6 +972,63 @@
   :config (treemacs-set-scope-type 'Tabs))
 ;; 
 ;; (treemacs-start-on-boot)
+
+(use-package dirvish
+  :init
+  (dirvish-override-dired-mode)
+  :bind
+  ("C-x C-d " . dirvish))
+  ;; (use-package dired
+  ;;   :ensure nil
+  ;;   :config
+  ;;   (setq dired-listing-switches
+  ;;         "-l --almost-all --human-readable --group-directories-first --no-group")
+  ;;   ;; this command is useful when you want to close the window of `dirvish-side'
+  ;;   ;; automatically when opening a file
+  ;;   (put 'dired-find-alternate-file 'disabled nil))
+  ;; 
+  ;; (use-package dirvish
+  ;;   :init
+  ;;   (dirvish-override-dired-mode)
+  ;;   :custom
+  ;;   (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
+  ;;    '(("h" "~/"                          "Home")
+  ;;      ("d" "~/Downloads/"                "Downloads")
+  ;;      ("m" "/mnt/"                       "Drives")
+  ;;      ("s" "/ssh:my-remote-server")      "SSH server"
+  ;;      ("e" "/sudo:root@localhost:/etc")  "Modify program settings"
+  ;;      ("t" "~/.local/share/Trash/files/" "TrashCan")))
+  ;;   :config
+  ;;   ;; (dirvish-peek-mode)             ; Preview files in minibuffer
+  ;;   ;; (dirvish-side-follow-mode)      ; similar to `treemacs-follow-mode'
+  ;;   (setq dirvish-mode-line-format
+  ;;         '(:left (sort symlink) :right (omit yank index)))
+  ;;   (setq dirvish-attributes           ; The order *MATTERS* for some attributes
+  ;;         '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
+  ;;         dirvish-side-attributes
+  ;;         '(vc-state nerd-icons collapse file-size))
+  ;;   ;; open large directory (over 20000 files) asynchronously with `fd' command
+  ;;   (setq dirvish-large-directory-threshold 20000)
+  ;;   :bind ; Bind `dirvish-fd|dirvish-side|dirvish-dwim' as you see fit
+  ;;   (("C-c f" . dirvish)
+  ;;    :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
+  ;;    (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
+  ;;    ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
+  ;;    ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
+  ;;    ("f"   . dirvish-file-info-menu)    ; [f]ile info
+  ;;    ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
+  ;;    ("s"   . dirvish-quicksort)         ; [s]ort flie list
+  ;;    ("r"   . dirvish-history-jump)      ; [r]ecent visited
+  ;;    ("l"   . dirvish-ls-switches-menu)  ; [l]s command flags
+  ;;    ("v"   . dirvish-vc-menu)           ; [v]ersion control commands
+  ;;    ("*"   . dirvish-mark-menu)
+  ;;    ("y"   . dirvish-yank-menu)
+  ;;    ("N"   . dirvish-narrow)
+  ;;    ("^"   . dirvish-history-last)
+  ;;    ("TAB" . dirvish-subtree-toggle)
+  ;;    ("M-f" . dirvish-history-go-forward)
+  ;;    ("M-b" . dirvish-history-go-backward)
+  ;;    ("M-e" . dirvish-emerge-menu)))
 
 ;crux
 ;;==============================================================================
