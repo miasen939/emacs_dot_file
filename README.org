@@ -1,5 +1,5 @@
 #+title: emacs 配置文件
-fork自[[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
+fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 
 试用过purcell/prelude/doomemacs,打算慢慢从上面偷配置
 
@@ -13,15 +13,27 @@ OS: Ubuntu 24.04.3 LTS x86_64
 [[file:static/img/screenshot1.png]]
 
 * 原则
-- 简洁美观
+
+- 简洁美观（？）
   字体和主题因为长时间盯着，还是要弄的。但是什么彩虹猫加载条，nerdicons，以及各种花哨的modeline我觉得就没有必要了。
 - 不过分追求编辑技巧
   多用avy/wichkey和embark降低记忆负担
   即使像magit和vterm这种用得多的函数，如无必要也不要加快捷键，直接用 =M-x= 调用，还有历史记忆也挺方便
+- 降低自己的记忆负担，多利用casual和embark、which key 等辅助包
 - 多偷别人的配置
-- 简化配置，解耦，提高可迁移性
+- 简化配置，解耦，提高可迁移性（？）
 
+* 住在emacs里
 
+- IDE我用 =emacs=
+- 浏览文件我用 =dired= ，需要预览我打开 =dirvish= ，需要搜索直接 =consult-fd consult-ripgrep=
+- 听音乐我用 =emms=
+- 处理邮件我用 =mu4e=
+- 记笔记我用 =org-roam= 待办清单用 =org-agenda=
+- 命令行我用  =vterm= , git当然是 =magit=
+- 浏览器这个我不懂，似乎只能靠 =EXWM= 套一个浏览器了
+- 电子书阅读我用 =PDF-tool= 和 =nov=
+- 如果我一整天都不关电脑，那我也可以用 =emacs= 设置起床闹钟
 
 
 

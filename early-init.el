@@ -1,6 +1,6 @@
 ;;; early-init.el --- Early Init -*- lexical-binding: t; -*-
 
-;; Author: James Cherti
+;; Author: James Cherti <https://www.jamescherti.com/contact/>
 ;; URL: https://github.com/jamescherti/minimal-emacs.d
 ;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: maint
@@ -80,16 +80,6 @@ tradeoff is that the mode line is hidden during the startup phase.")
   "Whether to automatically initialize and refresh packages.
 When set to non-nil, Emacs will automatically call `package-initialize' and
 `package-refresh-contents' to set up and update the package system.")
-
-(defvar minimal-emacs-setup-native-compilation t
-  "Controls whether native compilation settings are enabled during setup.
-When non-nil, the following variables are set to non-nil to enable
-native compilation features:
-- `native-comp-deferred-compilation'
-- `native-comp-jit-compilation'
-- `package-native-compile'
-If nil, these variables are left at their default values and are not
-modified during setup.")
 
 (defvar minimal-emacs-inhibit-redisplay-during-startup nil
   "Suppress redisplay during startup to improve performance.
@@ -187,12 +177,9 @@ pre-early-init.el, and post-early-init.el.")
 
 ;;; Native compilation and Byte compilation
 
-(if (and (featurep 'native-compile)
-         (fboundp 'native-comp-available-p)
-         (native-comp-available-p))
-    (when minimal-emacs-setup-native-compilation
-      ;; Activate `native-compile'
-      (setq package-native-compile t))
+(unless (and (featurep 'native-compile)
+             (fboundp 'native-comp-available-p)
+             (native-comp-available-p))
   ;; Deactivate the `native-compile' feature if it is not available
   (setq features (delq 'native-compile features)))
 
@@ -463,20 +450,18 @@ this stage of initialization."
 (setq tls-checktrust t)  ; Ensure SSL/TLS connections undergo trust verification
 (setq gnutls-min-prime-bits 3072)  ; Stronger GnuTLS encryption
 
-;;; package.el
-(setq use-package-compute-statistics minimal-emacs-debug)
-
-;; Setting use-package-expand-minimally to (t) results in a more compact output
-;; that emphasizes performance over clarity.
+;; This results in a more compact output that emphasizes performance
 (setq use-package-expand-minimally (not noninteractive))
 
-(setq package-quickstart-file
-      (expand-file-name "package-quickstart.el" user-emacs-directory))
 (setq use-package-minimum-reported-time (if minimal-emacs-debug 0 0.1))
 (setq use-package-verbose minimal-emacs-debug)
-(setq package-enable-at-startup nil)  ; Let the init.el file handle this
 (setq use-package-always-ensure t)
 (setq use-package-enable-imenu-support t)
+
+;; package.el
+(setq package-enable-at-startup nil)  ; Let the init.el file handle this
+(setq package-quickstart-file
+      (expand-file-name "package-quickstart.el" user-emacs-directory))
 (setq package-archives '(("melpa"        . "https://melpa.org/packages/")
                          ("gnu"          . "https://elpa.gnu.org/packages/")
                          ("nongnu"       . "https://elpa.nongnu.org/nongnu/")
