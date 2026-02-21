@@ -1070,6 +1070,52 @@
 ;;          ("M-v" . golden-ratio-scroll-screen-down)))
 ;;==============================================================================
 
+;; (use-package emms
+;;   :config
+;;   (require 'emms-setup)
+;;   (emms-all)                      ; 开启几乎所有稳定功能
+;; 
+;;   ;; 播放器优先顺序（mpv 最好，vlc 次之）
+;;   (setq emms-player-list '(
+;;                            emms-player-vlc
+;;                            ))
+;; 
+;;   ;; 元数据读取（native 是纯 elisp 的，速度还可以）
+;;   (setq emms-info-functions '(emms-info-ogginfo
+;;                               emms-info-mp3info
+;;                               emms-info-opusinfo   ; 如果你有 opus 文件
+;;                               emms-info-native))
+;; 
+;;   ;; 默认音乐目录（很重要！）
+;;   (setq emms-source-file-default-directory "~/Music/")
+;; 
+;;   ;; 显示封面（需要 ImageMagick 或 Image backend）
+;;   (setq emms-browser-covers 'emms-browser-cache-thumbnail
+;;         emms-show-format "Playing: %s")
+;; 
+;;   ;; 可选：modeline 显示当前歌曲（很实用）
+;;   (emms-mode-line 1)
+;;   (emms-playing-time 1))
+
+;; mu4e 基本加载（复制粘贴，根据你的系统改路径）
+;; (use-package mu4e
+;;   :ensure nil                ; 因为不是 package.el 装的
+;;   :load-path "/usr/share/emacs/site-lisp/elpa-src/mu4e-1.10.8"
+;; 
+;;   :config
+;;   ;; 指定 mu 二进制路径（通常不需要，但保险起见）
+;;   (setq mu4e-mu-binary (executable-find "mu"))
+;; 
+;;   ;; 最小配置示例（后面再细调）
+;;   (setq mu4e-maildir "~/Mail"                  ; 你的邮件存储目录
+;;         mu4e-get-mail-command "mbsync -a"      ; 用 isync/mbsync 拉邮件（或 offlineimap）
+;;         mu4e-update-interval 300               ; 每 5 分钟检查一次
+;;         mu4e-headers-auto-update t
+;;         message-send-mail-function 'smtpmail-send-it
+;;         smtpmail-default-smtp-server "smtp.gmail.com"  ; 根据你的邮箱改
+;;         ;; ... 更多配置见下面
+;;         ))
+
 (use-package rime
 :demand 1.0
 :custom
