@@ -26,7 +26,11 @@ OS: Ubuntu 24.04.3 LTS x86_64
 * 住在emacs里
 
 - IDE我用 =emacs=
-- 浏览文件我用 =dired= ，需要预览我打开 =dirvish= ，需要搜索直接 =consult-fd consult-ripgrep=
+- 处理文件我用 =dired= ，需要预览我打开 =dirvish= ，需要搜索直接 =consult-fd consult-ripgrep=
+- 计算器我用 =calc=
+- +用 =calendar= 当日历+
+- +用 =weather= 看天气+
+- +用 =emacs RSS= 看新闻或者其他讯息+
 - 听音乐我用 =emms=
 - 处理邮件我用 =mu4e=
 - 记笔记我用 =org-roam= 待办清单用 =org-agenda=

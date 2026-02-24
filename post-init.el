@@ -64,6 +64,12 @@
 
 ;;==============================================================================
 
+(use-package emacs
+  :bind ("M-o" . other-window)
+  :hook (after-make-frame . (lambda (frame)
+                              (select-frame frame)
+                              (toggle-frame-maximized))))
+
 ;; steal from system crafter
 (setq large-file-warning-threshold nil)
 (column-number-mode 1)
@@ -166,8 +172,7 @@
 
 (use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
-  :hook ((pdf-view-mode . pdf-view-roll-minor-mode)
-         )
+
   :config
   (pdf-tools-install :no-query)
   )
@@ -222,85 +227,98 @@
   (setq org-agenda-files '("~/Documents/orgnote/agenda/TODOs.org")))
 ;;org-capture)
 
-(use-package casual
-  :after org
+(use-package org-download
+  :ensure t
+  :defer t
   :bind (:map org-mode-map
-              ("M-m" . casual-org-tmenu)
-              :map org-table-fedit-map
-              ("M-m" . casual-org-table-fedit-tmenu)))
+              ("C-c C-M-y" . org-download-clipboard)   ; 推荐快捷键：粘贴剪贴板图片
+              ("C-c M-y"   . org-download-yank))       ; 另一种常用快捷键
+  :config
+  ;; 核心配置写在这里
+  (setq org-download-method 'directory
+        org-download-image-dir "./static/img")
+  (setq org-download-link-format "[[file:%s]]\n"
+        org-download-link-format-function
+        (lambda (link)
+          (format "[[file:%s]]\n" (file-relative-name link))))
 
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((dot . t)))
+  ;; 是否自动给文件名加时间戳前缀（避免重名）
+  (setq org-download-timestamp "_%Y%m%d_%H%M%S")
+
+  ;; Mac/Linux 剪贴板截图特别推荐再加这一行
+  (when (eq system-type 'darwin)   ; macOS
+    (setq org-download-screenshot-method "screencapture -i %s"))
+  (setq org-image-actual-width '(600))
+  )
 
 (defun org-roam-node-insert-immediate (arg &rest args)
-(interactive "P")
-(let ((args (cons arg args))
-      (org-roam-capture-templates (list (append (car org-roam-capture-templates)
-                                                '(:immediate-finish t)))))
-  (apply #'org-roam-node-insert args)))
+  (interactive "P")
+  (let ((args (cons arg args))
+        (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+                                                  '(:immediate-finish t)))))
+    (apply #'org-roam-node-insert args)))
 
-  (use-package org-roam
-    :ensure t
-    :custom
-    (org-roam-directory (file-truename "~/Documents/roamnote/"))
-    (org-roam-capture-templates
-     '(    ("d" "default" plain "%?"
-            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
-            :unnarrowed t)
-           ("s" "Study" plain "%?"
-            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Study:
-
-      ")
-            :unnarrowed t)
-            ("e" "Emacs" plain "%?"
-            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Emacs:
+(use-package org-roam
+  :ensure t
+  :custom
+  (org-roam-directory (file-truename "~/Documents/roamnote/"))
+  (org-roam-capture-templates
+   '(    ("d" "default" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
+          :unnarrowed t)
+         ("s" "Study" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Study:
 
       ")
-            :unnarrowed t)
-           ("c" "COD note" plain "%?"
-            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :textbook:Computer Organization and Design MIPS Edition:Computer Architecture:Study:\n\n#+book:Computer Organization and Design MIPS Edition
+          :unnarrowed t)
+         ("e" "Emacs" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Emacs:
+
+      ")
+          :unnarrowed t)
+         ("c" "COD note" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :textbook:Computer Organization and Design MIPS Edition:Computer Architecture:Study:\n\n#+book:Computer Organization and Design MIPS Edition
   ")
-            :unnarrowed t)))
+          :unnarrowed t)))
 
-    :bind (("C-c n l" . org-roam-buffer-toggle)
-           ("C-c n f" . org-roam-node-find)
-           ("C-c n g" . org-roam-graph)
-           ("C-c n i" . org-roam-node-insert)
-           ("C-c n c" . org-roam-capture)
-           ("C-c n t" . org-roam-tag-add)
-           ;; Dailies
-           ("C-c n j" . org-roam-dailies-capture-today)
-           ("C-c n i" . org-roam-node-insert-immediate))
-    :bind-keymap
-    ("C-c n d" . org-roam-dailies-map)
-    :config
-    
-    
-    (setq org-id-locations-file "~/.emacs.d/var/.org-id-locations")
-    ;; If you're using a vertical completion framework, you might want a more informative completion interface
-    (setq org-roam-dailies-capture-templates
-          '(("d" "default" entry "* %<%I:%M %p>: %?"
-             :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
-    (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-    (org-roam-db-autosync-mode)
-    ;; If using org-roam-protocol
-    (require 'org-roam-protocol))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ("C-c n t" . org-roam-tag-add)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today)
+         ("C-c n i" . org-roam-node-insert-immediate))
+  :bind-keymap
+  ("C-c n d" . org-roam-dailies-map)
+  :config
+  
+  
+  (setq org-id-locations-file "~/.emacs.d/var/.org-id-locations")
+  ;; If you're using a vertical completion framework, you might want a more informative completion interface
+  (setq org-roam-dailies-capture-templates
+        '(("d" "default" entry "* %<%I:%M %p>: %?"
+           :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
+  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-db-autosync-mode)
+  ;; If using org-roam-protocol
+  (require 'org-roam-protocol))
 
 (use-package org-roam-ui
-    :after org-roam ;; or :after org
-;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-;;         a hookable mode anymore, you're advised to pick something yourself
-;;         if you don't care about startup time, use
-;;  :hook (after-init . org-roam-ui-mode)
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+  :after org-roam ;; or :after org
+  ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+  ;;         a hookable mode anymore, you're advised to pick something yourself
+  ;;         if you don't care about startup time, use
+  ;;  :hook (after-init . org-roam-ui-mode)
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
 
 ;;==============================================================================
 ;;; Markdown
@@ -341,6 +359,47 @@
   :hook (markdown-mode . valign-mode)
   :custom
   (valign-fancy-bar t))
+
+;; (use-package casual
+  ;;   :after org
+  ;;   :bind (:map org-mode-map
+  ;;               ("M-m" . casual-org-tmenu)
+  ;;               :map org-table-fedit-map
+  ;;               ("M-m" . casual-org-table-fedit-tmenu))
+  ;;   :config
+  ;;   )
+  ;;
+  (use-package casual-suite
+  :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
+         ("C-o" . casual-suite-tmenu)
+         
+         ;; 如果你习惯在特定模式下使用更直观的快捷键
+         :map calc-mode-map ("C-o" . casual-calc-tmenu)
+         :map isearch-mode-map ("C-o" . casual-isearch-tmenu)
+         :map dired-mode-map ("C-o" . casual-dired-tmenu)
+         :map org-mode-map ("C-o" . casual-org-tmenu)
+         :map org-table-fedit-map ("C-o" . casual-org-table-fedit-tmenu)
+         :map org-agenda-mode-map ("C-o" . casual-agenda-tmenu)
+         :map ibuffer-mode-map ("C-o" . casual-ibuffer-tmenu)
+         :map bookmark-bmenu-mode-map ("C-o" . casual-bookmarks-tmenu)
+         :map calendar-mode-map ("C-o" . casual-calendar-tmenu)
+         :map compilation-mode-map ("C-o" . casual-compile-tmenu)
+         :map eww-mode-map ("C-o" . casual-eww-tmenu)
+         :map help-mode-map ("C-o" . casual-help-tmenu)
+         :map Info-mode-map ("C-o" . casual-info-tmenu)
+         :map re-builder-mode-map ("C-o" . casual-re-builder-tmenu)
+         :map shell-mode-map ("C-o" . casual-eshell-tmenu)
+         :map image-mode-map ("C-o" . casual-image-tmenu))
+
+  :config
+  ;; 默认情况下，suite 会自动检测并启用它支持的所有模块
+  ;; 你可以在这里进行全局微调
+;      (setq casual-use-avy-for-navigation t)
+  )
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((dot . t)))
 
 ;;==============================================================================
 ;;; 补全框架 (Completion Framework)
@@ -690,45 +749,45 @@
   (dashboard-setup-startup-hook))
 
 ;;==============================================================================
-;;; 导航和编辑增强 (Navigation & Editing)
-;;==============================================================================
+  ;;; 导航和编辑增强 (Navigation & Editing)
+  ;;==============================================================================
 
-(use-package avy
-  :bind (
-         ("C-." . avy-goto-char-timer)
-    ;     ("C-。". avy-goto-char-timer)
-         ("C-;" . avy-goto-line)
-                                        ;         ("C-;" . avy-goto-word-0)
-         ("M-g w" . avy-goto-word-1)
-         ("M-g k" . avy-kill-region)
-         ("M-g K" . avy-kill-ring-save-region)
-                                        ;("C-c C-j" . avy-resume)
-         )
-  :custom
-  (avy-timeout-seconds 0.3)
-  (avy-style 'at-full)
-  (avy-all-windows t)
-  (avy-background t)
-  (avy-single-candidate-jump t)
-  (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-  :config
-  (define-key isearch-mode-map (kbd "C-'") 'avy-isearch)
-  )
+  (use-package avy
+    :bind (
+           ("C-." . avy-goto-char-timer)
+                                          ;     ("C-。". avy-goto-char-timer)
+           ("C-;" . avy-goto-line)
+;           ("C-u C-;" . avy-goto-word-0)
+           ("M-g w" . avy-goto-word-0)
+           ("M-g k" . avy-kill-region)
+           ("M-g K" . avy-kill-ring-save-region)
+                                          ;("C-c C-j" . avy-resume)
+           )
+    :custom
+    (avy-timeout-seconds 0.3)
+    (avy-style 'at-full)
+    (avy-all-windows t)
+    (avy-background t)
+    (avy-single-candidate-jump t)
+    (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+    :config
+    (define-key isearch-mode-map (kbd "C-'") 'avy-isearch)
+    )
 
-(use-package ace-window
-  :bind ("C-x o" . ace-window)
-  :custom
-  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+  (use-package ace-window
+    :bind ("C-x o" . ace-window)
+    :custom
+    (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
-(use-package amx
-  :demand 0.2
-  :config
-  (amx-mode 1))
+  (use-package amx
+    :demand 0.2
+    :config
+    (amx-mode 1))
 
   ;; expand region
-(use-package expand-region
-  :bind ("C-=" . er/expand-region)) ;这个
-;;==============================================================================
+  (use-package expand-region
+    :bind ("C-=" . er/expand-region)) ;这个
+  ;;==============================================================================
 
 ;;==============================================================================
 ;;; 编程支持 (Programming Support) 
@@ -1030,46 +1089,6 @@
   ;;    ("M-b" . dirvish-history-go-backward)
   ;;    ("M-e" . dirvish-emerge-menu)))
 
-;crux
-;;==============================================================================
-;;==============================================================================
-;; (use-package sis
-;;   ;; :hook
-;;   ;; 为指定的缓冲区启用 /context/ 和 /inline region/ 模式
-;;   ;; (((text-mode prog-mode) . sis-context-mode)
-;;   ;;  ((text-mode prog-mode) . sis-inline-mode))
-;; 
-;;   :config
-;;   ;; 用于 MacOS
-;;   (sis-ism-lazyman-config
-;; 
-;;    ;; 英文输入源可能是："ABC"、"US" 或其他
-;;    ;; "com.apple.keylayout.ABC"
-;;    "com.apple.keylayout.US"
-;; 
-;;    ;; 其他语言输入源："rime"、"sogou" 或其他
-;;    ;; "im.rime.inputmethod.Squirrel.Rime"
-;;    "com.sogou.inputmethod.sogou.pinyin")
-;; 
-;;   ;; 启用 /光标颜色/ 模式
-;;   (sis-global-cursor-color-mode t)
-;;   ;; 启用 /respect/ 模式
-;;   (sis-global-respect-mode t)
-;;   ;; 为所有缓冲区启用 /context/ 模式
-;;   (sis-global-context-mode t)
-;;   ;; 为所有缓冲区启用 /inline english/ 模式
-;;   (sis-global-inline-mode t)
-;;   )
-;; ;;==============================================================================
-
-;;==============================================================================
-;; scroll-screen
-
-;; (use-package golden-ratio-scroll-screen
-;;   :bind (("C-v" . golden-ratio-scroll-screen-up)
-;;          ("M-v" . golden-ratio-scroll-screen-down)))
-;;==============================================================================
-
 ;; (use-package emms
 ;;   :config
 ;;   (require 'emms-setup)
@@ -1133,3 +1152,43 @@
 
 (provide 'post-init)
 ;;; post-init.el ends here
+
+;crux
+;;==============================================================================
+;;==============================================================================
+;; (use-package sis
+;;   ;; :hook
+;;   ;; 为指定的缓冲区启用 /context/ 和 /inline region/ 模式
+;;   ;; (((text-mode prog-mode) . sis-context-mode)
+;;   ;;  ((text-mode prog-mode) . sis-inline-mode))
+;; 
+;;   :config
+;;   ;; 用于 MacOS
+;;   (sis-ism-lazyman-config
+;; 
+;;    ;; 英文输入源可能是："ABC"、"US" 或其他
+;;    ;; "com.apple.keylayout.ABC"
+;;    "com.apple.keylayout.US"
+;; 
+;;    ;; 其他语言输入源："rime"、"sogou" 或其他
+;;    ;; "im.rime.inputmethod.Squirrel.Rime"
+;;    "com.sogou.inputmethod.sogou.pinyin")
+;; 
+;;   ;; 启用 /光标颜色/ 模式
+;;   (sis-global-cursor-color-mode t)
+;;   ;; 启用 /respect/ 模式
+;;   (sis-global-respect-mode t)
+;;   ;; 为所有缓冲区启用 /context/ 模式
+;;   (sis-global-context-mode t)
+;;   ;; 为所有缓冲区启用 /inline english/ 模式
+;;   (sis-global-inline-mode t)
+;;   )
+;; ;;==============================================================================
+
+;;==============================================================================
+;; scroll-screen
+
+;; (use-package golden-ratio-scroll-screen
+;;   :bind (("C-v" . golden-ratio-scroll-screen-up)
+;;          ("M-v" . golden-ratio-scroll-screen-down)))
+;;==============================================================================

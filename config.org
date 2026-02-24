@@ -110,11 +110,19 @@
 
   ;;==============================================================================
 #+end_src
+** M-o快速切换窗口，新frame自动全屏全屏
+#+begin_src emacs-lisp :tangle ./post-init.el
+  (use-package emacs
+    :bind ("M-o" . other-window)
+    :hook (after-make-frame . (lambda (frame)
+                                (select-frame frame)
+                                (toggle-frame-maximized))))
+    #+end_src
 
 从systemcrafet处偷的配置：[[https://github.com/daviwil/dotfiles/blob/master/Emacs.org][Emacs Configuration]]
 
 #+begin_src emacs-lisp :tangle ./post-init.el
-    ;; steal from system crafter
+  ;; steal from system crafter
   (setq large-file-warning-threshold nil)
   (column-number-mode 1) 
 #+end_src
@@ -231,19 +239,18 @@
 
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-    ;;==============================================================================
-    ;;; 文档查看 (Document Viewers)
-    ;;==============================================================================
+  ;;==============================================================================
+  ;;; 文档查看 (Document Viewers)
+  ;;==============================================================================
 
-    (use-package pdf-tools
-      :mode ("\\.pdf\\'" . pdf-view-mode)
-      :hook ((pdf-view-mode . pdf-view-roll-minor-mode)
-             )
-      :config
-      (pdf-tools-install :no-query)
-      )
-    (use-package nov
-      :mode ("\\.epub\\'" . nov-mode))
+  (use-package pdf-tools
+    :mode ("\\.pdf\\'" . pdf-view-mode)
+
+    :config
+    (pdf-tools-install :no-query)
+    )
+  (use-package nov
+    :mode ("\\.epub\\'" . nov-mode))
 #+end_src
 * org和markdown 和 roam 和 casual
 #+begin_src emacs-lisp :tangle ./post-init.el
@@ -296,105 +303,118 @@
     (setq org-agenda-files '("~/Documents/orgnote/agenda/TODOs.org")))
   ;;org-capture)
 #+end_src
-** casual
-#+begin_src emacs-lisp :tangle ./post-init.el
-  (use-package casual
-    :after org
-    :bind (:map org-mode-map
-                ("M-m" . casual-org-tmenu)
-                :map org-table-fedit-map
-                ("M-m" . casual-org-table-fedit-tmenu)))
-#+end_src
+** org-download
 
+org-download 是在orgmode里方便插入图片的工具。
+需要下载 xclip
 #+begin_src emacs-lisp :tangle ./post-init.el
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((dot . t)))
+  (use-package org-download
+    :ensure t
+    :defer t
+    :bind (:map org-mode-map
+                ("C-c C-M-y" . org-download-clipboard)   ; 推荐快捷键：粘贴剪贴板图片
+                ("C-c M-y"   . org-download-yank))       ; 另一种常用快捷键
+    :config
+    ;; 核心配置写在这里
+    (setq org-download-method 'directory
+          org-download-image-dir "./static/img")
+    (setq org-download-link-format "[[file:%s]]\n"
+          org-download-link-format-function
+          (lambda (link)
+            (format "[[file:%s]]\n" (file-relative-name link))))
+
+    ;; 是否自动给文件名加时间戳前缀（避免重名）
+    (setq org-download-timestamp "_%Y%m%d_%H%M%S")
+
+    ;; Mac/Linux 剪贴板截图特别推荐再加这一行
+    (when (eq system-type 'darwin)   ; macOS
+      (setq org-download-screenshot-method "screencapture -i %s"))
+    (setq org-image-actual-width '(600))
+    )
 #+end_src
 ** org roam
 =org-id-get-create=
 =org-roam-alias-add=
 
-  (org-roam-completion-everywhere
-  ("C-M-i"    . completion-at-point))
-      (setq org-roam-dailies-directory "~/Documents/roamnote/roamdaily/")
-  #+begin_src emacs-lisp :tangle ./post-init.el
+(org-roam-completion-everywhere
+("C-M-i"    . completion-at-point))
+(setq org-roam-dailies-directory "~/Documents/roamnote/roamdaily/")
+#+begin_src emacs-lisp :tangle ./post-init.el
 
-          (defun org-roam-node-insert-immediate (arg &rest args)
-        (interactive "P")
-        (let ((args (cons arg args))
-              (org-roam-capture-templates (list (append (car org-roam-capture-templates)
-                                                        '(:immediate-finish t)))))
-          (apply #'org-roam-node-insert args)))
-        
-          (use-package org-roam
-            :ensure t
-            :custom
-            (org-roam-directory (file-truename "~/Documents/roamnote/"))
-            (org-roam-capture-templates
-             '(    ("d" "default" plain "%?"
-                    :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
-                    :unnarrowed t)
-                   ("s" "Study" plain "%?"
-                    :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                                       "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Study:
+  (defun org-roam-node-insert-immediate (arg &rest args)
+    (interactive "P")
+    (let ((args (cons arg args))
+          (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+                                                    '(:immediate-finish t)))))
+      (apply #'org-roam-node-insert args)))
 
-              ")
-                    :unnarrowed t)
-                    ("e" "Emacs" plain "%?"
-                    :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                                       "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Emacs:
+  (use-package org-roam
+    :ensure t
+    :custom
+    (org-roam-directory (file-truename "~/Documents/roamnote/"))
+    (org-roam-capture-templates
+     '(    ("d" "default" plain "%?"
+            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
+            :unnarrowed t)
+           ("s" "Study" plain "%?"
+            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                               "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Study:
 
-              ")
-                    :unnarrowed t)
-                   ("c" "COD note" plain "%?"
-                    :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                                       "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :textbook:Computer Organization and Design MIPS Edition:Computer Architecture:Study:\n\n#+book:Computer Organization and Design MIPS Edition
-          ")
-                    :unnarrowed t)))
+        ")
+            :unnarrowed t)
+           ("e" "Emacs" plain "%?"
+            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                               "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Emacs:
 
-            :bind (("C-c n l" . org-roam-buffer-toggle)
-                   ("C-c n f" . org-roam-node-find)
-                   ("C-c n g" . org-roam-graph)
-                   ("C-c n i" . org-roam-node-insert)
-                   ("C-c n c" . org-roam-capture)
-                   ("C-c n t" . org-roam-tag-add)
-                   ;; Dailies
-                   ("C-c n j" . org-roam-dailies-capture-today)
-                   ("C-c n i" . org-roam-node-insert-immediate))
-            :bind-keymap
-            ("C-c n d" . org-roam-dailies-map)
-            :config
-            
-            
-            (setq org-id-locations-file "~/.emacs.d/var/.org-id-locations")
-            ;; If you're using a vertical completion framework, you might want a more informative completion interface
-            (setq org-roam-dailies-capture-templates
-                  '(("d" "default" entry "* %<%I:%M %p>: %?"
-                     :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
-            (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-            (org-roam-db-autosync-mode)
-            ;; If using org-roam-protocol
-            (require 'org-roam-protocol))
+        ")
+            :unnarrowed t)
+           ("c" "COD note" plain "%?"
+            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                               "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :textbook:Computer Organization and Design MIPS Edition:Computer Architecture:Study:\n\n#+book:Computer Organization and Design MIPS Edition
+    ")
+            :unnarrowed t)))
 
-  #+end_src
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ("C-c n t" . org-roam-tag-add)
+           ;; Dailies
+           ("C-c n j" . org-roam-dailies-capture-today)
+           ("C-c n i" . org-roam-node-insert-immediate))
+    :bind-keymap
+    ("C-c n d" . org-roam-dailies-map)
+    :config
+    
+    
+    (setq org-id-locations-file "~/.emacs.d/var/.org-id-locations")
+    ;; If you're using a vertical completion framework, you might want a more informative completion interface
+    (setq org-roam-dailies-capture-templates
+          '(("d" "default" entry "* %<%I:%M %p>: %?"
+             :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
+    (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+    (org-roam-db-autosync-mode)
+    ;; If using org-roam-protocol
+    (require 'org-roam-protocol))
 
-  #+begin_src emacs-lisp :tangle ./post-init.el
+#+end_src
 
-(use-package org-roam-ui
+#+begin_src emacs-lisp :tangle ./post-init.el
+
+  (use-package org-roam-ui
     :after org-roam ;; or :after org
-;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-;;         a hookable mode anymore, you're advised to pick something yourself
-;;         if you don't care about startup time, use
-;;  :hook (after-init . org-roam-ui-mode)
+    ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+    ;;         a hookable mode anymore, you're advised to pick something yourself
+    ;;         if you don't care about startup time, use
+    ;;  :hook (after-init . org-roam-ui-mode)
     :config
     (setq org-roam-ui-sync-theme t
           org-roam-ui-follow t
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
 
-  #+end_src
-** org drag drop
+#+end_src
 ** markdown
 #+begin_src emacs-lisp :tangle ./post-init.el
 
@@ -437,6 +457,57 @@
     :hook (markdown-mode . valign-mode)
     :custom
     (valign-fancy-bar t))
+#+end_src
+* casual
+这句
+~:map re-builder-mode-map ("C-o" . casual-re-builder-tmenu)~
+我还没配置好
+#+begin_src emacs-lisp :tangle ./post-init.el
+  ;; (use-package casual
+  ;;   :after org
+  ;;   :bind (:map org-mode-map
+  ;;               ("M-m" . casual-org-tmenu)
+  ;;               :map org-table-fedit-map
+  ;;               ("M-m" . casual-org-table-fedit-tmenu))
+  ;;   :config
+  ;;   )
+  ;;
+  (use-package casual-suite
+  :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
+         ("C-o" . casual-suite-tmenu)
+         
+         ;; 如果你习惯在特定模式下使用更直观的快捷键
+         :map calc-mode-map ("C-o" . casual-calc-tmenu)
+         :map isearch-mode-map ("C-o" . casual-isearch-tmenu)
+         :map dired-mode-map ("C-o" . casual-dired-tmenu)
+         :map org-mode-map ("C-o" . casual-org-tmenu)
+         :map org-table-fedit-map ("C-o" . casual-org-table-fedit-tmenu)
+         :map org-agenda-mode-map ("C-o" . casual-agenda-tmenu)
+         :map ibuffer-mode-map ("C-o" . casual-ibuffer-tmenu)
+         :map bookmark-bmenu-mode-map ("C-o" . casual-bookmarks-tmenu)
+         :map calendar-mode-map ("C-o" . casual-calendar-tmenu)
+         :map compilation-mode-map ("C-o" . casual-compile-tmenu)
+         :map eww-mode-map ("C-o" . casual-eww-tmenu)
+         :map help-mode-map ("C-o" . casual-help-tmenu)
+         :map Info-mode-map ("C-o" . casual-info-tmenu)
+         :map re-builder-mode-map ("C-o" . casual-re-builder-tmenu)
+         :map shell-mode-map ("C-o" . casual-eshell-tmenu)
+         :map image-mode-map ("C-o" . casual-image-tmenu))
+
+  :config
+  ;; 默认情况下，suite 会自动检测并启用它支持的所有模块
+  ;; 你可以在这里进行全局微调
+;      (setq casual-use-avy-for-navigation t)
+  )
+#+end_src
+
+#+RESULTS:
+: casual-image-tmenu
+
+#+begin_src emacs-lisp :tangle ./post-init.el
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((dot . t)))
 #+end_src
 * Vertico 五件套
 #+begin_src emacs-lisp :tangle ./post-init.el
@@ -727,7 +798,7 @@ pangu 这个是用来给中英文之间自动加空格的.
            ("C-c p a" . cape-abbrev)
            ("C-c p l" . cape-line)))
 
-  
+
   (use-package pangu-spacing
     :demand 0.2
     :config
@@ -825,10 +896,10 @@ pangu 这个是用来给中英文之间自动加空格的.
   (use-package avy
     :bind (
            ("C-." . avy-goto-char-timer)
-      ;     ("C-。". avy-goto-char-timer)
+                                          ;     ("C-。". avy-goto-char-timer)
            ("C-;" . avy-goto-line)
-                                          ;         ("C-;" . avy-goto-word-0)
-           ("M-g w" . avy-goto-word-1)
+;           ("C-u C-;" . avy-goto-word-0)
+           ("M-g w" . avy-goto-word-0)
            ("M-g k" . avy-kill-region)
            ("M-g K" . avy-kill-ring-save-region)
                                           ;("C-c C-j" . avy-resume)
@@ -854,7 +925,7 @@ pangu 这个是用来给中英文之间自动加空格的.
     :config
     (amx-mode 1))
 
-    ;; expand region
+  ;; expand region
   (use-package expand-region
     :bind ("C-=" . er/expand-region)) ;这个
   ;;==============================================================================
@@ -1315,4 +1386,4 @@ crux/easy-kill 似乎能优化编辑体验,可以试试.
   ;;          ("M-v" . golden-ratio-scroll-screen-down)))
   ;;==============================================================================
 #+end_src
-
+** TODO C-backspace 和  M-d 删的太多，不好用
