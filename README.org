@@ -23,10 +23,15 @@ OS: Ubuntu 24.04.3 LTS x86_64
 - 多偷别人的配置
 - 简化配置，解耦，提高可迁移性（？）
 
+* 发现式的使用emacs
+emacs功能之多拓展性之强，不可能掌握所有的概念和快捷键
+因此使用过程中多查 =C-h= ，
+并且安装 =which-key= =embark= =avy= =casual= 等包“发现式”使用emacs不错
+
 * 住在emacs里
 
 - IDE我用 =emacs=
-- 处理文件我用 =dired= ，需要预览我打开 =dirvish= ，需要搜索直接 =consult-fd consult-ripgrep=
+- 处理文件我用 =dired= ，需要预览我打开 =dirvish= ，需要搜索直接 =consult-fd =consult-ripgrep=
 - 计算器我用 =calc=
 - +用 =calendar= 当日历+
 - +用 =weather= 看天气+
@@ -38,6 +43,7 @@ OS: Ubuntu 24.04.3 LTS x86_64
 - 浏览器这个我不懂，似乎只能靠 =EXWM= 套一个浏览器了
 - 电子书阅读我用 =PDF-tool= 和 =nov=
 - 如果我一整天都不关电脑，那我也可以用 =emacs= 设置起床闹钟
+- emacs改变了我的人生
 
 
 

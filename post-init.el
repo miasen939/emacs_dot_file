@@ -66,9 +66,9 @@
 
 (use-package emacs
   :bind ("M-o" . other-window)
-  :hook (after-make-frame . (lambda (frame)
-                              (select-frame frame)
-                              (toggle-frame-maximized))))
+  :hook (after-make-frame-functions . (lambda (frame)
+                                        (select-frame frame)
+                                        (toggle-frame-maximized))))
 
 ;; steal from system crafter
 (setq large-file-warning-threshold nil)
@@ -121,7 +121,7 @@
   ;; for treemacs users
   (doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
   :config
-  (load-theme 'doom-one t)
+  (load-theme 'doom-vibrant t)
                                         ;  (load-theme 'doom-nord t)
                                         ;  (load-theme 'doom-solarized-light t)
 
@@ -149,7 +149,7 @@
 ;;   :config
 ;;   (setq ef-owl-palette-overrides
 ;;         '((bg-region "#1a3f4a")))
-;;   (modus-themes-load-theme 'ef-owl))
+;;   (moduns-themes-load-theme 'ef-owl))
 
 
 ;; (use-package zenburn-theme
@@ -157,6 +157,28 @@
 ;;   :config
 ;;   (load-theme 'zenburn t))
 ;;(load-theme 'leuven-dark)
+
+(use-package dashboard
+  :demand t
+  :custom
+  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。")
+  (dashboard-startup-banner
+   (let ((images '("~/Pictures/icon/miyamori300.png"
+                   "~/Pictures/icon/shirobako.png"
+                   "~/Pictures/icon/newgamenene.png")))
+     (seq-random-elt (seq-filter #'file-exists-p images))))
+
+  (dashboard-items '(
+                     (agenda . 10)
+                     (recents . 8)
+                     (bookmarks . 5)
+                     (projects . 5)))
+  (dashboard-center-content t)
+  (dashboard-vertically-center-content t)
+
+  :config
+  (dashboard-setup-startup-hook)
+  )
 
 ;; (use-package emacs
 ;;   :custom
@@ -200,7 +222,7 @@
   (org-log-done 'time)
   (org-return-follows-link t)
   (org-hide-emphasis-markers t)
-  (setq org-return-follows-link t)
+  (org-return-follows-link t)
   :config
   (setq org-startup-with-inline-images t)
 
@@ -224,8 +246,9 @@
           ("CANCELED" . (:foreground "LimeGreen" :weight bold))
           ))
   ;;org-agenda
-  (setq org-agenda-files '("~/Documents/orgnote/agenda/TODOs.org")))
-;;org-capture)
+  (setq org-agenda-files '
+        ("~/Documents/orgnote/agenda/TODOs.org")))
+;;org-capture
 
 (use-package org-download
   :ensure t
@@ -361,15 +384,15 @@
   (valign-fancy-bar t))
 
 ;; (use-package casual
-  ;;   :after org
-  ;;   :bind (:map org-mode-map
-  ;;               ("M-m" . casual-org-tmenu)
-  ;;               :map org-table-fedit-map
-  ;;               ("M-m" . casual-org-table-fedit-tmenu))
-  ;;   :config
-  ;;   )
-  ;;
-  (use-package casual-suite
+;;   :after org
+;;   :bind (:map org-mode-map
+;;               ("M-m" . casual-org-tmenu)
+;;               :map org-table-fedit-map
+;;               ("M-m" . casual-org-table-fedit-tmenu))
+;;   :config
+;;   )
+;;
+(use-package casual-suite
   :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
          ("C-o" . casual-suite-tmenu)
          
@@ -387,14 +410,14 @@
          :map eww-mode-map ("C-o" . casual-eww-tmenu)
          :map help-mode-map ("C-o" . casual-help-tmenu)
          :map Info-mode-map ("C-o" . casual-info-tmenu)
-         :map re-builder-mode-map ("C-o" . casual-re-builder-tmenu)
+         ;;:map re-builder-mode-map ("C-o" . casual-re-builder-tmenu)
          :map shell-mode-map ("C-o" . casual-eshell-tmenu)
          :map image-mode-map ("C-o" . casual-image-tmenu))
 
   :config
   ;; 默认情况下，suite 会自动检测并启用它支持的所有模块
   ;; 你可以在这里进行全局微调
-;      (setq casual-use-avy-for-navigation t)
+                                        ;      (setq casual-use-avy-for-navigation t)
   )
 
 (org-babel-do-load-languages
@@ -500,7 +523,7 @@
 
 (use-package embark
   :bind (("C-," . embark-act)
-         ("C-;" . embark-dwim)
+         ;;("C-;" . embark-dwim)
          ("C-h B" . embark-bindings)
          :map minibuffer-local-map
          ("C-." . embark-act)
@@ -601,6 +624,24 @@
   ;; 保存历史
   (with-eval-after-load 'savehist
     (add-to-list 'savehist-additional-variables 'corfu-history)))
+
+(use-package nerd-icons-corfu
+  :after corfu
+  :demand t
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
+  (setq nerd-icons-corfu-mapping
+        '((array :style "cod" :icon "symbol_array" :face font-lock-type-face)
+          (boolean :style "cod" :icon "symbol_boolean" :face font-lock-builtin-face)
+          ;; You can alternatively specify a function to perform the mapping,
+          ;; use this when knowing the exact completion candidate is important.
+          ;; Don't pass `:face' if the function already returns string with the
+          ;; face property, though.
+          (file :fn nerd-icons-icon-for-file :face font-lock-string-face)
+          ;; ...
+          (t :style "cod" :icon "code" :face font-lock-warning-face)))
+  )
+
 ;; (use-package corfu
 ;;   ;; Optional customizations
 ;;   ;; :custom
@@ -647,16 +688,7 @@
 ;;   ;; useful beyond Corfu.
 ;;   (read-extended-command-predicate #'command-completion-default-include-p))
 ;; Optionally:
-(setq nerd-icons-corfu-mapping
-      '((array :style "cod" :icon "symbol_array" :face font-lock-type-face)
-        (boolean :style "cod" :icon "symbol_boolean" :face font-lock-builtin-face)
-        ;; You can alternatively specify a function to perform the mapping,
-        ;; use this when knowing the exact completion candidate is important.
-        ;; Don't pass `:face' if the function already returns string with the
-        ;; face property, though.
-        (file :fn nerd-icons-icon-for-file :face font-lock-string-face)
-        ;; ...
-        (t :style "cod" :icon "code" :face font-lock-warning-face)))
+
 ;;         ;; If you add an entry for t, the library uses that as fallback.
 ;;         ;; The default fallback (when it's not specified) is the ? symbol.
 
@@ -726,68 +758,52 @@
      (format "tab-%s" (alist-get 'name (tab-bar--current-tab))))))
 
 ;;==============================================================================
-;;; Dashboard - 启动界面
+        ;;; 导航和编辑增强 (Navigation & Editing)
 ;;==============================================================================
 
-(use-package dashboard
-  :demand t
+(use-package avy
+  :bind (
+         ("C-." . avy-goto-char-timer)
+                                        ;     ("C-。". avy-goto-char-timer)
+         ("C-;" . avy-goto-line)
+                                        ;           ("C-u C-;" . avy-goto-word-0)
+         ("M-g w" . avy-goto-word-0)
+         ("M-g k" . avy-kill-region)
+         ("M-g K" . avy-kill-ring-save-region)
+         ;;             avy-goto-char-in-line
+         ;;               avy-zap
+                                        ;("C-c C-j" . avy-resume)
+         )
   :custom
-  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。")
-  (dashboard-startup-banner
-   (let ((images '("~/Pictures/icon/miyamori300.png"
-                   "~/Pictures/icon/shirobako.png"
-                   "~/Pictures/icon/newgamenene.png")))
-     (seq-random-elt (seq-filter #'file-exists-p images))))
-
-  (dashboard-items '((recents . 8)
-                     (agenda . 5)
-                     (bookmarks . 5)
-                     (projects . 5)))
-  (dashboard-center-content t)
-  (dashboard-vertically-center-content)
+  (avy-timeout-seconds 0.3)
+  (avy-style 'at-full)
+  (avy-all-windows t)
+  (avy-background t)
+  (avy-single-candidate-jump t)
+  (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   :config
-  (dashboard-setup-startup-hook))
+  (define-key isearch-mode-map (kbd "C-'") 'avy-isearch)
+  )
 
-;;==============================================================================
-  ;;; 导航和编辑增强 (Navigation & Editing)
-  ;;==============================================================================
+(use-package ace-window
+  :bind ("C-x o" . ace-window)
+  :custom
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
-  (use-package avy
-    :bind (
-           ("C-." . avy-goto-char-timer)
-                                          ;     ("C-。". avy-goto-char-timer)
-           ("C-;" . avy-goto-line)
-;           ("C-u C-;" . avy-goto-word-0)
-           ("M-g w" . avy-goto-word-0)
-           ("M-g k" . avy-kill-region)
-           ("M-g K" . avy-kill-ring-save-region)
-                                          ;("C-c C-j" . avy-resume)
-           )
-    :custom
-    (avy-timeout-seconds 0.3)
-    (avy-style 'at-full)
-    (avy-all-windows t)
-    (avy-background t)
-    (avy-single-candidate-jump t)
-    (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-    :config
-    (define-key isearch-mode-map (kbd "C-'") 'avy-isearch)
-    )
+(use-package amx
+  :demand 0.2
+  :config
+  (amx-mode 1))
 
-  (use-package ace-window
-    :bind ("C-x o" . ace-window)
-    :custom
-    (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
-
-  (use-package amx
-    :demand 0.2
-    :config
-    (amx-mode 1))
-
-  ;; expand region
-  (use-package expand-region
-    :bind ("C-=" . er/expand-region)) ;这个
-  ;;==============================================================================
+;; expand region
+;; (use-package expand-region
+;;   :bind ("C-=" . er/expand-region))
+;; 
+;;
+(use-package expreg
+  :bind ("C-=" . expreg-expand))
+                                        ;
+                                        ;==============================================================================
 
 ;;==============================================================================
 ;;; 编程支持 (Programming Support) 
@@ -1036,7 +1052,7 @@
   :init
   (dirvish-override-dired-mode)
   :bind
-  ("C-x C-d " . dirvish))
+  ("C-x C-d" . dirvish))
   ;; (use-package dired
   ;;   :ensure nil
   ;;   :config
