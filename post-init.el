@@ -844,10 +844,10 @@
 (use-package expreg
   :bind ("C-=" . expreg-expand))
 
-(use-package mwim
-  :config
-  (global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
-  (global-set-key (kbd "C-e") 'mwim-end-of-code-or-line))
+;; (use-package mwim
+;;   :config
+;;   (global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
+;;   (global-set-key (kbd "C-e") 'mwim-end-of-code-or-line))
           
                                         ;
                                         ;==============================================================================
