@@ -1,68 +1,92 @@
 ;;; post-init.el --- Emacs Configuration -*- no-byte-compile: t; lexical-binding: t; -*-
 
-(setq use-package-always-ensure t)  ;; 默认自动安装包
-(setq use-package-always-defer t)   ;; 默认延迟加载
+  (setq use-package-always-ensure t)  ;; 默认自动安装包
+  (setq use-package-always-defer t)   ;; 默认延迟加载
 
 
-;;==============================================================================
-;;; 基础设置 (Basic Settings)
-;;==============================================================================
+  ;;==============================================================================
+      ;;; 基础设置 (Basic Settings)
+  ;;==============================================================================
 
-;; 文件编码
-(prefer-coding-system 'utf-8)
-(set-default-coding-systems 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
+  ;; 文件编码
+  (prefer-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
 
-;; 编辑体验
-(setq-default tab-width 4)
-(setq-default indent-tabs-mode nil)       ;; 使用空格而非 Tab
-(setq require-final-newline t)            ;; 文件末尾自动添加换行
-(setq truncate-lines nil)                 ;; 自动换行
-(global-hl-line-mode 1)                   ;; 高亮当前行
-(show-paren-mode 1)                       ;; 显示匹配括号
-(electric-pair-mode 1)                    ;; 自动配对括号
-(delete-selection-mode 1)                 ;; 选中文本后输入会替换
-(global-auto-revert-mode 1)               ;; 自动刷新文件
-(setq display-line-numbers-type 'relative)
-                                        ;(setq display-line-numbers 'relative);; 显示相对行号
-(global-display-line-numbers-mode 1)
+  ;; 编辑体验
+  (setq-default tab-width 4)
+  (setq-default indent-tabs-mode nil)       ;; 使用空格而非 Tab
+  (setq require-final-newline t)            ;; 文件末尾自动添加换行
+  (setq truncate-lines nil)                 ;; 自动换行
+;;  (global-hl-line-mode 1)                   ;; 高亮当前行
+  (show-paren-mode 1)                       ;; 显示匹配括号
+  (electric-pair-mode 1)                    ;; 自动配对括号
+  (delete-selection-mode 1)                 ;; 选中文本后输入会替换
+  (global-auto-revert-mode 1)               ;; 自动刷新文件
+  (setq display-line-numbers-type 'relative)
+                                          ;(setq display-line-numbers 'relative);; 显示相对行号
+  (global-display-line-numbers-mode 1)
 
-;; 对选中文本使用括号引号自动放入
-;; 备份和自动保存
-;; (setq auto-save-default nil)
-;; (setq auto-save-interval 300)
-;; (setq auto-save-timeout 30)
-;; (setq make-backup-files t)
-;; (setq backup-directory-alist
-;;       `(("." . ,(expand-file-name "backups" user-emacs-directory))))
-;; (setq auto-save-file-name-transforms
-;;       `((".*" ,(expand-file-name "auto-saves/" user-emacs-directory) t)))
-(auto-save-visited-mode 1)
-(setq auto-save-timeout 20)
-;; 历史记录
-(savehist-mode 1)
-(save-place-mode 1)
-(recentf-mode 1)
-(setq recentf-max-saved-items 100)
-(setq history-length 500)
+  ;; 对选中文本使用括号引号自动放入
+  ;; 备份和自动保存
+  ;; (setq auto-save-default nil)
+  ;; (setq auto-save-interval 300)
+  ;; (setq auto-save-timeout 30)
+  ;; (setq make-backup-files t)
+  ;; (setq backup-directory-alist
+  ;;       `(("." . ,(expand-file-name "backups" user-emacs-directory))))
+  ;; (setq auto-save-file-name-transforms
+  ;;       `((".*" ,(expand-file-name "auto-saves/" user-emacs-directory) t)))
+  (auto-save-visited-mode 1)
+  (setq auto-save-timeout 20)
+  ;; 历史记录
+  (savehist-mode 1)
+  (save-place-mode 1)
+  (recentf-mode 1)
+  (setq recentf-max-saved-items 100)
+  (setq history-length 500)
 
 
-;;==============================================================================
-;;; 启动优化 (Startup Optimization)
-;;==============================================================================
+  ;;==============================================================================
+      ;;; 启动优化 (Startup Optimization)
+  ;;==============================================================================
 
-;; 启动全屏
-(add-hook 'emacs-startup-hook #'toggle-frame-maximized)
+  ;; 启动全屏
+  (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
 
-;; 显示启动时间
-;; (add-hook 'emacs-startup-hook
-;;           (lambda ()
-;;             (message "Emacs 启动完成，用时 %.2f 秒，加载了 %d 个包"
-;;                      (float-time (time-subtract after-init-time before-init-time))
-;;                      (length package-activated-list))))
+  ;; 显示启动时间
+  ;; (add-hook 'emacs-startup-hook
+  ;;           (lambda ()
+  ;;             (message "Emacs 启动完成，用时 %.2f 秒，加载了 %d 个包"
+  ;;                      (float-time (time-subtract after-init-time before-init-time))
+  ;;                      (length package-activated-list))))
 
-;;==============================================================================
+  ;;==============================================================================
+
+(global-subword-mode 1)
+
+(defun my/backward-kill-word ()
+  "More intelligent backward kill:
+- On whitespace: delete just the whitespace
+- On punctuation: delete just the punctuation run
+- On word: delete the word"
+  (interactive)
+  (if (bolp)
+      (backward-delete-char 1)
+    (let ((orig-point (point)))
+      (cond
+       ;; 如果光标前是空白，只删空白
+       ((looking-back "\\s-+" (line-beginning-position))
+        (delete-region (match-beginning 0) orig-point))
+       ;; 如果光标前是标点/符号，只删标点
+       ((looking-back "\\s.+" (line-beginning-position))
+        (delete-region (match-beginning 0) orig-point))
+       ;; 否则删一个词
+       (t
+        (backward-kill-word 1))))))
+
+(global-set-key (kbd "C-<backspace>") 'my/backward-kill-word)
 
 (use-package emacs
   :bind ("M-o" . other-window)
@@ -161,7 +185,7 @@
 (use-package dashboard
   :demand t
   :custom
-  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。")
+  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\nstay Stong my friend.")
   (dashboard-startup-banner
    (let ((images '("~/Pictures/icon/miyamori300.png"
                    "~/Pictures/icon/shirobako.png"
@@ -179,6 +203,23 @@
   :config
   (dashboard-setup-startup-hook)
   )
+
+(use-package helpful
+  :ensure t
+  :commands (helpful-callable
+             helpful-variable
+             helpful-key
+             helpful-command
+             helpful-at-point
+             helpful-function)
+  :bind
+  ([remap describe-command] . helpful-command)
+  ([remap describe-function] . helpful-callable)
+  ([remap describe-key] . helpful-key)
+  ([remap describe-symbol] . helpful-symbol)
+  ([remap describe-variable] . helpful-variable)
+  :custom
+  (helpful-max-buffers 7))
 
 ;; (use-package emacs
 ;;   :custom
@@ -394,25 +435,25 @@
 ;;
 (use-package casual-suite
   :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
-         ("C-o" . casual-suite-tmenu)
+         ("M-m" . casual-suite-tmenu)
          
          ;; 如果你习惯在特定模式下使用更直观的快捷键
-         :map calc-mode-map ("C-o" . casual-calc-tmenu)
-         :map isearch-mode-map ("C-o" . casual-isearch-tmenu)
-         :map dired-mode-map ("C-o" . casual-dired-tmenu)
-         :map org-mode-map ("C-o" . casual-org-tmenu)
-         :map org-table-fedit-map ("C-o" . casual-org-table-fedit-tmenu)
-         :map org-agenda-mode-map ("C-o" . casual-agenda-tmenu)
-         :map ibuffer-mode-map ("C-o" . casual-ibuffer-tmenu)
-         :map bookmark-bmenu-mode-map ("C-o" . casual-bookmarks-tmenu)
-         :map calendar-mode-map ("C-o" . casual-calendar-tmenu)
-         :map compilation-mode-map ("C-o" . casual-compile-tmenu)
-         :map eww-mode-map ("C-o" . casual-eww-tmenu)
-         :map help-mode-map ("C-o" . casual-help-tmenu)
-         :map Info-mode-map ("C-o" . casual-info-tmenu)
-         ;;:map re-builder-mode-map ("C-o" . casual-re-builder-tmenu)
-         :map shell-mode-map ("C-o" . casual-eshell-tmenu)
-         :map image-mode-map ("C-o" . casual-image-tmenu))
+         :map calc-mode-map ("M-m" . casual-calc-tmenu)
+         :map isearch-mode-map ("M-m" . casual-isearch-tmenu)
+         :map dired-mode-map ("M-m" . casual-dired-tmenu)
+         :map org-mode-map ("M-m" . casual-org-tmenu)
+         :map org-table-fedit-map ("M-m" . casual-org-table-fedit-tmenu)
+         :map org-agenda-mode-map ("M-m" . casual-agenda-tmenu)
+         :map ibuffer-mode-map ("M-m" . casual-ibuffer-tmenu)
+         :map bookmark-bmenu-mode-map ("M-m" . casual-bookmarks-tmenu)
+         :map calendar-mode-map ("M-m" . casual-calendar-tmenu)
+         :map compilation-mode-map ("M-m" . casual-compile-tmenu)
+         :map eww-mode-map ("M-m" . casual-eww-tmenu)
+         :map help-mode-map ("M-m" . casual-help-tmenu)
+         :map Info-mode-map ("M-m" . casual-info-tmenu)
+         ;;:map re-builder-mode-map ("M-m" . casual-re-builder-tmenu)
+       ;;  :map shell-mode-map ("M-m" . casual-eshell-tmenu)
+         :map image-mode-map ("M-m" . casual-image-tmenu))
 
   :config
   ;; 默认情况下，suite 会自动检测并启用它支持的所有模块
@@ -758,7 +799,7 @@
      (format "tab-%s" (alist-get 'name (tab-bar--current-tab))))))
 
 ;;==============================================================================
-        ;;; 导航和编辑增强 (Navigation & Editing)
+                ;;; 导航和编辑增强 (Navigation & Editing)
 ;;==============================================================================
 
 (use-package avy
@@ -802,6 +843,12 @@
 ;;
 (use-package expreg
   :bind ("C-=" . expreg-expand))
+
+(use-package mwim
+  :config
+  (global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
+  (global-set-key (kbd "C-e") 'mwim-end-of-code-or-line))
+          
                                         ;
                                         ;==============================================================================
 
@@ -887,7 +934,7 @@
   (save-place-mode 1))
 
 ;;==============================================================================
-;;; Terminal
+  ;;; Terminal
 ;;==============================================================================
 ;; eat
 ;; (use-package eat
@@ -897,7 +944,20 @@
   :config
   (add-hook 'vterm-mode-hook
             (lambda ()
-              (setq-local global-hl-line-mode nil)))
+              (setq-local global-hl-line-mode nil))) ;解决vterm闪烁
+  (defun my-vterm--setup ()
+
+    ;; Inhibit early horizontal scrolling
+    (setq-local hscroll-margin 0)
+
+    ;; Suppress prompts for terminating active processes when closing vterm
+    (setq-local confirm-kill-processes nil))
+
+  :init
+  (add-hook 'vterm-mode-hook #'my-vterm--setup)
+  (setq vterm-timer-delay 0.05)  ; Faster vterm
+  (setq vterm-kill-buffer-on-exit t)
+  (setq vterm-max-scrollback 5000)
   )
 ;;==============================================================================
 
@@ -1053,57 +1113,57 @@
   (dirvish-override-dired-mode)
   :bind
   ("C-x C-d" . dirvish))
-  ;; (use-package dired
-  ;;   :ensure nil
-  ;;   :config
-  ;;   (setq dired-listing-switches
-  ;;         "-l --almost-all --human-readable --group-directories-first --no-group")
-  ;;   ;; this command is useful when you want to close the window of `dirvish-side'
-  ;;   ;; automatically when opening a file
-  ;;   (put 'dired-find-alternate-file 'disabled nil))
-  ;; 
-  ;; (use-package dirvish
-  ;;   :init
-  ;;   (dirvish-override-dired-mode)
-  ;;   :custom
-  ;;   (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
-  ;;    '(("h" "~/"                          "Home")
-  ;;      ("d" "~/Downloads/"                "Downloads")
-  ;;      ("m" "/mnt/"                       "Drives")
-  ;;      ("s" "/ssh:my-remote-server")      "SSH server"
-  ;;      ("e" "/sudo:root@localhost:/etc")  "Modify program settings"
-  ;;      ("t" "~/.local/share/Trash/files/" "TrashCan")))
-  ;;   :config
-  ;;   ;; (dirvish-peek-mode)             ; Preview files in minibuffer
-  ;;   ;; (dirvish-side-follow-mode)      ; similar to `treemacs-follow-mode'
-  ;;   (setq dirvish-mode-line-format
-  ;;         '(:left (sort symlink) :right (omit yank index)))
-  ;;   (setq dirvish-attributes           ; The order *MATTERS* for some attributes
-  ;;         '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
-  ;;         dirvish-side-attributes
-  ;;         '(vc-state nerd-icons collapse file-size))
-  ;;   ;; open large directory (over 20000 files) asynchronously with `fd' command
-  ;;   (setq dirvish-large-directory-threshold 20000)
-  ;;   :bind ; Bind `dirvish-fd|dirvish-side|dirvish-dwim' as you see fit
-  ;;   (("C-c f" . dirvish)
-  ;;    :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
-  ;;    (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
-  ;;    ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
-  ;;    ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
-  ;;    ("f"   . dirvish-file-info-menu)    ; [f]ile info
-  ;;    ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
-  ;;    ("s"   . dirvish-quicksort)         ; [s]ort flie list
-  ;;    ("r"   . dirvish-history-jump)      ; [r]ecent visited
-  ;;    ("l"   . dirvish-ls-switches-menu)  ; [l]s command flags
-  ;;    ("v"   . dirvish-vc-menu)           ; [v]ersion control commands
-  ;;    ("*"   . dirvish-mark-menu)
-  ;;    ("y"   . dirvish-yank-menu)
-  ;;    ("N"   . dirvish-narrow)
-  ;;    ("^"   . dirvish-history-last)
-  ;;    ("TAB" . dirvish-subtree-toggle)
-  ;;    ("M-f" . dirvish-history-go-forward)
-  ;;    ("M-b" . dirvish-history-go-backward)
-  ;;    ("M-e" . dirvish-emerge-menu)))
+;; (use-package dired
+;;   :ensure nil
+;;   :config
+;;   (setq dired-listing-switches
+;;         "-l --almost-all --human-readable --group-directories-first --no-group")
+;;   ;; this command is useful when you want to close the window of `dirvish-side'
+;;   ;; automatically when opening a file
+;;   (put 'dired-find-alternate-file 'disabled nil))
+;; 
+;; (use-package dirvish
+;;   :init
+;;   (dirvish-override-dired-mode)
+;;   :custom
+;;   (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
+;;    '(("h" "~/"                          "Home")
+;;      ("d" "~/Downloads/"                "Downloads")
+;;      ("m" "/mnt/"                       "Drives")
+;;      ("s" "/ssh:my-remote-server")      "SSH server"
+;;      ("e" "/sudo:root@localhost:/etc")  "Modify program settings"
+;;      ("t" "~/.local/share/Trash/files/" "TrashCan")))
+;;   :config
+;;   ;; (dirvish-peek-mode)             ; Preview files in minibuffer
+;;   ;; (dirvish-side-follow-mode)      ; similar to `treemacs-follow-mode'
+;;   (setq dirvish-mode-line-format
+;;         '(:left (sort symlink) :right (omit yank index)))
+;;   (setq dirvish-attributes           ; The order *MATTERS* for some attributes
+;;         '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
+;;         dirvish-side-attributes
+;;         '(vc-state nerd-icons collapse file-size))
+;;   ;; open large directory (over 20000 files) asynchronously with `fd' command
+;;   (setq dirvish-large-directory-threshold 20000)
+;;   :bind ; Bind `dirvish-fd|dirvish-side|dirvish-dwim' as you see fit
+;;   (("C-c f" . dirvish)
+;;    :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
+;;    (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
+;;    ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
+;;    ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
+;;    ("f"   . dirvish-file-info-menu)    ; [f]ile info
+;;    ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
+;;    ("s"   . dirvish-quicksort)         ; [s]ort flie list
+;;    ("r"   . dirvish-history-jump)      ; [r]ecent visited
+;;    ("l"   . dirvish-ls-switches-menu)  ; [l]s command flags
+;;    ("v"   . dirvish-vc-menu)           ; [v]ersion control commands
+;;    ("*"   . dirvish-mark-menu)
+;;    ("y"   . dirvish-yank-menu)
+;;    ("N"   . dirvish-narrow)
+;;    ("^"   . dirvish-history-last)
+;;    ("TAB" . dirvish-subtree-toggle)
+;;    ("M-f" . dirvish-history-go-forward)
+;;    ("M-b" . dirvish-history-go-backward)
+;;    ("M-e" . dirvish-emerge-menu)))
 
 ;; (use-package emms
 ;;   :config
@@ -1152,19 +1212,47 @@
 ;;         ))
 
 (use-package rime
-:demand 1.0
-:custom
-(default-input-method "rime")
-:config
-(setq rime-show-candidate 'posframe)
-(setq rime-cursor "█")
-(setq rime-cursor-face '((t (:foreground "#00ff00"))))
-(setq rime-show-preedit t)
-(setq rime-user-data-dir "~/.config/fcitx/Rime/")
-;; 默认值
-(setq rime-translate-keybindings
-'("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
-)
+  :demand 1.0
+  :custom
+  (default-input-method "rime")
+  :config
+  (setq rime-show-candidate 'posframe)
+  (setq rime-cursor "█")
+  (setq rime-cursor-face '((t (:foreground "#00ff00"))))
+  (setq rime-show-preedit t)
+  (setq rime-user-data-dir "~/.config/fcitx/Rime/")
+  ;; 默认值
+  (setq rime-translate-keybindings
+        '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
+  (defun +rime--posframe-display-content-a (args)
+    "给 `rime--posframe-display-content' 传入的字符串加一个全角空
+  格，以解决 `posframe' 偶尔吃字的问题。"
+    (cl-destructuring-bind (content) args
+      (let ((newresult (if (string-blank-p content)
+                           content
+                         (concat content "　"))))
+        (list newresult))))
+
+  (if (fboundp 'rime--posframe-display-content)
+      (advice-add 'rime--posframe-display-content
+                  :filter-args
+                  #'+rime--posframe-display-content-a)
+    (error "Function `rime--posframe-display-content' is not available."))
+  )
+ 
+;;(require 'mozc)
+;; (setq mozc-candidate-style 'overlay)
+
+(use-package quick-sdcv
+  :ensure t
+  :bind (("C-c D" . quick-sdcv-search-at-point)
+         ("C-c d" . quick-sdcv-search-input))
+  
+  :custom
+  (quick-sdcv-dictionary-data-dir "~/Ingrediant/dictionary/")
+  (quick-sdcv-unique-buffers t)
+  (quick-sdcv-dictionary-prefix-symbol "►")
+  (quick-sdcv-ellipsis " ▼"))
 
 (provide 'post-init)
 ;;; post-init.el ends here
