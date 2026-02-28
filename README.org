@@ -1,4 +1,6 @@
 #+title: emacs 配置文件
+#+STARTUP: noinlineimages
+
 fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 
 试用过purcell/prelude/doomemacs,打算慢慢从上面偷配置
@@ -8,9 +10,15 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 OS: Ubuntu 24.04.3 LTS x86_64
 
 * img
+:PROPERTIES:
+:ID:       68e8c4d1-ecc7-4ab1-8c26-05f56f110f4e
+:END:
 [[file:static/img/MPV-00_02_35.197-N0002.png]]
 
 [[file:static/img/screenshot1.png]]
+#+DOWNLOADED: screenshot @ 2026-02-28 20:32:14
+[[file:static/img/img/_20260228_203214screenshot.png]]
+
 
 * 原则
 
@@ -30,20 +38,44 @@ emacs功能之多拓展性之强，不可能掌握所有的概念和快捷键
 
 * 住在emacs里
 
-- IDE我用 =emacs=
-- 处理文件我用 =dired= ，需要预览我打开 =dirvish= ，需要搜索直接 =consult-fd =consult-ripgrep=
-- 计算器我用 =calc=
-- +用 =calendar= 当日历+
-- +用 =weather= 看天气+
-- +用 =emacs RSS= 看新闻或者其他讯息+
-- 听音乐我用 =emms=
-- 处理邮件我用 =mu4e=
-- 记笔记我用 =org-roam= 待办清单用 =org-agenda=
-- 命令行我用  =vterm= , git当然是 =magit=
-- 浏览器这个我不懂，似乎只能靠 =EXWM= 套一个浏览器了
-- 电子书阅读我用 =PDF-tool= 和 =nov=
-- 如果我一整天都不关电脑，那我也可以用 =emacs= 设置起床闹钟
-- emacs改变了我的人生
+- +IDE： =evil-mode= 。+
+- 集成开发环境： =Emacs=
+- 处理文件 =dired=  =dirvish= ，需要搜索文件 =consult-fd =consult-ripgrep=
+- 强大的科学计算器 =calc= 
+- +日历 =calendar= 。+ 
+- +- =wttrin / emacs-weather= 天气+
+- +RSS =el feed= 。+
+- 音乐播放器 =emms= =listen.el=
+- +视频播放 =ready-player= 。+
+- 词典 =quick-sdcv=
+- +电子邮件 =mu4e= 。+
+- 强大的笔记 =org-mode=
+- 文学编程/Jupyter Notebook =org-babel=
+- +latex/word文档 AUCTeX+  markdown =markdown-mode=
+- 不输obsidian和notion的双向链接 =org-roam= 还有ui
+- 待办清单 =org-agenda=
+- 终端模拟器 =vterm= =eat=
+- 最好用的git GUI =magit=
+- +浏览器 =eww= 。+
+- +真浏览器/窗口管理： =EXWM/eaf= + firfox+
+- 项目管理 =projectile=
+- +docker =docker.el / docker-compose-mode= .+
+- +ISP =eglot  lsp-mode= 。+
+- 电子书阅读 =PDF-tool= 和 =nov=
+- 密码本 =pass=
+- +进程管理器 =proced/symon= 。+
+- +番茄钟，计时，定时闹钟……+
+- +LLM集成 =gptel / ellama / copilot.el=。+
+- 主题/美观 =doom theme doom modeline=
+- +聊天 =erc / rcirc= irc+
+- +excel 电子表格（ =Org table + orgtbl= ）+
+- +ppt =ox-beamer= 。+
+- +宏 =kmacro= .+
+- +思维导图 =org-mind-map / mindstream= 。+
+- +远程服务器 =tramp= 。+
+- 输入法 =rime= =mozc=
+- 贪吃蛇，乒乓，甚至是doom
+- 世界を変える
 
 * 移动到cachyos
 - boot的选择（grub还是？）

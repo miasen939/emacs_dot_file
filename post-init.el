@@ -1,10 +1,10 @@
 ;;; post-init.el --- Emacs Configuration -*- no-byte-compile: t; lexical-binding: t; -*-
 
 
- (use-package benchmark-init
- :ensure t
- :config
- (add-hook 'after-init-hook 'benchmark-init/deactivate))
+ ;; (use-package benchmark-init
+ ;; :ensure t
+ ;; :config
+ ;; (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
 (setq use-package-always-ensure t)  ;; 默认自动安装包
 (setq use-package-always-defer t)   ;; 默认延迟加载
@@ -50,6 +50,8 @@
 (setq history-length 500)
 ;; 启动全屏
 (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
+;;像素滚动
+(pixel-scroll-precision-mode 1)
 
 ;;==============================================================================
 
@@ -241,6 +243,10 @@
 
   :config
   (setq org-startup-with-inline-images t)
+  (setq image-use-external-converter t)
+  (setq org-image-actual-width nil   ;; 使用图片原始宽度，不强制缩放
+    image-transform-smoothing nil
+    max-image-size nil)
 
   ;;(add-to-list 'org-modules 'org-habit)
   (setq org-modules '(org-habit
@@ -259,7 +265,11 @@
                                         ;org-export
   (with-eval-after-load 'ox
     (require 'ox-md))
+
+  
+  
   ;; img
+  
   ;;org-todo
   ;; TODO states
   (setq org-todo-keywords
@@ -296,7 +306,7 @@
 
 (use-package org-download
   :ensure t
-  :defer t
+  :after org
   :bind (:map org-mode-map
               ("C-c C-M-y" . org-download-clipboard)   ; 推荐快捷键：粘贴剪贴板图片
               ("C-c M-y"   . org-download-yank))       ; 另一种常用快捷键
@@ -1209,8 +1219,9 @@
 ;;   (emms-mode-line 1)
 ;;   (emms-playing-time 1)
 ;;   (setq emms-browser-thumbnail-small-size 80
-;;         emms-browser-thumbnail-medium-size 150))
+;;         emms-browser-thumbnail-medium-size
 
+(use-package listen)  
 (use-package emms
   :defer t
   :config
@@ -1251,24 +1262,12 @@
   (setq rime-cursor-face '((t (:foreground "#00ff00"))))
   (setq rime-show-preedit t)
   (setq rime-user-data-dir "~/.config/fcitx/Rime/")
-  (setq rime-posframe-style ' simple)
-  (setq rime-show-preedit ' inline)
+  ;(setq rime-posframe-style ' simple)
+  ;(setq rime-show-preedit ' inline)
   ;; 默认值
   (setq rime-translate-keybindings
         '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
-  (defun +rime--posframe-display-content-a (args)
-    "给 `rime--posframe-display-content' 传入的字符串加一个全角空格，以解决 `posframe' 偶尔吃字的问题。"
-    (cl-destructuring-bind (content) args
-      (let ((newresult (if (string-blank-p content)
-                           content
-                         (concat content "　"))))
-        (list newresult))))
 
-  (if (fboundp 'rime--posframe-display-content)
-      (advice-add 'rime--posframe-display-content
-                  :filter-args
-                  #'+rime--posframe-display-content-a)
-    (error "Function `rime--posframe-display-content' is not available."))
    )
 
 (use-package quick-sdcv
