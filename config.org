@@ -36,8 +36,8 @@
   ;;; pre-early-init.el ends here
 #+end_src
 
-* benchmark
-用来分析启动时间
+* post-init.el 开头
+benchmark 用来分析启动时间
 #+begin_src emacs-lisp :tangle ./post-init.el
   ;;; post-init.el --- Emacs Configuration -*- no-byte-compile: t; lexical-binding: t; -*-
 
@@ -103,6 +103,8 @@
   (setq history-length 500)
   ;; 启动全屏
   (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
+  ;;像素滚动
+  (pixel-scroll-precision-mode 1)
 
   ;;==============================================================================
 #+end_src
@@ -330,6 +332,10 @@ md需要安装 pandoc
 
 #+end_src
 org attach 有点意思
+
+因为图片大时很卡，
+使用 =#+STARTUP: noinlineimage=
+不默认显示图片 可以用 =C-c C-x C-v=  手动打开
 #+begin_src emacs-lisp :tangle ./post-init.el
   (use-package org
     :ensure nil
@@ -351,6 +357,10 @@ org attach 有点意思
 
     :config
     (setq org-startup-with-inline-images t)
+    (setq image-use-external-converter t)
+    (setq org-image-actual-width nil   ;; 使用图片原始宽度，不强制缩放
+      image-transform-smoothing nil
+      max-image-size nil)
 
     ;;(add-to-list 'org-modules 'org-habit)
     (setq org-modules '(org-habit
@@ -369,7 +379,11 @@ org attach 有点意思
                                           ;org-export
     (with-eval-after-load 'ox
       (require 'ox-md))
+
+    
+    
     ;; img
+    
     ;;org-todo
     ;; TODO states
     (setq org-todo-keywords
@@ -412,7 +426,7 @@ CachyOS需要 wl-clipboard
 #+begin_src emacs-lisp :tangle ./post-init.el
   (use-package org-download
     :ensure t
-    :defer t
+    :after org
     :bind (:map org-mode-map
                 ("C-c C-M-y" . org-download-clipboard)   ; 推荐快捷键：粘贴剪贴板图片
                 ("C-c M-y"   . org-download-yank))       ; 另一种常用快捷键
@@ -1378,6 +1392,7 @@ eat我听说很厉害,但是没有怎么使用过.
 #+end_src
 
 * TODO emms
+
 #+begin_src emacs-lisp :tangle ./post-init.el
   ;; (use-package emms
   ;;   :demand 0.2
@@ -1408,8 +1423,9 @@ eat我听说很厉害,但是没有怎么使用过.
   ;;   (emms-mode-line 1)
   ;;   (emms-playing-time 1)
   ;;   (setq emms-browser-thumbnail-small-size 80
-  ;;         emms-browser-thumbnail-medium-size 150))
+  ;;         emms-browser-thumbnail-medium-size
 
+  (use-package listen)  
   (use-package emms
     :defer t
     :config
@@ -1425,6 +1441,7 @@ eat我听说很厉害,但是没有怎么使用过.
 
 
 * TODO mu4e
+或者用：notmuch
 #+begin_src emacs-lisp :tangle ./post-init.el
   ;; mu4e 基本加载（复制粘贴，根据你的系统改路径）
   ;; (use-package mu4e
@@ -1467,31 +1484,23 @@ eat我听说很厉害,但是没有怎么使用过.
     (setq rime-cursor-face '((t (:foreground "#00ff00"))))
     (setq rime-show-preedit t)
     (setq rime-user-data-dir "~/.config/fcitx/Rime/")
-    (setq rime-posframe-style ' simple)
-    (setq rime-show-preedit ' inline)
+    ;(setq rime-posframe-style ' simple)
+    ;(setq rime-show-preedit ' inline)
     ;; 默认值
     (setq rime-translate-keybindings
           '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
-    (defun +rime--posframe-display-content-a (args)
-      "给 `rime--posframe-display-content' 传入的字符串加一个全角空格，以解决 `posframe' 偶尔吃字的问题。"
-      (cl-destructuring-bind (content) args
-        (let ((newresult (if (string-blank-p content)
-                             content
-                           (concat content "　"))))
-          (list newresult))))
-
-    (if (fboundp 'rime--posframe-display-content)
-        (advice-add 'rime--posframe-display-content
-                    :filter-args
-                    #'+rime--posframe-display-content-a)
-      (error "Function `rime--posframe-display-content' is not available."))
+  
      )
 #+end_src
+
+
 
 
 * quick-sdcv emacs内置词典
 需要依赖 sdcv
 不是很好用，似乎识别不了一些词典的格式，而且样式有点丑，还不能折叠
+
+词典：quick-sdcv 或 dictionary + sdcv（更现代推荐 define-word 或 powerthesaurus）
 
 #+begin_src emacs-lisp :tangle ./post-init.el
   (use-package quick-sdcv
@@ -1534,7 +1543,7 @@ eat我听说很厉害,但是没有怎么使用过.
 #+end_src
 
 
-* 尾部
+* post-init.el 结尾
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   (provide 'post-init)
@@ -1546,9 +1555,10 @@ eat我听说很厉害,但是没有怎么使用过.
 crux/easy-kill 似乎能优化编辑体验,可以试试.
 在emacs里处理电子邮件也没弄.
 
-
-
+** 番茄钟
+番茄/计时：org-pomodoro（和 org-agenda 集成最好），或 pomm（transient 菜单超美）、tmr（Protesilaos 出品，轻量定时器）
 ** 智能 C-a M-a M-e C-e 智能 C-backspace删除
+** popper
 
 ** emacs everywhere
 
@@ -1561,6 +1571,166 @@ crux/easy-kill 似乎能优化编辑体验,可以试试.
 ** stright.el
 
 ** rime调试配置
+
+** vertico + consult + orderless + marginalia + embark现代 Emacs 的“灵魂四件套”，搜索/跳转/操作快到飞起
+
+** 查缺补漏
+🧠 编辑体验 / 输入效率（核心但你没展开）
+
+结构化编辑
+
+=smartparens / paredit=
+
+多光标
+
+=multiple-cursors=
+
+跳转增强
+
+=avy=（比 ace-jump 更现代）
+
+历史与撤销树
+
+=undo-tree= / 内置 undo-redo（29+）
+
+补全体系
+
+=corfu + cape + kind-icon=
+
+minibuffer增强
+
+=vertico + orderless + marginalia + consult=
+
+👉 这一块其实决定你“住得舒不舒服”，比功能更重要。
+
+🔍 搜索 / 导航（可以强化）
+
+你写了 consult，但可以补完整生态：
+
+项目内导航
+
+=xref=
+
+代码大纲
+
+=imenu / consult-imenu=
+
+工作区跳转
+
+=tab-bar / tabspaces=
+
+🧾 文档 / 写作流（你已经强，但还能补）
+
+拼写检查
+
+=flyspell / jinx=
+
+语法检查
+
+=flymake / flycheck=
+
+写作专注模式
+
+=olivetti / writeroom=
+
+🧩 开发体验（比 LSP 更细一层）
+
+语法高亮（现代核心）
+
+tree-sitter（内置）
+
+代码格式化
+
+=apheleia / format-all=
+
+调试
+
+=dap-mode=
+
+代码折叠
+
+=hideshow / origami=
+
+📦 系统工具 / 运维
+
+文件历史 / 版本回溯
+
+=vc=（很多人忽略，其实很强）
+
+环境变量管理
+
+=direnv / envrc=
+
+shell集成
+
+=eshell=（比你写的 vterm 更“emacs式”）
+
+🌐 网络 / 信息流（可以补强）
+
+HTTP 客户端
+
+=restclient / verb=
+
+API 调试
+-（很多人直接用它替代 postman）
+
+下载管理
+
+=aria2 + aria2.el=
+
+📚 学习 / 知识管理（你可以再往“第二大脑”扩展）
+
+卡片记忆
+
+=org-drill=
+
+知识图谱增强
+
+=org-roam-bibtex=
+
+引用管理
+
+=citar / org-cite=
+
+🕒 时间 / 习惯系统（你只写了 agenda）
+
+可以升级成完整 GTD：
+
+时间追踪
+
+=org-clock=
+
+习惯养成
+
+=org-habit=
+
+日志
+
+=org-journal=
+
+🔐 安全 / 加密
+
+文件加密
+
+=epa / gpg=
+
+org 加密
+
+=org-crypt=
+
+🎨 UI / 体验细节（提升“常住感”）
+
+图标
+
+=all-the-icons / nerd-icons=
+
+动态美化
+
+=hl-todo / rainbow-delimiters=
+
+buffer 管理
+
+=ibuffer=
 
 * 依赖
 latex 
