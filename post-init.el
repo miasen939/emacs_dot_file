@@ -186,13 +186,25 @@
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode))
 
+;; (use-package org-habit
+;;   :ensure nil
+;;   :config
+;;   ;; 在 org-modules 中启用 org-habit
+;;   ;;(require 'org-habit)
+;;   (add-to-list 'org-modules 'org-habit)
+;;   (org-load-modules-maybe t)  
+;;   ;; 习惯图表显示最近 30 天，未来 3 天
+;;   (setq org-habit-show-habits-only-for-today t
+;;         org-habit-graph-column 50
+;;         org-habit-preceding-days 30
+;;         org-habit-following-days 3
+;;         org-habit-show-all-today t))
+
 (use-package org
   :ensure nil
-  :defer t
   :mode ("\\.org\\'" . org-mode)
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
-         ("C-c c" . org-capture)
          :map org-mode-map
          ("C-c <up>" . org-priority-up)
          ("C-c <down>" . org-priority-down)
@@ -204,31 +216,56 @@
   (org-return-follows-link t)
   (org-hide-emphasis-markers t)
   (org-return-follows-link t)
+
+
   :config
   (setq org-startup-with-inline-images t)
 
+  (add-to-list 'org-modules 'org-habit)
+  (org-load-modules-maybe t)  ;; org-habit 此时才真正加载完毕
+
+  (setq org-habit-graph-column 50
+        org-habit-preceding-days 30
+        org-habit-following-days 3
+        org-habit-show-habits-only-for-today t
+        org-habit-show-all-today t)
+  
+
                                         ;org-export
-  (require 'ox-md)
-  ;; img
-  ;;org-todo
-  ;; TODO states
-  (setq org-todo-keywords
-        '((sequence "TODO(t)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
-                    "BLOCKED(b@)" "|" "DONE(d!)" "CANCELED(c@!)")))
-  (setq org-log-done 'note) 
-  ;; TODO colors
-  (setq org-todo-keyword-faces
-        '(
-          ("TODO" . (:foreground "GoldenRod" :weight bold))
-          ("PLANNING" . (:foreground "DeepPink" :weight bold))
-          ("IN-PROGRESS" . (:foreground "Cyan" :weight bold))
-          ("BLOCKED" . (:foreground "Red" :weight bold))
-          ("DONE" . (:foreground "LimeGreen" :weight bold))
-          ("CANCELED" . (:foreground "LimeGreen" :weight bold))
-          ))
-  ;;org-agenda
-  (setq org-agenda-files '
-        ("~/Documents/org-note/agenda/TODOs.org")))
+(require 'ox-md)
+;; img
+;;org-todo
+;; TODO states
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "SOMEDAY(s)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
+                  "BLOCKED(b@)" "|" "DONE(d!)" "CANCELED(c@!)")))
+(setq org-log-done 'note) 
+;; TODO colors
+(setq org-todo-keyword-faces
+      '(
+        ("TODO" . (:foreground "GoldenRod" :weight bold))
+        ("SOMEDAY" . (:foreground "RosyBrown" :weight bold))
+        ("PLANNING" . (:foreground "DeepPink" :weight bold))
+        ("IN-PROGRESS" . (:foreground "Cyan" :weight bold))
+        ("BLOCKED" . (:foreground "Red" :weight bold))
+        ("DONE" . (:foreground "LimeGreen" :weight bold))
+        ("CANCELED" . (:foreground "DimGrey" :weight bold))
+        ))
+;;org-agenda
+(setq org-agenda-files '
+      ("~/Documents/org-note/agenda/TODOs.org")))
+
+(use-package org-capture
+  :ensure nil
+  :bind ("C-c c" . org-capture)
+  :config
+  (setq org-capture-templates
+        '(("t" "Todo" entry
+           (file+headline "~/Documents/org-note/agenda/TODOs.org" "inbox:inbox:")
+           "* TODO %?\n  %U\n")
+          ("s" "Someday" entry
+           (file+headline "~/Documents/org-note/agenda/TODOs.org" "inbox:inbox:")
+           "* SOMEDAY %?\n  %U\n"))))
 ;;org-capture
 
 (use-package org-download
