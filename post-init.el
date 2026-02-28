@@ -1,51 +1,57 @@
 ;;; post-init.el --- Emacs Configuration -*- no-byte-compile: t; lexical-binding: t; -*-
 
-    (setq use-package-always-ensure t)  ;; 默认自动安装包
-    (setq use-package-always-defer t)   ;; 默认延迟加载
+
+ (use-package benchmark-init
+ :ensure t
+ :config
+ (add-hook 'after-init-hook 'benchmark-init/deactivate))
+
+(setq use-package-always-ensure t)  ;; 默认自动安装包
+(setq use-package-always-defer t)   ;; 默认延迟加载
 
 
-   
-    ;; 文件编码
-    (prefer-coding-system 'utf-8)
-    (set-default-coding-systems 'utf-8)
-    (set-terminal-coding-system 'utf-8)
-    (set-keyboard-coding-system 'utf-8)
 
-    ;; 编辑体验
-    (setq-default tab-width 4)
-    (setq-default indent-tabs-mode nil)       ;; 使用空格而非 Tab
-    (setq require-final-newline t)            ;; 文件末尾自动添加换行
-    (setq truncate-lines nil)                 ;; 自动换行
-  ;;  (global-hl-line-mode 1)                   ;; 高亮当前行
-    (show-paren-mode 1)                       ;; 显示匹配括号
-    (electric-pair-mode 1)                    ;; 自动配对括号
-    (delete-selection-mode 1)                 ;; 选中文本后输入会替换
-    (global-auto-revert-mode 1)               ;; 自动刷新文件
-  ;;  (setq display-line-numbers-type 'relative)  ;显示相对行号
+;; 文件编码
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+
+;; 编辑体验
+(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)       ;; 使用空格而非 Tab
+(setq require-final-newline t)            ;; 文件末尾自动添加换行
+(setq truncate-lines nil)                 ;; 自动换行
+;;  (global-hl-line-mode 1)                   ;; 高亮当前行
+(show-paren-mode 1)                       ;; 显示匹配括号
+(electric-pair-mode 1)                    ;; 自动配对括号
+(delete-selection-mode 1)                 ;; 选中文本后输入会替换
+(global-auto-revert-mode 1)               ;; 自动刷新文件
+;;  (setq display-line-numbers-type 'relative)  ;显示相对行号
 ;;    (global-display-line-numbers-mode 1)
 
-    ;; 对选中文本使用括号引号自动放入
-    ;; 备份和自动保存
-    ;; (setq auto-save-default nil)
-    ;; (setq auto-save-interval 300)
-    ;; (setq auto-save-timeout 30)
-    ;; (setq make-backup-files t)
-    ;; (setq backup-directory-alist
-    ;;       `(("." . ,(expand-file-name "backups" user-emacs-directory))))
-    ;; (setq auto-save-file-name-transforms
-    ;;       `((".*" ,(expand-file-name "auto-saves/" user-emacs-directory) t)))
-    (auto-save-visited-mode 1)
-    (setq auto-save-timeout 20)
-    ;; 历史记录
-    (savehist-mode 1)
-    (save-place-mode 1)
-    (recentf-mode 1)
-    (setq recentf-max-saved-items 100)
-    (setq history-length 500)
-    ;; 启动全屏
-    (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
+;; 对选中文本使用括号引号自动放入
+;; 备份和自动保存
+;; (setq auto-save-default nil)
+;; (setq auto-save-interval 300)
+;; (setq auto-save-timeout 30)
+;; (setq make-backup-files t)
+;; (setq backup-directory-alist
+;;       `(("." . ,(expand-file-name "backups" user-emacs-directory))))
+;; (setq auto-save-file-name-transforms
+;;       `((".*" ,(expand-file-name "auto-saves/" user-emacs-directory) t)))
+(auto-save-visited-mode 1)
+(setq auto-save-timeout 20)
+;; 历史记录
+(savehist-mode 1)
+(save-place-mode 1)
+(recentf-mode 1)
+(setq recentf-max-saved-items 100)
+(setq history-length 500)
+;; 启动全屏
+(add-hook 'emacs-startup-hook #'toggle-frame-maximized)
 
-    ;;==============================================================================
+;;==============================================================================
 
 (global-subword-mode 1)
 
@@ -114,46 +120,61 @@
   ;; or for treemacs users
   (doom-themes-treemacs-config)
   ;; Corrects (and improves) org-mode's native fontification.
+
   (doom-themes-org-config))
 
+
+
+
 (use-package doom-modeline
-  :init (doom-modeline-mode 1))
+  :init (doom-modeline-mode 1)    )
 
+
+
+;; (use-package doom-modeline
+;;   :hook (after-init . doom-modeline-mode))
 ;; 其他主题配置
-;; (use-package ef-themes
-;;   :demand t
-;;   :bind (("<f5>" . modus-themes-rotate)
-;;          ("C-<f5>" . modus-themes-select)
-;;          ("M-<f5>" . modus-themes-load-random))
-;;   :init
-;;   (setq modus-themes-mixed-fonts t
-;;         modus-themes-italic-constructs t)
-;;   :config
-;;   (setq ef-owl-palette-overrides
-;;         '((bg-region "#1a3f4a")))
-;;   (moduns-themes-load-theme 'ef-owl))
+ ;; (use-package ef-themes
+ ;;  :demand t
+ ;;  :bind (("<f5>" . modus-themes-rotate)
+ ;;         ("C-<f5>" . modus-themes-select)
+ ;;         ("M-<f5>" . modus-themes-load-random))
+ ;;  :init
+ ;;  (setq modus-themes-mixed-fonts t
+ ;;        modus-themes-italic-constructs t)
+ ;;  :config
+ ;;  (setq ef-owl-palette-overrides
+ ;;        '((bg-region "#1a3f4a")))
+ ;;  
+ ;;  (ef-themes-load-theme 'ef-owl))
 
-(use-package dashboard
-  :demand t
-  :custom
-  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
-  ;; (dashboard-startup-banner
-  ;;  (let ((images '("~/Pictures/icon/miyamori300.png"
-  ;;                  "~/Pictures/icon/shirobako.png"
-  ;;                  "~/Pictures/icon/newgamenene.png")))
-  ;;    (seq-random-elt (seq-filter #'file-exists-p images))))
+  ;; (use-package mood-line
+  ;; :hook (after-init . mood-line-mode))
 
-  (dashboard-items '(
-                     (agenda . 10)
-                     (recents . 8)
-                     (bookmarks . 5)
-                     (projects . 5)))
-  (dashboard-center-content t)
-  (dashboard-vertically-center-content t)
+;; (use-package esup
+;;   :demand t)
+  
+  (use-package dashboard
+    :demand t
+    :custom
+    (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
+    (dashboard-startup-banner
+     (let ((images '("~/Pictures/icon/miyamori300.png"
+                     "~/Pictures/icon/shirobako.png"
+                     "~/Pictures/icon/newgamenene.png")))
+       (seq-random-elt (seq-filter #'file-exists-p images))))
 
-  :config
-  (dashboard-setup-startup-hook)
-  )
+    (dashboard-items '(
+                       (agenda . 10)
+                       (recents . 8)
+                       (bookmarks . 5)
+                       (projects . 5)))
+    (dashboard-center-content t)
+    (dashboard-vertically-center-content t)
+
+    :config
+    (dashboard-setup-startup-hook)
+    )
 
 (use-package helpful
   :ensure t
@@ -221,7 +242,11 @@
   :config
   (setq org-startup-with-inline-images t)
 
-  (add-to-list 'org-modules 'org-habit)
+  ;;(add-to-list 'org-modules 'org-habit)
+  (setq org-modules '(org-habit
+                  org-id      ;; 如果用 org-roam 或跨文件链接
+                  org-attach  ;; 如果用附件
+                  ))
   (org-load-modules-maybe t)  ;; org-habit 此时才真正加载完毕
 
   (setq org-habit-graph-column 50
@@ -232,28 +257,29 @@
   
 
                                         ;org-export
-(require 'ox-md)
-;; img
-;;org-todo
-;; TODO states
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "SOMEDAY(s)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
-                  "BLOCKED(b@)" "|" "DONE(d!)" "CANCELED(c@!)")))
-(setq org-log-done 'note) 
-;; TODO colors
-(setq org-todo-keyword-faces
-      '(
-        ("TODO" . (:foreground "GoldenRod" :weight bold))
-        ("SOMEDAY" . (:foreground "RosyBrown" :weight bold))
-        ("PLANNING" . (:foreground "DeepPink" :weight bold))
-        ("IN-PROGRESS" . (:foreground "Cyan" :weight bold))
-        ("BLOCKED" . (:foreground "Red" :weight bold))
-        ("DONE" . (:foreground "LimeGreen" :weight bold))
-        ("CANCELED" . (:foreground "DimGrey" :weight bold))
-        ))
-;;org-agenda
-(setq org-agenda-files '
-      ("~/Documents/org-note/agenda/TODOs.org")))
+  (with-eval-after-load 'ox
+    (require 'ox-md))
+  ;; img
+  ;;org-todo
+  ;; TODO states
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "SOMEDAY(s)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
+                    "BLOCKED(b@)" "|" "DONE(d!)" "CANCELED(c@!)")))
+  (setq org-log-done 'note) 
+  ;; TODO colors
+  (setq org-todo-keyword-faces
+        '(
+          ("TODO" . (:foreground "GoldenRod" :weight bold))
+          ("SOMEDAY" . (:foreground "RosyBrown" :weight bold))
+          ("PLANNING" . (:foreground "DeepPink" :weight bold))
+          ("IN-PROGRESS" . (:foreground "Cyan" :weight bold))
+          ("BLOCKED" . (:foreground "Red" :weight bold))
+          ("DONE" . (:foreground "LimeGreen" :weight bold))
+          ("CANCELED" . (:foreground "DimGrey" :weight bold))
+          ))
+  ;;org-agenda
+  (setq org-agenda-files '
+        ("~/Documents/org-note/agenda/TODOs.org")))
 
 (use-package org-capture
   :ensure nil
@@ -523,7 +549,7 @@
 ;;; Projectile - 项目管理
 ;;==============================================================================
 (use-package projectile
-  :demand t
+  :demand 0.2
   ;; 常用设置（可以根据需要增删）
   :custom
   (projectile-project-search-path '("~/projects/" "~/work/" "~/playground" "~/Documents/"))
@@ -1186,7 +1212,7 @@
 ;;         emms-browser-thumbnail-medium-size 150))
 
 (use-package emms
-  :demand 0.2
+  :defer t
   :config
   
 
