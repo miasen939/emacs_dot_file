@@ -3,7 +3,7 @@
 ;; use-package
 (eval-when-compile
   (require 'use-package))
-;;不验证签名，应该改动！
+;;不验证签名
 (setq package-check-signature nil)
 ;; melpa 和 host
 (require 'package)
@@ -19,17 +19,7 @@
 (setq user-emacs-directory (expand-file-name "var/" minimal-emacs-user-directory))
 (setq package-user-dir (expand-file-name "elpa" user-emacs-directory))
 
-
-;; 移除gnome的标题栏
-(add-to-list 'default-frame-alist '(undecorated . t))
-
-;(setq minimal-emacs-user-directory "~/projects/emacs_dot_file/")
-;(add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory))
-
-
-
+;; 移除的标题栏
+;;(add-to-list 'default-frame-alist '(undecorated . t))
 (provide 'pre-early-init.el)
-                             
-                             
-
 ;;; pre-early-init.el ends here

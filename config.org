@@ -10,7 +10,7 @@
   ;; use-package
   (eval-when-compile
     (require 'use-package))
-  ;;不验证签名，应该改动！
+  ;;不验证签名
   (setq package-check-signature nil)
   ;; melpa 和 host
   (require 'package)
@@ -26,89 +26,63 @@
   (setq user-emacs-directory (expand-file-name "var/" minimal-emacs-user-directory))
   (setq package-user-dir (expand-file-name "elpa" user-emacs-directory))
 
-
-  ;; 移除gnome的标题栏
-  (add-to-list 'default-frame-alist '(undecorated . t))
-
-  ;(setq minimal-emacs-user-directory "~/projects/emacs_dot_file/")
-  ;(add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory))
-
-
-
+  ;; 移除的标题栏
+  ;;(add-to-list 'default-frame-alist '(undecorated . t))
   (provide 'pre-early-init.el)
-                               
-                               
-
   ;;; pre-early-init.el ends here
 #+end_src
 
 * 不使用package的设置
+
 #+begin_src emacs-lisp :tangle ./post-init.el
-        ;;; post-init.el --- Emacs Configuration -*- no-byte-compile: t; lexical-binding: t; -*-
+          ;;; post-init.el --- Emacs Configuration -*- no-byte-compile: t; lexical-binding: t; -*-
 
-  (setq use-package-always-ensure t)  ;; 默认自动安装包
-  (setq use-package-always-defer t)   ;; 默认延迟加载
-
-
-  ;;==============================================================================
-      ;;; 基础设置 (Basic Settings)
-  ;;==============================================================================
-
-  ;; 文件编码
-  (prefer-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8)
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-
-  ;; 编辑体验
-  (setq-default tab-width 4)
-  (setq-default indent-tabs-mode nil)       ;; 使用空格而非 Tab
-  (setq require-final-newline t)            ;; 文件末尾自动添加换行
-  (setq truncate-lines nil)                 ;; 自动换行
-;;  (global-hl-line-mode 1)                   ;; 高亮当前行
-  (show-paren-mode 1)                       ;; 显示匹配括号
-  (electric-pair-mode 1)                    ;; 自动配对括号
-  (delete-selection-mode 1)                 ;; 选中文本后输入会替换
-  (global-auto-revert-mode 1)               ;; 自动刷新文件
-  (setq display-line-numbers-type 'relative)
-                                          ;(setq display-line-numbers 'relative);; 显示相对行号
-  (global-display-line-numbers-mode 1)
-
-  ;; 对选中文本使用括号引号自动放入
-  ;; 备份和自动保存
-  ;; (setq auto-save-default nil)
-  ;; (setq auto-save-interval 300)
-  ;; (setq auto-save-timeout 30)
-  ;; (setq make-backup-files t)
-  ;; (setq backup-directory-alist
-  ;;       `(("." . ,(expand-file-name "backups" user-emacs-directory))))
-  ;; (setq auto-save-file-name-transforms
-  ;;       `((".*" ,(expand-file-name "auto-saves/" user-emacs-directory) t)))
-  (auto-save-visited-mode 1)
-  (setq auto-save-timeout 20)
-  ;; 历史记录
-  (savehist-mode 1)
-  (save-place-mode 1)
-  (recentf-mode 1)
-  (setq recentf-max-saved-items 100)
-  (setq history-length 500)
+    (setq use-package-always-ensure t)  ;; 默认自动安装包
+    (setq use-package-always-defer t)   ;; 默认延迟加载
 
 
-  ;;==============================================================================
-      ;;; 启动优化 (Startup Optimization)
-  ;;==============================================================================
+   
+    ;; 文件编码
+    (prefer-coding-system 'utf-8)
+    (set-default-coding-systems 'utf-8)
+    (set-terminal-coding-system 'utf-8)
+    (set-keyboard-coding-system 'utf-8)
 
-  ;; 启动全屏
-  (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
+    ;; 编辑体验
+    (setq-default tab-width 4)
+    (setq-default indent-tabs-mode nil)       ;; 使用空格而非 Tab
+    (setq require-final-newline t)            ;; 文件末尾自动添加换行
+    (setq truncate-lines nil)                 ;; 自动换行
+  ;;  (global-hl-line-mode 1)                   ;; 高亮当前行
+    (show-paren-mode 1)                       ;; 显示匹配括号
+    (electric-pair-mode 1)                    ;; 自动配对括号
+    (delete-selection-mode 1)                 ;; 选中文本后输入会替换
+    (global-auto-revert-mode 1)               ;; 自动刷新文件
+  ;;  (setq display-line-numbers-type 'relative)  ;显示相对行号
+;;    (global-display-line-numbers-mode 1)
 
-  ;; 显示启动时间
-  ;; (add-hook 'emacs-startup-hook
-  ;;           (lambda ()
-  ;;             (message "Emacs 启动完成，用时 %.2f 秒，加载了 %d 个包"
-  ;;                      (float-time (time-subtract after-init-time before-init-time))
-  ;;                      (length package-activated-list))))
+    ;; 对选中文本使用括号引号自动放入
+    ;; 备份和自动保存
+    ;; (setq auto-save-default nil)
+    ;; (setq auto-save-interval 300)
+    ;; (setq auto-save-timeout 30)
+    ;; (setq make-backup-files t)
+    ;; (setq backup-directory-alist
+    ;;       `(("." . ,(expand-file-name "backups" user-emacs-directory))))
+    ;; (setq auto-save-file-name-transforms
+    ;;       `((".*" ,(expand-file-name "auto-saves/" user-emacs-directory) t)))
+    (auto-save-visited-mode 1)
+    (setq auto-save-timeout 20)
+    ;; 历史记录
+    (savehist-mode 1)
+    (save-place-mode 1)
+    (recentf-mode 1)
+    (setq recentf-max-saved-items 100)
+    (setq history-length 500)
+    ;; 启动全屏
+    (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
 
-  ;;==============================================================================
+    ;;==============================================================================
 #+end_src
 
 ** 温和删词
@@ -116,27 +90,6 @@
 
   (global-subword-mode 1)
 
-  (defun my/backward-kill-word ()
-    "More intelligent backward kill:
-  - On whitespace: delete just the whitespace
-  - On punctuation: delete just the punctuation run
-  - On word: delete the word"
-    (interactive)
-    (if (bolp)
-        (backward-delete-char 1)
-      (let ((orig-point (point)))
-        (cond
-         ;; 如果光标前是空白，只删空白
-         ((looking-back "\\s-+" (line-beginning-position))
-          (delete-region (match-beginning 0) orig-point))
-         ;; 如果光标前是标点/符号，只删标点
-         ((looking-back "\\s.+" (line-beginning-position))
-          (delete-region (match-beginning 0) orig-point))
-         ;; 否则删一个词
-         (t
-          (backward-kill-word 1))))))
-
-  (global-set-key (kbd "C-<backspace>") 'my/backward-kill-word)
 
 
 #+end_src
@@ -164,9 +117,6 @@
 这里也安装了 ~nerd-icons~ 完全是默认配置,以后可以自定义一下图标.
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-  ;;==============================================================================
-  ;;; 字体和主题 (Fonts & Theme)
-  ;;==============================================================================
   (custom-set-faces
    '(gnus-group-news-low ((t (:foreground "cyan"))))
    '(gnus-group-news-low-empty ((t (:foreground "cyan" :weight normal)))))
@@ -193,7 +143,7 @@
       ;; 中文字体 - 使用更通用的字体
       (dolist (charset '(kana han symbol cjk-misc bopomofo))
         (set-fontset-font t charset
-                          (font-spec :family "Sarasa Fixed CL"
+                          (font-spec :family "Sarasa Fixed SC"
                                      :height 130)))))
 
   ;;(add-to-list 'default-frame-alist '(undecorated . t))
@@ -206,6 +156,8 @@
 ** 主题
 用来用去,感觉doom的默认主题是最好的,因为这个主题用的人最多,所以调教得也最多,性能和兼容性可能有点问题但是视觉效果是最好的.
 我也用过很久ef themes,但是稍逊于doom theme.
+
+字体安装： =sudo pacman -S ttf-sarasa-gothic= 
 
 #+begin_src emacs-lisp :tangle ./post-init.el
 
@@ -234,7 +186,7 @@
   (use-package doom-modeline
     :init (doom-modeline-mode 1))
 
-  ;; 主题配置b
+  ;; 其他主题配置
   ;; (use-package ef-themes
   ;;   :demand t
   ;;   :bind (("<f5>" . modus-themes-rotate)
@@ -247,13 +199,6 @@
   ;;   (setq ef-owl-palette-overrides
   ;;         '((bg-region "#1a3f4a")))
   ;;   (moduns-themes-load-theme 'ef-owl))
-
-
-  ;; (use-package zenburn-theme
-  ;;   :demand t
-  ;;   :config
-  ;;   (load-theme 'zenburn t))
-  ;;(load-theme 'leuven-dark)
 #+end_src
 * Dashboard
 启动界面
@@ -264,12 +209,12 @@
   (use-package dashboard
     :demand t
     :custom
-    (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\nstay Stong my friend.")
-    (dashboard-startup-banner
-     (let ((images '("~/Pictures/icon/miyamori300.png"
-                     "~/Pictures/icon/shirobako.png"
-                     "~/Pictures/icon/newgamenene.png")))
-       (seq-random-elt (seq-filter #'file-exists-p images))))
+    (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
+    ;; (dashboard-startup-banner
+    ;;  (let ((images '("~/Pictures/icon/miyamori300.png"
+    ;;                  "~/Pictures/icon/shirobako.png"
+    ;;                  "~/Pictures/icon/newgamenene.png")))
+    ;;    (seq-random-elt (seq-filter #'file-exists-p images))))
 
     (dashboard-items '(
                        (agenda . 10)
@@ -305,23 +250,15 @@
 
 * 不要乱动我的窗口！
 #+begin_src emacs-lisp :tangle ./post-init.el
-  ;; (use-package emacs
-  ;;   :custom
-  ;;   (display-buffer-alist
-  ;;    '(("\\*\\(Help\\|Warnings\\|compilation\\|Backtrace\\|Messages\\|Occur\\)\\*"
-  ;;       (display-buffer-reuse-window display-buffer-pop-up-window))
-  ;;      (".*"
-  ;;       (display-buffer-reuse-window display-buffer-same-window))))    )
+  (use-package good-scroll
+    :ensure t
+    :if window-system     ; 在图形化界面时才使用这个插件
+    :init (good-scroll-mode))
 #+end_src
 * 电子书阅读
 就是单纯的nov 和pdf-tool
 
 #+begin_src emacs-lisp :tangle ./post-init.el
-
-  ;;==============================================================================
-  ;;; 文档查看 (Document Viewers)
-  ;;==============================================================================
-
   (use-package pdf-tools
     :mode ("\\.pdf\\'" . pdf-view-mode)
 
@@ -332,12 +269,9 @@
     :mode ("\\.epub\\'" . nov-mode))
 #+end_src
 * org和markdown 和 roam 和 casual
+需要依赖
+md需要安装 pandoc
 #+begin_src emacs-lisp :tangle ./post-init.el
-
-  ;;==============================================================================
-  ;;; Org Mode
-  ;;==============================================================================
-
   (use-package org
     :ensure nil
     :defer t
@@ -380,13 +314,14 @@
             ))
     ;;org-agenda
     (setq org-agenda-files '
-          ("~/Documents/orgnote/agenda/TODOs.org")))
+          ("~/Documents/org-note/agenda/TODOs.org")))
   ;;org-capture
 #+end_src
 ** org-download
-
+需要外部依赖
 org-download 是在orgmode里方便插入图片的工具。
-需要下载 xclip
+ubuntu需要下载 xclip
+CachyOS需要 wl-clipboard
 #+begin_src emacs-lisp :tangle ./post-init.el
   (use-package org-download
     :ensure t
@@ -410,8 +345,10 @@ org-download 是在orgmode里方便插入图片的工具。
     (when (eq system-type 'darwin)   ; macOS
       (setq org-download-screenshot-method "screencapture -i %s"))
     (setq org-image-actual-width '(600))
-    )
+    ) 
 #+end_src
+
+
 ** org roam
 =org-id-get-create=
 =org-roam-alias-add=
@@ -431,7 +368,7 @@ org-download 是在orgmode里方便插入图片的工具。
   (use-package org-roam
     :ensure t
     :custom
-    (org-roam-directory (file-truename "~/Documents/roamnote/"))
+    (org-roam-directory (file-truename "~/Documents/roam-note/"))
     (org-roam-capture-templates
      '(    ("d" "default" plain "%?"
             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
@@ -822,6 +759,9 @@ pangu 这个是用来给中英文之间自动加空格的.
             (t :style "cod" :icon "code" :face font-lock-warning-face)))
     )
 
+  (use-package corfu-terminal
+  :ensure t)
+
   ;; (use-package corfu
   ;;   ;; Optional customizations
   ;;   ;; :custom
@@ -951,7 +891,7 @@ pangu 这个是用来给中英文之间自动加空格的.
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   ;;==============================================================================
-                  ;;; 导航和编辑增强 (Navigation & Editing)
+                   ;;; 导航和编辑增强 (Navigation & Editing)
   ;;==============================================================================
 
   (use-package avy
@@ -1000,11 +940,17 @@ pangu 这个是用来给中英文之间自动加空格的.
   ;;   :config
   ;;   (global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
   ;;   (global-set-key (kbd "C-e") 'mwim-end-of-code-or-line))
-            
+
+  (use-package mwim
+    :ensure t
+    :bind
+    ("C-a" . mwim-beginning-of-code-or-line)
+    ("C-e" . mwim-end-of-code-or-line))
+
                                           ;
                                           ;==============================================================================
 
-    #+end_src
+  #+end_src
 * 编程体验增强
 #+begin_src emacs-lisp :tangle ./post-init.el
 
@@ -1119,10 +1065,13 @@ eat我听说很厉害,但是没有怎么使用过.
       (setq-local confirm-kill-processes nil))
 
     :init
-    (add-hook 'vterm-mode-hook #'my-vterm--setup)
+    
     (setq vterm-timer-delay 0.05)  ; Faster vterm
     (setq vterm-kill-buffer-on-exit t)
     (setq vterm-max-scrollback 5000)
+    
+    (add-hook 'vterm-mode-hook #'my-vterm--setup)
+
     )
   ;;==============================================================================
 #+end_src
@@ -1344,32 +1293,50 @@ eat我听说很厉害,但是没有怎么使用过.
 * TODO emms
 #+begin_src emacs-lisp :tangle ./post-init.el
   ;; (use-package emms
+  ;;   :demand 0.2
   ;;   :config
   ;;   (require 'emms-setup)
   ;;   (emms-all)                      ; 开启几乎所有稳定功能
   ;; 
   ;;   ;; 播放器优先顺序（mpv 最好，vlc 次之）
   ;;   (setq emms-player-list '(
-  ;;                            emms-player-vlc
+  ;;                            emms-player-mpv
   ;;                            ))
   ;; 
   ;;   ;; 元数据读取（native 是纯 elisp 的，速度还可以）
-  ;;   (setq emms-info-functions '(emms-info-ogginfo
-  ;;                               emms-info-mp3info
+  ;;   (setq emms-info-functions '(emms-info-exiftool
+  ;;                               emms-info-ogginfo
   ;;                               emms-info-opusinfo   ; 如果你有 opus 文件
-  ;;                               emms-info-native))
+  ;;                               ))
   ;; 
   ;;   ;; 默认音乐目录（很重要！）
-  ;;   (setq emms-source-file-default-directory "~/Music/")
+  ;;   (setq emms-source-file-default-directory "~/Music/music/")
   ;; 
   ;;   ;; 显示封面（需要 ImageMagick 或 Image backend）
-  ;;   (setq emms-browser-covers 'emms-browser-cache-thumbnail
+  ;;   (setq emms-browser-covers 'emms-browser-cache-thumbnail-async
   ;;         emms-show-format "Playing: %s")
+  ;;   (setq emms-browser-thumbnail-program "ffmpegthumbnailer")
   ;; 
   ;;   ;; 可选：modeline 显示当前歌曲（很实用）
   ;;   (emms-mode-line 1)
-  ;;   (emms-playing-time 1))
+  ;;   (emms-playing-time 1)
+  ;;   (setq emms-browser-thumbnail-small-size 80
+  ;;         emms-browser-thumbnail-medium-size 150))
+
+  (use-package emms
+    :demand 0.2
+    :config
+    
+
+    (emms-all)
+    (setq emms-player-list '(emms-player-mpv)
+          emms-info-functions '(emms-info-native))
+
+    )
+
 #+end_src
+
+
 * TODO mu4e
 #+begin_src emacs-lisp :tangle ./post-init.el
   ;; mu4e 基本加载（复制粘贴，根据你的系统改路径）
@@ -1413,12 +1380,13 @@ eat我听说很厉害,但是没有怎么使用过.
     (setq rime-cursor-face '((t (:foreground "#00ff00"))))
     (setq rime-show-preedit t)
     (setq rime-user-data-dir "~/.config/fcitx/Rime/")
+    (setq rime-posframe-style ' simple)
+    (setq rime-show-preedit ' inline)
     ;; 默认值
     (setq rime-translate-keybindings
           '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
     (defun +rime--posframe-display-content-a (args)
-      "给 `rime--posframe-display-content' 传入的字符串加一个全角空
-    格，以解决 `posframe' 偶尔吃字的问题。"
+      "给 `rime--posframe-display-content' 传入的字符串加一个全角空格，以解决 `posframe' 偶尔吃字的问题。"
       (cl-destructuring-bind (content) args
         (let ((newresult (if (string-blank-p content)
                              content
@@ -1430,16 +1398,14 @@ eat我听说很厉害,但是没有怎么使用过.
                     :filter-args
                     #'+rime--posframe-display-content-a)
       (error "Function `rime--posframe-display-content' is not available."))
-    )
-   
-  ;;(require 'mozc)
-  ;; (setq mozc-candidate-style 'overlay)
+     )
+#+end_src
 
-  
-          #+end_src
 
 * quick-sdcv emacs内置词典
+需要依赖 sdcv
 不是很好用，似乎识别不了一些词典的格式，而且样式有点丑，还不能折叠
+
 #+begin_src emacs-lisp :tangle ./post-init.el
   (use-package quick-sdcv
     :ensure t
@@ -1452,7 +1418,36 @@ eat我听说很厉害,但是没有怎么使用过.
     (quick-sdcv-dictionary-prefix-symbol "►")
     (quick-sdcv-ellipsis " ▼"))
 #+end_src
+* password manage
+=sudo pacman -S pass gnupg git=
 
+一定不要忘了备份（但是别分享）私钥
+一定不要忘了pass phrase
+#+begin_src emacs-lisp :tangle ./post-init.el
+
+  ;; 推荐组合：auth-source + pass 的桥接 + 好用的界面
+(use-package auth-source
+  :ensure t
+  :config
+  (add-to-list 'auth-sources 'password-store))   ; 关键这行
+
+(use-package auth-source-pass
+  :ensure t
+  :after auth-source
+  :config
+  (auth-source-pass-enable))
+
+(use-package pass
+  :ensure t
+  :bind ("C-c p p" . pass))          ; 打开 pass 浏览器模式
+
+(use-package password-store-menu
+  :ensure t
+  :bind ("C-c P" . password-store-menu))
+#+end_src
+
+
+* 尾部
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   (provide 'post-init)
@@ -1461,51 +1456,36 @@ eat我听说很厉害,但是没有怎么使用过.
 
 
 * 待办
-=smart input source= 这个对体验影响很大,但是我一直拖着没弄.
 crux/easy-kill 似乎能优化编辑体验,可以试试.
 在emacs里处理电子邮件也没弄.
 
-#+begin_src emacs-lisp :tangle ./post-init.el
 
-                                          ;crux
-  ;;==============================================================================
-  ;;==============================================================================
-  ;; (use-package sis
-  ;;   ;; :hook
-  ;;   ;; 为指定的缓冲区启用 /context/ 和 /inline region/ 模式
-  ;;   ;; (((text-mode prog-mode) . sis-context-mode)
-  ;;   ;;  ((text-mode prog-mode) . sis-inline-mode))
-  ;; 
-  ;;   :config
-  ;;   ;; 用于 MacOS
-  ;;   (sis-ism-lazyman-config
-  ;; 
-  ;;    ;; 英文输入源可能是："ABC"、"US" 或其他
-  ;;    ;; "com.apple.keylayout.ABC"
-  ;;    "com.apple.keylayout.US"
-  ;; 
-  ;;    ;; 其他语言输入源："rime"、"sogou" 或其他
-  ;;    ;; "im.rime.inputmethod.Squirrel.Rime"
-  ;;    "com.sogou.inputmethod.sogou.pinyin")
-  ;; 
-  ;;   ;; 启用 /光标颜色/ 模式
-  ;;   (sis-global-cursor-color-mode t)
-  ;;   ;; 启用 /respect/ 模式
-  ;;   (sis-global-respect-mode t)
-  ;;   ;; 为所有缓冲区启用 /context/ 模式
-  ;;   (sis-global-context-mode t)
-  ;;   ;; 为所有缓冲区启用 /inline english/ 模式
-  ;;   (sis-global-inline-mode t)
-  ;;   )
-  ;; ;;==============================================================================
 
-  ;;==============================================================================
-  ;; scroll-screen
+** 智能 C-a M-a M-e C-e 智能 C-backspace删除
 
-  ;; (use-package golden-ratio-scroll-screen
-  ;;   :bind (("C-v" . golden-ratio-scroll-screen-up)
-  ;;          ("M-v" . golden-ratio-scroll-screen-down)))
-  ;;==============================================================================
-#+end_src
+** emacs everywhere
 
-** 智能 C-a M-a M-e C-e
+** undo-
+
+** 撤出minimal emacs 真正的香草味
+
+** 如何更新transit/orgmode这些内置包？
+
+** stright.el
+
+** rime调试配置
+
+* 依赖
+latex 
+pandoc mdox
+pacman -S poppler ffmpegthumbnailer mediainfo libvips 7zip imagemagick 
+
+Org download 在 CachyOS需要 wl-clipboard
+
+词典依赖Sdcv
+pass：sudo pacman -S pass gnupg git
+
+emms： ImageMagick
+=sudo pacman -S perl-image-exiftool=
+=sudo pacman -Syu vorbis-tools opus-tools=
+=yay -S mp3info=

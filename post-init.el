@@ -1,92 +1,53 @@
 ;;; post-init.el --- Emacs Configuration -*- no-byte-compile: t; lexical-binding: t; -*-
 
-  (setq use-package-always-ensure t)  ;; 默认自动安装包
-  (setq use-package-always-defer t)   ;; 默认延迟加载
+    (setq use-package-always-ensure t)  ;; 默认自动安装包
+    (setq use-package-always-defer t)   ;; 默认延迟加载
 
 
-  ;;==============================================================================
-      ;;; 基础设置 (Basic Settings)
-  ;;==============================================================================
+   
+    ;; 文件编码
+    (prefer-coding-system 'utf-8)
+    (set-default-coding-systems 'utf-8)
+    (set-terminal-coding-system 'utf-8)
+    (set-keyboard-coding-system 'utf-8)
 
-  ;; 文件编码
-  (prefer-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8)
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
+    ;; 编辑体验
+    (setq-default tab-width 4)
+    (setq-default indent-tabs-mode nil)       ;; 使用空格而非 Tab
+    (setq require-final-newline t)            ;; 文件末尾自动添加换行
+    (setq truncate-lines nil)                 ;; 自动换行
+  ;;  (global-hl-line-mode 1)                   ;; 高亮当前行
+    (show-paren-mode 1)                       ;; 显示匹配括号
+    (electric-pair-mode 1)                    ;; 自动配对括号
+    (delete-selection-mode 1)                 ;; 选中文本后输入会替换
+    (global-auto-revert-mode 1)               ;; 自动刷新文件
+  ;;  (setq display-line-numbers-type 'relative)  ;显示相对行号
+;;    (global-display-line-numbers-mode 1)
 
-  ;; 编辑体验
-  (setq-default tab-width 4)
-  (setq-default indent-tabs-mode nil)       ;; 使用空格而非 Tab
-  (setq require-final-newline t)            ;; 文件末尾自动添加换行
-  (setq truncate-lines nil)                 ;; 自动换行
-;;  (global-hl-line-mode 1)                   ;; 高亮当前行
-  (show-paren-mode 1)                       ;; 显示匹配括号
-  (electric-pair-mode 1)                    ;; 自动配对括号
-  (delete-selection-mode 1)                 ;; 选中文本后输入会替换
-  (global-auto-revert-mode 1)               ;; 自动刷新文件
-  (setq display-line-numbers-type 'relative)
-                                          ;(setq display-line-numbers 'relative);; 显示相对行号
-  (global-display-line-numbers-mode 1)
+    ;; 对选中文本使用括号引号自动放入
+    ;; 备份和自动保存
+    ;; (setq auto-save-default nil)
+    ;; (setq auto-save-interval 300)
+    ;; (setq auto-save-timeout 30)
+    ;; (setq make-backup-files t)
+    ;; (setq backup-directory-alist
+    ;;       `(("." . ,(expand-file-name "backups" user-emacs-directory))))
+    ;; (setq auto-save-file-name-transforms
+    ;;       `((".*" ,(expand-file-name "auto-saves/" user-emacs-directory) t)))
+    (auto-save-visited-mode 1)
+    (setq auto-save-timeout 20)
+    ;; 历史记录
+    (savehist-mode 1)
+    (save-place-mode 1)
+    (recentf-mode 1)
+    (setq recentf-max-saved-items 100)
+    (setq history-length 500)
+    ;; 启动全屏
+    (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
 
-  ;; 对选中文本使用括号引号自动放入
-  ;; 备份和自动保存
-  ;; (setq auto-save-default nil)
-  ;; (setq auto-save-interval 300)
-  ;; (setq auto-save-timeout 30)
-  ;; (setq make-backup-files t)
-  ;; (setq backup-directory-alist
-  ;;       `(("." . ,(expand-file-name "backups" user-emacs-directory))))
-  ;; (setq auto-save-file-name-transforms
-  ;;       `((".*" ,(expand-file-name "auto-saves/" user-emacs-directory) t)))
-  (auto-save-visited-mode 1)
-  (setq auto-save-timeout 20)
-  ;; 历史记录
-  (savehist-mode 1)
-  (save-place-mode 1)
-  (recentf-mode 1)
-  (setq recentf-max-saved-items 100)
-  (setq history-length 500)
-
-
-  ;;==============================================================================
-      ;;; 启动优化 (Startup Optimization)
-  ;;==============================================================================
-
-  ;; 启动全屏
-  (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
-
-  ;; 显示启动时间
-  ;; (add-hook 'emacs-startup-hook
-  ;;           (lambda ()
-  ;;             (message "Emacs 启动完成，用时 %.2f 秒，加载了 %d 个包"
-  ;;                      (float-time (time-subtract after-init-time before-init-time))
-  ;;                      (length package-activated-list))))
-
-  ;;==============================================================================
+    ;;==============================================================================
 
 (global-subword-mode 1)
-
-(defun my/backward-kill-word ()
-  "More intelligent backward kill:
-- On whitespace: delete just the whitespace
-- On punctuation: delete just the punctuation run
-- On word: delete the word"
-  (interactive)
-  (if (bolp)
-      (backward-delete-char 1)
-    (let ((orig-point (point)))
-      (cond
-       ;; 如果光标前是空白，只删空白
-       ((looking-back "\\s-+" (line-beginning-position))
-        (delete-region (match-beginning 0) orig-point))
-       ;; 如果光标前是标点/符号，只删标点
-       ((looking-back "\\s.+" (line-beginning-position))
-        (delete-region (match-beginning 0) orig-point))
-       ;; 否则删一个词
-       (t
-        (backward-kill-word 1))))))
-
-(global-set-key (kbd "C-<backspace>") 'my/backward-kill-word)
 
 (use-package emacs
   :bind ("M-o" . other-window)
@@ -98,9 +59,6 @@
 (setq large-file-warning-threshold nil)
 (column-number-mode 1)
 
-;;==============================================================================
-;;; 字体和主题 (Fonts & Theme)
-;;==============================================================================
 (custom-set-faces
  '(gnus-group-news-low ((t (:foreground "cyan"))))
  '(gnus-group-news-low-empty ((t (:foreground "cyan" :weight normal)))))
@@ -127,7 +85,7 @@
     ;; 中文字体 - 使用更通用的字体
     (dolist (charset '(kana han symbol cjk-misc bopomofo))
       (set-fontset-font t charset
-                        (font-spec :family "Sarasa Fixed CL"
+                        (font-spec :family "Sarasa Fixed SC"
                                    :height 130)))))
 
 ;;(add-to-list 'default-frame-alist '(undecorated . t))
@@ -161,7 +119,7 @@
 (use-package doom-modeline
   :init (doom-modeline-mode 1))
 
-;; 主题配置b
+;; 其他主题配置
 ;; (use-package ef-themes
 ;;   :demand t
 ;;   :bind (("<f5>" . modus-themes-rotate)
@@ -175,22 +133,15 @@
 ;;         '((bg-region "#1a3f4a")))
 ;;   (moduns-themes-load-theme 'ef-owl))
 
-
-;; (use-package zenburn-theme
-;;   :demand t
-;;   :config
-;;   (load-theme 'zenburn t))
-;;(load-theme 'leuven-dark)
-
 (use-package dashboard
   :demand t
   :custom
-  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\nstay Stong my friend.")
-  (dashboard-startup-banner
-   (let ((images '("~/Pictures/icon/miyamori300.png"
-                   "~/Pictures/icon/shirobako.png"
-                   "~/Pictures/icon/newgamenene.png")))
-     (seq-random-elt (seq-filter #'file-exists-p images))))
+  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
+  ;; (dashboard-startup-banner
+  ;;  (let ((images '("~/Pictures/icon/miyamori300.png"
+  ;;                  "~/Pictures/icon/shirobako.png"
+  ;;                  "~/Pictures/icon/newgamenene.png")))
+  ;;    (seq-random-elt (seq-filter #'file-exists-p images))))
 
   (dashboard-items '(
                      (agenda . 10)
@@ -221,17 +172,10 @@
   :custom
   (helpful-max-buffers 7))
 
-;; (use-package emacs
-;;   :custom
-;;   (display-buffer-alist
-;;    '(("\\*\\(Help\\|Warnings\\|compilation\\|Backtrace\\|Messages\\|Occur\\)\\*"
-;;       (display-buffer-reuse-window display-buffer-pop-up-window))
-;;      (".*"
-;;       (display-buffer-reuse-window display-buffer-same-window))))    )
-
-;;==============================================================================
-;;; 文档查看 (Document Viewers)
-;;==============================================================================
+(use-package good-scroll
+  :ensure t
+  :if window-system     ; 在图形化界面时才使用这个插件
+  :init (good-scroll-mode))
 
 (use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
@@ -241,10 +185,6 @@
   )
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode))
-
-;;==============================================================================
-;;; Org Mode
-;;==============================================================================
 
 (use-package org
   :ensure nil
@@ -288,7 +228,7 @@
           ))
   ;;org-agenda
   (setq org-agenda-files '
-        ("~/Documents/orgnote/agenda/TODOs.org")))
+        ("~/Documents/org-note/agenda/TODOs.org")))
 ;;org-capture
 
 (use-package org-download
@@ -325,7 +265,7 @@
 (use-package org-roam
   :ensure t
   :custom
-  (org-roam-directory (file-truename "~/Documents/roamnote/"))
+  (org-roam-directory (file-truename "~/Documents/roam-note/"))
   (org-roam-capture-templates
    '(    ("d" "default" plain "%?"
           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
@@ -683,6 +623,9 @@
           (t :style "cod" :icon "code" :face font-lock-warning-face)))
   )
 
+(use-package corfu-terminal
+:ensure t)
+
 ;; (use-package corfu
 ;;   ;; Optional customizations
 ;;   ;; :custom
@@ -799,7 +742,7 @@
      (format "tab-%s" (alist-get 'name (tab-bar--current-tab))))))
 
 ;;==============================================================================
-                ;;; 导航和编辑增强 (Navigation & Editing)
+                 ;;; 导航和编辑增强 (Navigation & Editing)
 ;;==============================================================================
 
 (use-package avy
@@ -848,7 +791,13 @@
 ;;   :config
 ;;   (global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
 ;;   (global-set-key (kbd "C-e") 'mwim-end-of-code-or-line))
-          
+
+(use-package mwim
+  :ensure t
+  :bind
+  ("C-a" . mwim-beginning-of-code-or-line)
+  ("C-e" . mwim-end-of-code-or-line))
+
                                         ;
                                         ;==============================================================================
 
@@ -954,10 +903,13 @@
     (setq-local confirm-kill-processes nil))
 
   :init
-  (add-hook 'vterm-mode-hook #'my-vterm--setup)
+  
   (setq vterm-timer-delay 0.05)  ; Faster vterm
   (setq vterm-kill-buffer-on-exit t)
   (setq vterm-max-scrollback 5000)
+  
+  (add-hook 'vterm-mode-hook #'my-vterm--setup)
+
   )
 ;;==============================================================================
 
@@ -1166,31 +1118,46 @@
 ;;    ("M-e" . dirvish-emerge-menu)))
 
 ;; (use-package emms
+;;   :demand 0.2
 ;;   :config
 ;;   (require 'emms-setup)
 ;;   (emms-all)                      ; 开启几乎所有稳定功能
 ;; 
 ;;   ;; 播放器优先顺序（mpv 最好，vlc 次之）
 ;;   (setq emms-player-list '(
-;;                            emms-player-vlc
+;;                            emms-player-mpv
 ;;                            ))
 ;; 
 ;;   ;; 元数据读取（native 是纯 elisp 的，速度还可以）
-;;   (setq emms-info-functions '(emms-info-ogginfo
-;;                               emms-info-mp3info
+;;   (setq emms-info-functions '(emms-info-exiftool
+;;                               emms-info-ogginfo
 ;;                               emms-info-opusinfo   ; 如果你有 opus 文件
-;;                               emms-info-native))
+;;                               ))
 ;; 
 ;;   ;; 默认音乐目录（很重要！）
-;;   (setq emms-source-file-default-directory "~/Music/")
+;;   (setq emms-source-file-default-directory "~/Music/music/")
 ;; 
 ;;   ;; 显示封面（需要 ImageMagick 或 Image backend）
-;;   (setq emms-browser-covers 'emms-browser-cache-thumbnail
+;;   (setq emms-browser-covers 'emms-browser-cache-thumbnail-async
 ;;         emms-show-format "Playing: %s")
+;;   (setq emms-browser-thumbnail-program "ffmpegthumbnailer")
 ;; 
 ;;   ;; 可选：modeline 显示当前歌曲（很实用）
 ;;   (emms-mode-line 1)
-;;   (emms-playing-time 1))
+;;   (emms-playing-time 1)
+;;   (setq emms-browser-thumbnail-small-size 80
+;;         emms-browser-thumbnail-medium-size 150))
+
+(use-package emms
+  :demand 0.2
+  :config
+  
+
+  (emms-all)
+  (setq emms-player-list '(emms-player-mpv)
+        emms-info-functions '(emms-info-native))
+
+  )
 
 ;; mu4e 基本加载（复制粘贴，根据你的系统改路径）
 ;; (use-package mu4e
@@ -1221,12 +1188,13 @@
   (setq rime-cursor-face '((t (:foreground "#00ff00"))))
   (setq rime-show-preedit t)
   (setq rime-user-data-dir "~/.config/fcitx/Rime/")
+  (setq rime-posframe-style ' simple)
+  (setq rime-show-preedit ' inline)
   ;; 默认值
   (setq rime-translate-keybindings
         '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
   (defun +rime--posframe-display-content-a (args)
-    "给 `rime--posframe-display-content' 传入的字符串加一个全角空
-  格，以解决 `posframe' 偶尔吃字的问题。"
+    "给 `rime--posframe-display-content' 传入的字符串加一个全角空格，以解决 `posframe' 偶尔吃字的问题。"
     (cl-destructuring-bind (content) args
       (let ((newresult (if (string-blank-p content)
                            content
@@ -1238,10 +1206,7 @@
                   :filter-args
                   #'+rime--posframe-display-content-a)
     (error "Function `rime--posframe-display-content' is not available."))
-  )
- 
-;;(require 'mozc)
-;; (setq mozc-candidate-style 'overlay)
+   )
 
 (use-package quick-sdcv
   :ensure t
@@ -1254,45 +1219,25 @@
   (quick-sdcv-dictionary-prefix-symbol "►")
   (quick-sdcv-ellipsis " ▼"))
 
+;; 推荐组合：auth-source + pass 的桥接 + 好用的界面
+(use-package auth-source
+  :ensure t
+  :config
+  (add-to-list 'auth-sources 'password-store))   ; 关键这行
+
+(use-package auth-source-pass
+  :ensure t
+  :after auth-source
+  :config
+  (auth-source-pass-enable))
+
+(use-package pass
+  :ensure t
+  :bind ("C-c p p" . pass))          ; 打开 pass 浏览器模式
+
+(use-package password-store-menu
+  :ensure t
+  :bind ("C-c P" . password-store-menu))
+
 (provide 'post-init)
 ;;; post-init.el ends here
-
-;crux
-;;==============================================================================
-;;==============================================================================
-;; (use-package sis
-;;   ;; :hook
-;;   ;; 为指定的缓冲区启用 /context/ 和 /inline region/ 模式
-;;   ;; (((text-mode prog-mode) . sis-context-mode)
-;;   ;;  ((text-mode prog-mode) . sis-inline-mode))
-;; 
-;;   :config
-;;   ;; 用于 MacOS
-;;   (sis-ism-lazyman-config
-;; 
-;;    ;; 英文输入源可能是："ABC"、"US" 或其他
-;;    ;; "com.apple.keylayout.ABC"
-;;    "com.apple.keylayout.US"
-;; 
-;;    ;; 其他语言输入源："rime"、"sogou" 或其他
-;;    ;; "im.rime.inputmethod.Squirrel.Rime"
-;;    "com.sogou.inputmethod.sogou.pinyin")
-;; 
-;;   ;; 启用 /光标颜色/ 模式
-;;   (sis-global-cursor-color-mode t)
-;;   ;; 启用 /respect/ 模式
-;;   (sis-global-respect-mode t)
-;;   ;; 为所有缓冲区启用 /context/ 模式
-;;   (sis-global-context-mode t)
-;;   ;; 为所有缓冲区启用 /inline english/ 模式
-;;   (sis-global-inline-mode t)
-;;   )
-;; ;;==============================================================================
-
-;;==============================================================================
-;; scroll-screen
-
-;; (use-package golden-ratio-scroll-screen
-;;   :bind (("C-v" . golden-ratio-scroll-screen-up)
-;;          ("M-v" . golden-ratio-scroll-screen-down)))
-;;==============================================================================
