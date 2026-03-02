@@ -1,6 +1,5 @@
 #+title: emacs 配置文件
 #+STARTUP: noinlineimages
-
 fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 
 试用过purcell/prelude/doomemacs,打算慢慢从上面偷配置
@@ -34,7 +33,10 @@ OS: Ubuntu 24.04.3 LTS x86_64
 * 发现式的使用emacs
 emacs功能之多拓展性之强，不可能掌握所有的概念和快捷键
 因此使用过程中多查 =C-h= ，
-并且安装 =which-key= =embark= =avy= =casual= 等包“发现式”使用emacs不错
+并且安装 =which-key= =embark=  =casual= 等包“发现式”使用emacs不错
+=which-key= 是输入一个前缀后提示有什么按键
+=emabrk= 则是提供了一个强大的右键菜单
+=casual（transient）或者hydra= 是把函数分配给了快捷键提供了一个可视但是又效率很高的按键映射
 
 * 住在emacs里
 

@@ -257,17 +257,21 @@
 
 
   :config
-  (setq org-startup-with-inline-images t)
+  ;; (setq org-startup-with-inline-images t)
+  
+
+  
+
   (setq image-use-external-converter t)
   (setq org-image-actual-width nil   ;; 使用图片原始宽度，不强制缩放
-    image-transform-smoothing nil
-    max-image-size nil)
+        image-transform-smoothing nil
+        max-image-size nil)
 
   ;;(add-to-list 'org-modules 'org-habit)
   (setq org-modules '(org-habit
-                  org-id      ;; 如果用 org-roam 或跨文件链接
-                  org-attach  ;; 如果用附件
-                  ))
+                      org-id      ;; 如果用 org-roam 或跨文件链接
+                      org-attach  ;; 如果用附件
+                      ))
   (org-load-modules-maybe t)  ;; org-habit 此时才真正加载完毕
 
   (setq org-habit-graph-column 50
@@ -304,7 +308,11 @@
           ))
   ;;org-agenda
   (setq org-agenda-files '
-        ("~/Documents/org-note/agenda/TODOs.org")))
+        ("~/Documents/org-note/agenda/TODOs.org"))
+  :hook
+  (org-mode . org-link-preview-refresh)
+  
+  )
 
 (use-package org-capture
   :ensure nil
@@ -317,6 +325,82 @@
           ("s" "Someday" entry
            (file+headline "~/Documents/org-note/agenda/TODOs.org" "inbox:inbox:")
            "* SOMEDAY %?\n  %U\n"))))
+(use-package org-appear
+:hook (org-mode . org-appear-mode)
+:config
+(setq org-appear-autoemphasis t   ;; *bold* / /italic/
+      org-appear-autolinks t      ;; 链接
+      org-appear-autosubmarkers t))
+
+;; (use-package org-modern
+;; :hook (org-mode . org-modern-mode)
+;; :config
+;; ;; ===== 基础外观 =====
+;; (setq org-modern-hide-stars nil         ;; 保留标题星号（更稳定）
+;;       org-modern-table nil             ;; 表格用原生（更快）
+;;       org-modern-list '((?- . "•")
+;;                         (?+ . "➤")
+;;                         (?* . "◦"))   ;; 列表样式
+;;       org-modern-checkbox
+;;       '((?X . "☑")
+;;         (?- . "❍")
+;;         (?  . "☐")))
+;; 
+;; ;; ===== TODO 样式 =====
+;; (setq org-modern-todo t
+;;       org-modern-label-border 1)
+;; 
+;; ;; ===== 代码块 =====
+;; (setq org-modern-block-fringe nil
+;;       org-modern-block-name t
+;;       org-modern-keyword t)
+;; 
+;; ;; ===== 时间戳 =====
+;; (setq org-modern-timestamp t)
+;; 
+;; ;; ===== 优先级 =====
+;; (setq org-modern-priority t))
+
+;; (use-package org-super-agenda
+;; :after org-agenda
+;; :config
+;; (org-super-agenda-mode)
+;; 
+;; (setq org-super-agenda-groups
+;;       '(
+;;         ;; ===== 今日重要 =====
+;;         (:name "🔥 Important"
+;;                :priority "A")
+;; 
+;;         ;; ===== 今天 =====
+;;         (:name "📅 Today"
+;;                :time-grid t
+;;                :scheduled today)
+;; 
+;;         ;; ===== 已经延期 =====
+;;         (:name "⚠️ Overdue"
+;;                :deadline past)
+;; 
+;;         ;; ===== 即将截止 =====
+;;         (:name "⏳ Due soon"
+;;                :deadline future
+;;                :order 1)
+;; 
+;;         ;; ===== 习惯 =====
+;;         (:name "💪 Habits"
+;;                :habit t)
+;; 
+;;         ;; ===== 学习 =====
+;;         (:name "📚 Study"
+;;                :tag "study")
+;; 
+;;         ;; ===== 项目 =====
+;;         (:name "🚧 Projects"
+;;                :tag "project")
+;; 
+;;         ;; ===== 其他 =====
+;;         (:name "🧩 Others"
+;;                :anything t))))
 ;;org-capture
 
 (use-package org-download
@@ -453,41 +537,46 @@
   (valign-fancy-bar t))
 
 ;; (use-package casual
-;;   :after org
-;;   :bind (:map org-mode-map
-;;               ("M-m" . casual-org-tmenu)
-;;               :map org-table-fedit-map
-;;               ("M-m" . casual-org-table-fedit-tmenu))
-;;   :config
-;;   )
-;;
-(use-package casual-suite
-  :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
-         ("M-m" . casual-suite-tmenu)
-         
-         ;; 如果你习惯在特定模式下使用更直观的快捷键
-         :map calc-mode-map ("M-m" . casual-calc-tmenu)
-         :map isearch-mode-map ("M-m" . casual-isearch-tmenu)
-         :map dired-mode-map ("M-m" . casual-dired-tmenu)
-         :map org-mode-map ("M-m" . casual-org-tmenu)
-         :map org-table-fedit-map ("M-m" . casual-org-table-fedit-tmenu)
-         :map org-agenda-mode-map ("M-m" . casual-agenda-tmenu)
-         :map ibuffer-mode-map ("M-m" . casual-ibuffer-tmenu)
-         :map bookmark-bmenu-mode-map ("M-m" . casual-bookmarks-tmenu)
-         :map calendar-mode-map ("M-m" . casual-calendar-tmenu)
-         :map compilation-mode-map ("M-m" . casual-compile-tmenu)
-         :map eww-mode-map ("M-m" . casual-eww-tmenu)
-         :map help-mode-map ("M-m" . casual-help-tmenu)
-         :map Info-mode-map ("M-m" . casual-info-tmenu)
-         ;;:map re-builder-mode-map ("M-m" . casual-re-builder-tmenu)
-       ;;  :map shell-mode-map ("M-m" . casual-eshell-tmenu)
-         :map image-mode-map ("M-m" . casual-image-tmenu))
+  ;;   :after org
+  ;;   :bind (:map org-mode-map
+  ;;               ("M-m" . casual-org-tmenu)
+  ;;               :map org-table-fedit-map
+  ;;               ("M-m" . casual-org-table-fedit-tmenu))
+  ;;   :config
+  ;;   )
+  ;;
+  (use-package casual-suite
+    :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
+           ("M-j" . casual-avy-tmenu)
+           ("C-o" . casual-editkit-main-tmenu)
+           
+           ("M-m" . casual-suite-tmenu)
+           ;; 如果你习惯在特定模式下使用更直观的快捷键
+           :map calc-mode-map ("M-m" . casual-calc-tmenu)
+           ;;:map isearch-mode-map ("M-m" . )
+           :map dired-mode-map ("M-m" . casual-dired-tmenu)
+           :map org-mode-map ("M-m" . casual-org-tmenu)
+           :map org-table-fedit-map ("M-m" . casual-org-table-fedit-tmenu)
+           :map org-agenda-mode-map ("M-m" . casual-agenda-tmenu)
+           :map ibuffer-mode-map ("M-m" . casual-ibuffer-tmenu)
+           :map bookmark-bmenu-mode-map ("M-m" . casual-bookmarks-tmenu)
+           :map calendar-mode-map ("M-m" . casual-calendar-tmenu)
+           :map compilation-mode-map ("M-m" . casual-compile-tmenu)
+;;           :map eww-mode-map ("M-m" . casual-eww-tmenu)
+           :map help-mode-map ("M-m" . casual-help-tmenu)
+           :map Info-mode-map ("M-m" . casual-info-tmenu)
+           ;;:map re-builder-mode-map ("M-m" . casual-re-builder-tmenu)
+           ;;  :map shell-mode-map ("M-m" . casual-eshell-tmenu)
+           :map image-mode-map ("M-m" . casual-image-tmenu)
+           )
 
-  :config
-  ;; 默认情况下，suite 会自动检测并启用它支持的所有模块
-  ;; 你可以在这里进行全局微调
-                                        ;      (setq casual-use-avy-for-navigation t)
-  )
+    :config
+
+
+    ;; 默认情况下，suite 会自动检测并启用它支持的所有模块
+    ;; 你可以在这里进行全局微调
+                                          ;      (setq casual-use-avy-for-navigation t)
+    )
 
 (org-babel-do-load-languages
  'org-babel-load-languages
