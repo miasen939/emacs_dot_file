@@ -67,6 +67,10 @@
 (setq large-file-warning-threshold nil)
 (column-number-mode 1)
 
+(use-package transient
+:ensure t
+:pin gnu)
+
 (custom-set-faces
  '(gnus-group-news-low ((t (:foreground "cyan"))))
  '(gnus-group-news-low-empty ((t (:foreground "cyan" :weight normal)))))
@@ -155,28 +159,38 @@
 
 ;; (use-package esup
 ;;   :demand t)
+
+(use-package dashboard
+  :demand t
+  :custom
+  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
+  ;; (dashboard-startup-banner
+  ;;  (let ((images '("~/Pictures/icon/miyamori300.png"
+  ;;                  "~/Pictures/icon/shirobako.png"
+  ;;                  "~/Pictures/icon/newgamenene.png")))
+  ;;    (seq-random-elt (seq-filter #'file-exists-p images))))
+
   
-  (use-package dashboard
-    :demand t
-    :custom
-    (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
-    (dashboard-startup-banner
-     (let ((images '("~/Pictures/icon/miyamori300.png"
-                     "~/Pictures/icon/shirobako.png"
-                     "~/Pictures/icon/newgamenene.png")))
-       (seq-random-elt (seq-filter #'file-exists-p images))))
 
-    (dashboard-items '(
-                       (agenda . 10)
-                       (recents . 8)
-                       (bookmarks . 5)
-                       (projects . 5)))
-    (dashboard-center-content t)
-    (dashboard-vertically-center-content t)
+  (dashboard-startup-banner
+   (let* ((image-dir (expand-file-name "~/Pictures/icon/"))
+          (images (directory-files image-dir t "\\.\\(png\\|jpg\\|jpeg\\|gif\\|webp\\)$" t)))
+     (if images
+         (seq-random-elt images)
+       (message "No images found in %s" image-dir)
+       nil)))   ; 或换成你想要的默认图
 
-    :config
-    (dashboard-setup-startup-hook)
-    )
+  (dashboard-items '(
+                     (agenda . 10)
+                     (recents . 8)
+                     (bookmarks . 5)
+                     (projects . 5)))
+  (dashboard-center-content t)
+  (dashboard-vertically-center-content t)
+
+  :config
+  (dashboard-setup-startup-hook)
+  )
 
 (use-package helpful
   :ensure t
@@ -224,7 +238,8 @@
 ;;         org-habit-show-all-today t))
 
 (use-package org
-  :ensure nil
+  :ensure t
+  :pin gnu ;; 更新此内置包
   :mode ("\\.org\\'" . org-mode)
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)

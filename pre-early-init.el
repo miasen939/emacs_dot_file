@@ -7,12 +7,17 @@
 
 (eval-when-compile
   (require 'use-package))
+
+;;确保 ELPA 路径优先
+(setq package-install-upgrade-built-in t)
+
 ;;不验证签名
 (setq package-check-signature nil)
 ;; melpa 和 host
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/") t)
+
 (setq url-proxy-services '(("no_proxy" . "^\\(192\\.168\\..*\\)")
               ("http" . "127.0.0.1:7897")
    ("https" . "127.0.0.1:7897")))

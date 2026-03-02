@@ -14,12 +14,17 @@
 
   (eval-when-compile
     (require 'use-package))
+
+  ;;确保 ELPA 路径优先
+  (setq package-install-upgrade-built-in t)
+
   ;;不验证签名
   (setq package-check-signature nil)
   ;; melpa 和 host
   (require 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/") t)
+
   (setq url-proxy-services '(("no_proxy" . "^\\(192\\.168\\..*\\)")
                 ("http" . "127.0.0.1:7897")
      ("https" . "127.0.0.1:7897")))
@@ -54,8 +59,8 @@ benchmark 用来分析启动时间
 
 
 
-#+begin_src emacs-lisp :tangle ./post-init.el
 
+#+begin_src emacs-lisp :tangle ./post-init.el
 
 
 
@@ -133,6 +138,15 @@ benchmark 用来分析启动时间
   ;; steal from system crafter
   (setq large-file-warning-threshold nil)
   (column-number-mode 1) 
+#+end_src
+
+* 内置包更新
+
+#+begin_src emacs-lisp :tangle ./post-init.el
+  (use-package transient
+  :ensure t
+  :pin gnu)
+  
 #+end_src
 
 * 字体 主题
@@ -239,33 +253,43 @@ benchmark 用来分析启动时间
 #+end_src
 * Dashboard
 启动界面
-
+dashboard的banner最好自己手动压缩为500x500以下
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   ;; (use-package esup
   ;;   :demand t)
+
+  (use-package dashboard
+    :demand t
+    :custom
+    (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
+    ;; (dashboard-startup-banner
+    ;;  (let ((images '("~/Pictures/icon/miyamori300.png"
+    ;;                  "~/Pictures/icon/shirobako.png"
+    ;;                  "~/Pictures/icon/newgamenene.png")))
+    ;;    (seq-random-elt (seq-filter #'file-exists-p images))))
+
     
-    (use-package dashboard
-      :demand t
-      :custom
-      (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
-      (dashboard-startup-banner
-       (let ((images '("~/Pictures/icon/miyamori300.png"
-                       "~/Pictures/icon/shirobako.png"
-                       "~/Pictures/icon/newgamenene.png")))
-         (seq-random-elt (seq-filter #'file-exists-p images))))
 
-      (dashboard-items '(
-                         (agenda . 10)
-                         (recents . 8)
-                         (bookmarks . 5)
-                         (projects . 5)))
-      (dashboard-center-content t)
-      (dashboard-vertically-center-content t)
+    (dashboard-startup-banner
+     (let* ((image-dir (expand-file-name "~/Pictures/icon/"))
+            (images (directory-files image-dir t "\\.\\(png\\|jpg\\|jpeg\\|gif\\|webp\\)$" t)))
+       (if images
+           (seq-random-elt images)
+         (message "No images found in %s" image-dir)
+         nil)))   ; 或换成你想要的默认图
 
-      :config
-      (dashboard-setup-startup-hook)
-      )
+    (dashboard-items '(
+                       (agenda . 10)
+                       (recents . 8)
+                       (bookmarks . 5)
+                       (projects . 5)))
+    (dashboard-center-content t)
+    (dashboard-vertically-center-content t)
+
+    :config
+    (dashboard-setup-startup-hook)
+    )
 #+end_src
 * helpful 更易用的help界面
 #+begin_src emacs-lisp :tangle ./post-init.el
@@ -338,7 +362,8 @@ org attach 有点意思
 不默认显示图片 可以用 =C-c C-x C-v=  手动打开
 #+begin_src emacs-lisp :tangle ./post-init.el
   (use-package org
-    :ensure nil
+    :ensure t
+    :pin gnu ;; 更新此内置包
     :mode ("\\.org\\'" . org-mode)
     :bind (("C-c l" . org-store-link)
            ("C-c a" . org-agenda)
@@ -628,6 +653,8 @@ CachyOS需要 wl-clipboard
    '((dot . t)))
 #+end_src
 * Vertico 五件套
+
+M-RET 提交精确输入
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   ;;==============================================================================
@@ -1587,7 +1614,7 @@ crux/easy-kill 似乎能优化编辑体验,可以试试.
 
 跳转增强
 
-=avy=（比 ace-jump 更现代）
+=avy= （比 ace-jump 更现代）
 
 历史与撤销树
 
