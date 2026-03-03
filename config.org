@@ -140,14 +140,7 @@ benchmark 用来分析启动时间
   (column-number-mode 1) 
 #+end_src
 
-* 内置包更新
 
-#+begin_src emacs-lisp :tangle ./post-init.el
-  (use-package transient
-  :ensure t
-  :pin gnu)
-  
-#+end_src
 
 * 字体 主题
 ** 字体
@@ -230,25 +223,23 @@ benchmark 用来分析启动时间
 
 
 
-  ;; (use-package doom-modeline
-  ;;   :hook (after-init . doom-modeline-mode))
-  ;; 其他主题配置
-   ;; (use-package ef-themes
-   ;;  :demand t
-   ;;  :bind (("<f5>" . modus-themes-rotate)
-   ;;         ("C-<f5>" . modus-themes-select)
-   ;;         ("M-<f5>" . modus-themes-load-random))
-   ;;  :init
-   ;;  (setq modus-themes-mixed-fonts t
-   ;;        modus-themes-italic-constructs t)
-   ;;  :config
-   ;;  (setq ef-owl-palette-overrides
-   ;;        '((bg-region "#1a3f4a")))
-   ;;  
-   ;;  (ef-themes-load-theme 'ef-owl))
+  ;; 备用的其他主题配置
+  ;; (use-package ef-themes
+  ;;  :demand t
+  ;;  :bind (("<f5>" . modus-themes-rotate)
+  ;;         ("C-<f5>" . modus-themes-select)
+  ;;         ("M-<f5>" . modus-themes-load-random))
+  ;;  :init
+  ;;  (setq modus-themes-mixed-fonts t
+  ;;        modus-themes-italic-constructs t)
+  ;;  :config
+  ;;  (setq ef-owl-palette-overrides
+  ;;        '((bg-region "#1a3f4a")))
+  ;;  
+  ;;  (ef-themes-load-theme 'ef-owl))
 
-    ;; (use-package mood-line
-    ;; :hook (after-init . mood-line-mode))
+  ;; (use-package mood-line
+  ;; :hook (after-init . mood-line-mode))
 
 #+end_src
 * Dashboard
@@ -311,7 +302,7 @@ dashboard的banner最好自己手动压缩为500x500以下
   (helpful-max-buffers 7))
 #+end_src
 
-* 不要乱动我的窗口！
+* 不要乱动我的窗口！ good scroll
 #+begin_src emacs-lisp :tangle ./post-init.el
   (use-package good-scroll
     :ensure t
@@ -339,28 +330,14 @@ md需要安装 pandoc
 
 org - babel
 org-bibtex
-#+begin_src emacs-lisp :tangle ./post-init.el
-  ;; (use-package org-habit
-  ;;   :ensure nil
-  ;;   :config
-  ;;   ;; 在 org-modules 中启用 org-habit
-  ;;   ;;(require 'org-habit)
-  ;;   (add-to-list 'org-modules 'org-habit)
-  ;;   (org-load-modules-maybe t)  
-  ;;   ;; 习惯图表显示最近 30 天，未来 3 天
-  ;;   (setq org-habit-show-habits-only-for-today t
-  ;;         org-habit-graph-column 50
-  ;;         org-habit-preceding-days 30
-  ;;         org-habit-following-days 3
-  ;;         org-habit-show-all-today t))
 
-
-#+end_src
 org attach 有点意思
+
+美化：org-modern org-super-agenda
 
 因为图片大时很卡，
 使用 =#+STARTUP: noinlineimage=
-不默认显示图片 可以用 =C-c C-x C-v=  手动打开
+显示图片 可以用 =C-c C-x C-v=  手动打开
 #+begin_src emacs-lisp :tangle ./post-init.el
   (use-package org
     :ensure t
@@ -457,76 +434,7 @@ org attach 有点意思
         org-appear-autolinks t      ;; 链接
         org-appear-autosubmarkers t))
 
-  ;; (use-package org-modern
-  ;; :hook (org-mode . org-modern-mode)
-  ;; :config
-  ;; ;; ===== 基础外观 =====
-  ;; (setq org-modern-hide-stars nil         ;; 保留标题星号（更稳定）
-  ;;       org-modern-table nil             ;; 表格用原生（更快）
-  ;;       org-modern-list '((?- . "•")
-  ;;                         (?+ . "➤")
-  ;;                         (?* . "◦"))   ;; 列表样式
-  ;;       org-modern-checkbox
-  ;;       '((?X . "☑")
-  ;;         (?- . "❍")
-  ;;         (?  . "☐")))
-  ;; 
-  ;; ;; ===== TODO 样式 =====
-  ;; (setq org-modern-todo t
-  ;;       org-modern-label-border 1)
-  ;; 
-  ;; ;; ===== 代码块 =====
-  ;; (setq org-modern-block-fringe nil
-  ;;       org-modern-block-name t
-  ;;       org-modern-keyword t)
-  ;; 
-  ;; ;; ===== 时间戳 =====
-  ;; (setq org-modern-timestamp t)
-  ;; 
-  ;; ;; ===== 优先级 =====
-  ;; (setq org-modern-priority t))
 
-  ;; (use-package org-super-agenda
-  ;; :after org-agenda
-  ;; :config
-  ;; (org-super-agenda-mode)
-  ;; 
-  ;; (setq org-super-agenda-groups
-  ;;       '(
-  ;;         ;; ===== 今日重要 =====
-  ;;         (:name "🔥 Important"
-  ;;                :priority "A")
-  ;; 
-  ;;         ;; ===== 今天 =====
-  ;;         (:name "📅 Today"
-  ;;                :time-grid t
-  ;;                :scheduled today)
-  ;; 
-  ;;         ;; ===== 已经延期 =====
-  ;;         (:name "⚠️ Overdue"
-  ;;                :deadline past)
-  ;; 
-  ;;         ;; ===== 即将截止 =====
-  ;;         (:name "⏳ Due soon"
-  ;;                :deadline future
-  ;;                :order 1)
-  ;; 
-  ;;         ;; ===== 习惯 =====
-  ;;         (:name "💪 Habits"
-  ;;                :habit t)
-  ;; 
-  ;;         ;; ===== 学习 =====
-  ;;         (:name "📚 Study"
-  ;;                :tag "study")
-  ;; 
-  ;;         ;; ===== 项目 =====
-  ;;         (:name "🚧 Projects"
-  ;;                :tag "project")
-  ;; 
-  ;;         ;; ===== 其他 =====
-  ;;         (:name "🧩 Others"
-  ;;                :anything t))))
-  ;;org-capture
 #+end_src
 ** org-download
 需要外部依赖
@@ -729,15 +637,7 @@ casual-compile-tmenu
 
 
 #+begin_src emacs-lisp :tangle ./post-init.el
-  ;; (use-package casual
-  ;;   :after org
-  ;;   :bind (:map org-mode-map
-  ;;               ("M-m" . casual-org-tmenu)
-  ;;               :map org-table-fedit-map
-  ;;               ("M-m" . casual-org-table-fedit-tmenu))
-  ;;   :config
-  ;;   )
-  ;;
+
   (use-package casual-suite
     :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
            ("M-j" . casual-avy-tmenu)
@@ -755,7 +655,7 @@ casual-compile-tmenu
            :map bookmark-bmenu-mode-map ("M-m" . casual-bookmarks-tmenu)
            :map calendar-mode-map ("M-m" . casual-calendar-tmenu)
            :map compilation-mode-map ("M-m" . casual-compile-tmenu)
-;;           :map eww-mode-map ("M-m" . casual-eww-tmenu)
+           ;;           :map eww-mode-map ("M-m" . casual-eww-tmenu)
            :map help-mode-map ("M-m" . casual-help-tmenu)
            :map Info-mode-map ("M-m" . casual-info-tmenu)
            ;;:map re-builder-mode-map ("M-m" . casual-re-builder-tmenu)
@@ -766,9 +666,6 @@ casual-compile-tmenu
     :config
 
 
-    ;; 默认情况下，suite 会自动检测并启用它支持的所有模块
-    ;; 你可以在这里进行全局微调
-                                          ;      (setq casual-use-avy-for-navigation t)
     )
            #+end_src
 
@@ -778,7 +675,7 @@ casual-compile-tmenu
    '((dot . t)))
 #+end_src
 * Vertico 五件套
-
+vertico + consult + orderless + marginalia + embark现代 Emacs 的“灵魂四件套
 M-RET 提交精确输入
 #+begin_src emacs-lisp :tangle ./post-init.el
 
@@ -881,9 +778,6 @@ M-RET 提交精确输入
 * Embark/Which key
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-  ;;==============================================================================
-  ;;; Embark - 上下文操作
-  ;;==============================================================================
 
   (use-package embark
     :bind (("C-," . embark-act)
@@ -927,10 +821,6 @@ M-RET 提交精确输入
     :demand t
     :hook (embark-collect-mode . consult-preview-at-point-mode))
 
-  ;;==============================================================================
-  ;;; Which-key - 按键提示
-  ;;==============================================================================
-
   (use-package which-key
     :demand t
     :custom
@@ -942,7 +832,7 @@ M-RET 提交精确输入
     :init
     (which-key-mode))
 #+end_src
-* 代码补全
+* corfu 代码补全
 Corfu
 pangu 这个是用来给中英文之间自动加空格的.
 图标问题没解决
@@ -1013,7 +903,7 @@ pangu 这个是用来给中英文之间自动加空格的.
     )
 
   (use-package corfu-terminal
-  :ensure t)
+    :ensure t)
 
   ;; (use-package corfu
   ;;   ;; Optional customizations
@@ -1081,10 +971,58 @@ pangu 这个是用来给中英文之间自动加空格的.
            ("C-c p l" . cape-line)))
 
 
-  (use-package pangu-spacing
-    :demand 0.2
+  
+#+end_src
+* multiple-cursors and undo-tree
+#+begin_src emacs-lisp :tangle ./post-init.el
+
+  (use-package multiple-cursors
+    :ensure t
+    :bind
+    (;; 最常用操作：选中词 → 连续按这个键添加相似光标
+     ("C->"     . mc/mark-next-like-this)
+     ("C-<"     . mc/mark-prev-like-this)
+     ;; 选中一个词后按这个 → 全缓冲区相同词都加光标
+     ("C-c C->" . mc/mark-all-like-this)
+
+     ;; 选中多行后 → 每行都出现光标（最实用的批量编辑）
+     ("C-S-c C-S-c" . mc/edit-lines)
+
+     ;; 其他常用（可选）
+     ("M-<down-mouse-1>" . mc/add-cursor-on-click)   ; 鼠标点哪哪出现光标（很爽）
+     ("C-!"          . mc/mark-all-dwim)            ; 智能全选（有区域就选区域，没区域就选全部）
+     )
+
     :config
-    (global-pangu-spacing-mode +1)) 
+    ;; 建议：让这些常用命令在 mc 模式下也能正常工作
+    (add-to-list 'mc/cmds-to-run-for-all 'forward-char)
+    (add-to-list 'mc/cmds-to-run-for-all 'backward-char)
+    (add-to-list 'mc/cmds-to-run-for-all 'delete-char)
+    (add-to-list 'mc/cmds-to-run-for-all 'backward-delete-char)
+    )
+
+  (use-package undo-tree
+    :ensure t
+    :bind
+    (("C-x u"   . undo-tree-visualize)     ; 原 C-x u 改成可视化树
+     ("C-/"     . undo-tree-undo)           ; ← 很多人喜欢这个组合
+     ("C-?"     . undo-tree-redo))          ; ← redo
+
+    :config
+    ;; 全局开启 undo-tree 模式（强烈推荐）
+    (global-undo-tree-mode 1)
+
+    ;; 以下是常用优化（按个人喜好选择）
+    (setq undo-tree-auto-save-history t)
+
+    (setq undo-tree-visualizer-timestamps t)
+
+    (setq undo-tree-visualizer-diff t)
+
+    (setq undo-tree-limit 2048)           ; 每个缓冲区最多保存 2048 次修改
+    (setq undo-tree-strong-limit 4096)
+    (setq undo-tree-history nil)          ; 如果你不需要跨会话历史可以关掉
+    )
 #+end_src
 * PLANNING yasnippet
 未实际使用..
@@ -1141,6 +1079,7 @@ pangu 这个是用来给中英文之间自动加空格的.
 * PLANNING [#B] avy ace-window amx expand-region
 虽然已经在用了,但是没有完全用明白.
 大体懂得 =filtering-selecting-acting= 的概念.
+expand-region的缩小选择功能我还挺喜欢的
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   ;;==============================================================================
@@ -1181,18 +1120,9 @@ pangu 这个是用来给中英文之间自动加空格的.
     :config
     (amx-mode 1))
 
-  ;; expand region
-  ;; (use-package expand-region
-  ;;   :bind ("C-=" . er/expand-region))
-  ;; 
-  ;;
+
   (use-package expreg
     :bind ("C-=" . expreg-expand))
-
-  ;; (use-package mwim
-  ;;   :config
-  ;;   (global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
-  ;;   (global-set-key (kbd "C-e") 'mwim-end-of-code-or-line))
 
   (use-package mwim
     :ensure t
@@ -1200,16 +1130,12 @@ pangu 这个是用来给中英文之间自动加空格的.
     ("C-a" . mwim-beginning-of-code-or-line)
     ("C-e" . mwim-end-of-code-or-line))
 
-                                          ;
-                                          ;==============================================================================
 
   #+end_src
-* 编程体验增强
+* flycheck magit rainbow-delimiters
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-  ;;==============================================================================
-  ;;; 编程支持 (Programming Support) 
-  ;;==============================================================================
+
 
   (use-package flycheck
     :hook (prog-mode . flycheck-mode)
@@ -1233,12 +1159,8 @@ pangu 这个是用来给中英文之间自动加空格的.
     )
 #+end_src
 * 自动恢复相关
-我希望把文件的autosave改一下,目前是每隔一段时间就自动写入,这个虽然现代但是也有一些弊端.
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-  ;;==============================================================================
-  ;;; 文件历史和自动恢复 (File History & Auto-revert)
-  ;;==============================================================================
 
   (use-package autorevert
     :ensure nil
@@ -1297,12 +1219,11 @@ vterm太强了,感觉跟真的终端完全没有区别.
 eat我听说很厉害,但是没有怎么使用过.
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-  ;;==============================================================================
-    ;;; Terminal
-  ;;==============================================================================
+
   ;; eat
   ;; (use-package eat
   ;;   )
+  
   ;; vterm
   (use-package vterm
     :config
@@ -1326,13 +1247,9 @@ eat我听说很厉害,但是没有怎么使用过.
     (add-hook 'vterm-mode-hook #'my-vterm--setup)
 
     )
-  ;;==============================================================================
 #+end_src
 * ibuffer
 #+begin_src emacs-lisp :tangle ./post-init.el
-
-  ;;==============================================================================
-  ;; ibuffer
   (use-package ibuffer
     :ensure nil                  ; ibuffer 是 Emacs 内置，不需要从 MELPA 安装
     :bind
@@ -1349,18 +1266,6 @@ eat我听说很厉害,但是没有怎么使用过.
 * treemacs 和 未整理杂项    
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-
-  ;;解耦
-  ;; (add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory)) 
-  ;; (require 'init-ime)
-
-  ;;==============================================================================
-  ;;==============================================================================
-  (use-package nerd-icons-dired
-    :hook
-    (dired-mode . nerd-icons-dired-mode))
-  ;;==============================================================================
-  ;;
   (use-package treemacs
     :ensure t
     :defer t
@@ -1454,9 +1359,6 @@ eat我听说很厉害,但是没有怎么使用过.
           ("C-x t C-t" . treemacs-find-file)
           ("C-x t M-t" . treemacs-find-tag)))
 
-  (use-package treemacs-evil
-    :after (treemacs evil)
-    :ensure t)
 
   (use-package treemacs-projectile
     :after (treemacs projectile)
@@ -1485,65 +1387,20 @@ eat我听说很厉害,但是没有怎么使用过.
 #+end_src
 * dired 相关
 #+begin_src emacs-lisp :tangle ./post-init.el
+
+  (use-package nerd-icons-dired
+    :hook
+    (dired-mode . nerd-icons-dired-mode))
+
   (use-package dirvish
     :init
     (dirvish-override-dired-mode)
     :bind
     ("C-x C-d" . dirvish))
-  ;; (use-package dired
-  ;;   :ensure nil
-  ;;   :config
-  ;;   (setq dired-listing-switches
-  ;;         "-l --almost-all --human-readable --group-directories-first --no-group")
-  ;;   ;; this command is useful when you want to close the window of `dirvish-side'
-  ;;   ;; automatically when opening a file
-  ;;   (put 'dired-find-alternate-file 'disabled nil))
-  ;; 
-  ;; (use-package dirvish
-  ;;   :init
-  ;;   (dirvish-override-dired-mode)
-  ;;   :custom
-  ;;   (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
-  ;;    '(("h" "~/"                          "Home")
-  ;;      ("d" "~/Downloads/"                "Downloads")
-  ;;      ("m" "/mnt/"                       "Drives")
-  ;;      ("s" "/ssh:my-remote-server")      "SSH server"
-  ;;      ("e" "/sudo:root@localhost:/etc")  "Modify program settings"
-  ;;      ("t" "~/.local/share/Trash/files/" "TrashCan")))
-  ;;   :config
-  ;;   ;; (dirvish-peek-mode)             ; Preview files in minibuffer
-  ;;   ;; (dirvish-side-follow-mode)      ; similar to `treemacs-follow-mode'
-  ;;   (setq dirvish-mode-line-format
-  ;;         '(:left (sort symlink) :right (omit yank index)))
-  ;;   (setq dirvish-attributes           ; The order *MATTERS* for some attributes
-  ;;         '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
-  ;;         dirvish-side-attributes
-  ;;         '(vc-state nerd-icons collapse file-size))
-  ;;   ;; open large directory (over 20000 files) asynchronously with `fd' command
-  ;;   (setq dirvish-large-directory-threshold 20000)
-  ;;   :bind ; Bind `dirvish-fd|dirvish-side|dirvish-dwim' as you see fit
-  ;;   (("C-c f" . dirvish)
-  ;;    :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
-  ;;    (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
-  ;;    ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
-  ;;    ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
-  ;;    ("f"   . dirvish-file-info-menu)    ; [f]ile info
-  ;;    ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
-  ;;    ("s"   . dirvish-quicksort)         ; [s]ort flie list
-  ;;    ("r"   . dirvish-history-jump)      ; [r]ecent visited
-  ;;    ("l"   . dirvish-ls-switches-menu)  ; [l]s command flags
-  ;;    ("v"   . dirvish-vc-menu)           ; [v]ersion control commands
-  ;;    ("*"   . dirvish-mark-menu)
-  ;;    ("y"   . dirvish-yank-menu)
-  ;;    ("N"   . dirvish-narrow)
-  ;;    ("^"   . dirvish-history-last)
-  ;;    ("TAB" . dirvish-subtree-toggle)
-  ;;    ("M-f" . dirvish-history-go-forward)
-  ;;    ("M-b" . dirvish-history-go-backward)
-  ;;    ("M-e" . dirvish-emerge-menu)))
+
 #+end_src
 
-* TODO emms
+* emms listen
 
 #+begin_src emacs-lisp :tangle ./post-init.el
   ;; (use-package emms
@@ -1577,17 +1434,17 @@ eat我听说很厉害,但是没有怎么使用过.
   ;;   (setq emms-browser-thumbnail-small-size 80
   ;;         emms-browser-thumbnail-medium-size
 
-  (use-package listen)  
-  (use-package emms
-    :defer t
-    :config
-    
-
-    (emms-all)
-    (setq emms-player-list '(emms-player-mpv)
-          emms-info-functions '(emms-info-native))
-
-    )
+  ;; (use-package listen)  
+  ;; (use-package emms
+  ;;   :defer t
+  ;;   :config
+  ;;   
+  ;; 
+  ;;   (emms-all)
+  ;;   (setq emms-player-list '(emms-player-mpv)
+  ;;         emms-info-functions '(emms-info-native))
+  ;; 
+  ;;   )
 
 #+end_src
 
@@ -1616,7 +1473,7 @@ eat我听说很厉害,但是没有怎么使用过.
 
 #+end_src
 
-* 中文输入法
+* 输入法
 
 配置了一小时。
 使用了雾凇拼音的词库。
@@ -1626,8 +1483,10 @@ eat我听说很厉害,但是没有怎么使用过.
 我顺带也把ubuntu的输入法也配置上雾凇了，在 =~/.config/ibus/rime/=
 
 #+begin_src emacs-lisp :tangle ./post-init.el
+  (global-set-key (kbd "S-SPC") #'toggle-input-method) 
+
   (use-package rime
-    :demand 1.0
+    ;;:demand 1.0
     :custom
     (default-input-method "rime")
     :config
@@ -1636,13 +1495,17 @@ eat我听说很厉害,但是没有怎么使用过.
     (setq rime-cursor-face '((t (:foreground "#00ff00"))))
     (setq rime-show-preedit t)
     (setq rime-user-data-dir "~/.config/fcitx/Rime/")
-    ;(setq rime-posframe-style ' simple)
-    ;(setq rime-show-preedit ' inline)
+                                          ;(setq rime-posframe-style ' simple)
+                                          ;(setq rime-show-preedit ' inline)
     ;; 默认值
     (setq rime-translate-keybindings
           '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
-  
-     )
+    )
+  ;; 中文英文之间插入空格
+  (use-package pangu-spacing
+    :demand 0.2
+    :config
+    (global-pangu-spacing-mode +1))
 #+end_src
 
 
@@ -1653,6 +1516,9 @@ eat我听说很厉害,但是没有怎么使用过.
 不是很好用，似乎识别不了一些词典的格式，而且样式有点丑，还不能折叠
 
 词典：quick-sdcv 或 dictionary + sdcv（更现代推荐 define-word 或 powerthesaurus）
+go-translate
+朗文词典
+
 
 #+begin_src emacs-lisp :tangle ./post-init.el
   (use-package quick-sdcv
@@ -1666,36 +1532,37 @@ eat我听说很厉害,但是没有怎么使用过.
     (quick-sdcv-dictionary-prefix-symbol "►")
     (quick-sdcv-ellipsis " ▼"))
 #+end_src
-* password manage
+* pass 
+t* password manage
 =sudo pacman -S pass gnupg git=
 
 一定不要忘了备份（但是别分享）私钥
 一定不要忘了pass phrase
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-  ;; 推荐组合：auth-source + pass 的桥接 + 好用的界面
-(use-package auth-source
-  :ensure t
-  :config
-  (add-to-list 'auth-sources 'password-store))   ; 关键这行
+    ;; 推荐组合：auth-source + pass 的桥接 + 好用的界面
+  (use-package auth-source
+    :ensure t
+    :config
+    (add-to-list 'auth-sources 'password-store))   ; 关键这行
 
-(use-package auth-source-pass
-  :ensure t
-  :after auth-source
-  :config
-  (auth-source-pass-enable))
+  (use-package auth-source-pass
+    :ensure t
+    :after auth-source
+    :config
+    (auth-source-pass-enable))
 
-(use-package pass
-  :ensure t
-  :bind ("C-c p p" . pass))          ; 打开 pass 浏览器模式
+  ;; (use-package pass
+  ;;   :ensure t
+  ;;   :bind ("C-c p p" . pass))
 
-(use-package password-store-menu
-  :ensure t
-  :bind ("C-c P" . password-store-menu))
+  (use-package password-store-menu
+    :ensure t
+    :bind ("C-c P" . password-store-menu))
 #+end_src
 
 
-* post-init.el 结尾
+* post-init.el ends here
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   (provide 'post-init)
@@ -1707,57 +1574,19 @@ eat我听说很厉害,但是没有怎么使用过.
 crux/easy-kill 似乎能优化编辑体验,可以试试.
 在emacs里处理电子邮件也没弄.
 
-** 番茄钟
-番茄/计时：org-pomodoro（和 org-agenda 集成最好），或 pomm（transient 菜单超美）、tmr（Protesilaos 出品，轻量定时器）
-** 智能 C-a M-a M-e C-e 智能 C-backspace删除
-** popper
 
-** emacs everywhere
 
-** undo-tree
 
-** 撤出minimal emacs 真正的香草味
 
-** 如何更新transit/orgmode这些内置包？
-把更新内置包的变量设为t，直接用 M-x package-update 就行了
-** stright.el
 
-** rime调试配置
-
-** vertico + consult + orderless + marginalia + embark现代 Emacs 的“灵魂四件套”，搜索/跳转/操作快到飞起
 
 ** 查缺补漏
-🧠 编辑体验 / 输入效率（核心但你没展开）
 
 结构化编辑
 
 =smartparens / paredit=
 
-多光标
-
-=multiple-cursors=
-
-跳转增强
-
-=avy= （比 ace-jump 更现代）
-
-历史与撤销树
-
-=undo-tree= / 内置 undo-redo（29+）
-
-补全体系
-
 =corfu + cape + kind-icon=
-
-minibuffer增强
-
-=vertico + orderless + marginalia + consult=
-
-👉 这一块其实决定你“住得舒不舒服”，比功能更重要。
-
-🔍 搜索 / 导航（可以强化）
-
-你写了 consult，但可以补完整生态：
 
 项目内导航
 
@@ -1813,9 +1642,6 @@ tree-sitter（内置）
 
 =direnv / envrc=
 
-shell集成
-
-=eshell=（比你写的 vterm 更“emacs式”）
 
 🌐 网络 / 信息流（可以补强）
 
@@ -1852,9 +1678,6 @@ API 调试
 
 =org-clock=
 
-习惯养成
-
-=org-habit=
 
 日志
 
@@ -1872,17 +1695,10 @@ org 加密
 
 🎨 UI / 体验细节（提升“常住感”）
 
-图标
-
-=all-the-icons / nerd-icons=
-
 动态美化
 
 =hl-todo / rainbow-delimiters=
 
-buffer 管理
-
-=ibuffer=
 
 * 依赖
 latex 

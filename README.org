@@ -49,7 +49,7 @@ emacs功能之多拓展性之强，不可能掌握所有的概念和快捷键
 - +RSS =el feed= 。+
 - 音乐播放器 =emms= =listen.el=
 - +视频播放 =ready-player= 。+
-- 词典 =quick-sdcv=
+- 词典 =quick-sdcv= 
 - +电子邮件 =mu4e= 。+
 - 强大的笔记 =org-mode=
 - 文学编程/Jupyter Notebook =org-babel=

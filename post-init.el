@@ -67,10 +67,6 @@
 (setq large-file-warning-threshold nil)
 (column-number-mode 1)
 
-(use-package transient
-:ensure t
-:pin gnu)
-
 (custom-set-faces
  '(gnus-group-news-low ((t (:foreground "cyan"))))
  '(gnus-group-news-low-empty ((t (:foreground "cyan" :weight normal)))))
@@ -137,25 +133,23 @@
 
 
 
-;; (use-package doom-modeline
-;;   :hook (after-init . doom-modeline-mode))
-;; 其他主题配置
- ;; (use-package ef-themes
- ;;  :demand t
- ;;  :bind (("<f5>" . modus-themes-rotate)
- ;;         ("C-<f5>" . modus-themes-select)
- ;;         ("M-<f5>" . modus-themes-load-random))
- ;;  :init
- ;;  (setq modus-themes-mixed-fonts t
- ;;        modus-themes-italic-constructs t)
- ;;  :config
- ;;  (setq ef-owl-palette-overrides
- ;;        '((bg-region "#1a3f4a")))
- ;;  
- ;;  (ef-themes-load-theme 'ef-owl))
+;; 备用的其他主题配置
+;; (use-package ef-themes
+;;  :demand t
+;;  :bind (("<f5>" . modus-themes-rotate)
+;;         ("C-<f5>" . modus-themes-select)
+;;         ("M-<f5>" . modus-themes-load-random))
+;;  :init
+;;  (setq modus-themes-mixed-fonts t
+;;        modus-themes-italic-constructs t)
+;;  :config
+;;  (setq ef-owl-palette-overrides
+;;        '((bg-region "#1a3f4a")))
+;;  
+;;  (ef-themes-load-theme 'ef-owl))
 
-  ;; (use-package mood-line
-  ;; :hook (after-init . mood-line-mode))
+;; (use-package mood-line
+;; :hook (after-init . mood-line-mode))
 
 ;; (use-package esup
 ;;   :demand t)
@@ -222,20 +216,6 @@
   )
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode))
-
-;; (use-package org-habit
-;;   :ensure nil
-;;   :config
-;;   ;; 在 org-modules 中启用 org-habit
-;;   ;;(require 'org-habit)
-;;   (add-to-list 'org-modules 'org-habit)
-;;   (org-load-modules-maybe t)  
-;;   ;; 习惯图表显示最近 30 天，未来 3 天
-;;   (setq org-habit-show-habits-only-for-today t
-;;         org-habit-graph-column 50
-;;         org-habit-preceding-days 30
-;;         org-habit-following-days 3
-;;         org-habit-show-all-today t))
 
 (use-package org
   :ensure t
@@ -331,77 +311,6 @@
 (setq org-appear-autoemphasis t   ;; *bold* / /italic/
       org-appear-autolinks t      ;; 链接
       org-appear-autosubmarkers t))
-
-;; (use-package org-modern
-;; :hook (org-mode . org-modern-mode)
-;; :config
-;; ;; ===== 基础外观 =====
-;; (setq org-modern-hide-stars nil         ;; 保留标题星号（更稳定）
-;;       org-modern-table nil             ;; 表格用原生（更快）
-;;       org-modern-list '((?- . "•")
-;;                         (?+ . "➤")
-;;                         (?* . "◦"))   ;; 列表样式
-;;       org-modern-checkbox
-;;       '((?X . "☑")
-;;         (?- . "❍")
-;;         (?  . "☐")))
-;; 
-;; ;; ===== TODO 样式 =====
-;; (setq org-modern-todo t
-;;       org-modern-label-border 1)
-;; 
-;; ;; ===== 代码块 =====
-;; (setq org-modern-block-fringe nil
-;;       org-modern-block-name t
-;;       org-modern-keyword t)
-;; 
-;; ;; ===== 时间戳 =====
-;; (setq org-modern-timestamp t)
-;; 
-;; ;; ===== 优先级 =====
-;; (setq org-modern-priority t))
-
-;; (use-package org-super-agenda
-;; :after org-agenda
-;; :config
-;; (org-super-agenda-mode)
-;; 
-;; (setq org-super-agenda-groups
-;;       '(
-;;         ;; ===== 今日重要 =====
-;;         (:name "🔥 Important"
-;;                :priority "A")
-;; 
-;;         ;; ===== 今天 =====
-;;         (:name "📅 Today"
-;;                :time-grid t
-;;                :scheduled today)
-;; 
-;;         ;; ===== 已经延期 =====
-;;         (:name "⚠️ Overdue"
-;;                :deadline past)
-;; 
-;;         ;; ===== 即将截止 =====
-;;         (:name "⏳ Due soon"
-;;                :deadline future
-;;                :order 1)
-;; 
-;;         ;; ===== 习惯 =====
-;;         (:name "💪 Habits"
-;;                :habit t)
-;; 
-;;         ;; ===== 学习 =====
-;;         (:name "📚 Study"
-;;                :tag "study")
-;; 
-;;         ;; ===== 项目 =====
-;;         (:name "🚧 Projects"
-;;                :tag "project")
-;; 
-;;         ;; ===== 其他 =====
-;;         (:name "🧩 Others"
-;;                :anything t))))
-;;org-capture
 
 (use-package org-download
   :ensure t
@@ -536,47 +445,35 @@
   :custom
   (valign-fancy-bar t))
 
-;; (use-package casual
-  ;;   :after org
-  ;;   :bind (:map org-mode-map
-  ;;               ("M-m" . casual-org-tmenu)
-  ;;               :map org-table-fedit-map
-  ;;               ("M-m" . casual-org-table-fedit-tmenu))
-  ;;   :config
-  ;;   )
-  ;;
-  (use-package casual-suite
-    :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
-           ("M-j" . casual-avy-tmenu)
-           ("C-o" . casual-editkit-main-tmenu)
-           
-           ("M-m" . casual-suite-tmenu)
-           ;; 如果你习惯在特定模式下使用更直观的快捷键
-           :map calc-mode-map ("M-m" . casual-calc-tmenu)
-           ;;:map isearch-mode-map ("M-m" . )
-           :map dired-mode-map ("M-m" . casual-dired-tmenu)
-           :map org-mode-map ("M-m" . casual-org-tmenu)
-           :map org-table-fedit-map ("M-m" . casual-org-table-fedit-tmenu)
-           :map org-agenda-mode-map ("M-m" . casual-agenda-tmenu)
-           :map ibuffer-mode-map ("M-m" . casual-ibuffer-tmenu)
-           :map bookmark-bmenu-mode-map ("M-m" . casual-bookmarks-tmenu)
-           :map calendar-mode-map ("M-m" . casual-calendar-tmenu)
-           :map compilation-mode-map ("M-m" . casual-compile-tmenu)
-;;           :map eww-mode-map ("M-m" . casual-eww-tmenu)
-           :map help-mode-map ("M-m" . casual-help-tmenu)
-           :map Info-mode-map ("M-m" . casual-info-tmenu)
-           ;;:map re-builder-mode-map ("M-m" . casual-re-builder-tmenu)
-           ;;  :map shell-mode-map ("M-m" . casual-eshell-tmenu)
-           :map image-mode-map ("M-m" . casual-image-tmenu)
-           )
+(use-package casual-suite
+  :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
+         ("M-j" . casual-avy-tmenu)
+         ("C-o" . casual-editkit-main-tmenu)
+         
+         ("M-m" . casual-suite-tmenu)
+         ;; 如果你习惯在特定模式下使用更直观的快捷键
+         :map calc-mode-map ("M-m" . casual-calc-tmenu)
+         ;;:map isearch-mode-map ("M-m" . )
+         :map dired-mode-map ("M-m" . casual-dired-tmenu)
+         :map org-mode-map ("M-m" . casual-org-tmenu)
+         :map org-table-fedit-map ("M-m" . casual-org-table-fedit-tmenu)
+         :map org-agenda-mode-map ("M-m" . casual-agenda-tmenu)
+         :map ibuffer-mode-map ("M-m" . casual-ibuffer-tmenu)
+         :map bookmark-bmenu-mode-map ("M-m" . casual-bookmarks-tmenu)
+         :map calendar-mode-map ("M-m" . casual-calendar-tmenu)
+         :map compilation-mode-map ("M-m" . casual-compile-tmenu)
+         ;;           :map eww-mode-map ("M-m" . casual-eww-tmenu)
+         :map help-mode-map ("M-m" . casual-help-tmenu)
+         :map Info-mode-map ("M-m" . casual-info-tmenu)
+         ;;:map re-builder-mode-map ("M-m" . casual-re-builder-tmenu)
+         ;;  :map shell-mode-map ("M-m" . casual-eshell-tmenu)
+         :map image-mode-map ("M-m" . casual-image-tmenu)
+         )
 
-    :config
+  :config
 
 
-    ;; 默认情况下，suite 会自动检测并启用它支持的所有模块
-    ;; 你可以在这里进行全局微调
-                                          ;      (setq casual-use-avy-for-navigation t)
-    )
+  )
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -801,7 +698,7 @@
   )
 
 (use-package corfu-terminal
-:ensure t)
+  :ensure t)
 
 ;; (use-package corfu
 ;;   ;; Optional customizations
@@ -868,11 +765,53 @@
          ("C-c p a" . cape-abbrev)
          ("C-c p l" . cape-line)))
 
+(use-package multiple-cursors
+  :ensure t
+  :bind
+  (;; 最常用操作：选中词 → 连续按这个键添加相似光标
+   ("C->"     . mc/mark-next-like-this)
+   ("C-<"     . mc/mark-prev-like-this)
+   ;; 选中一个词后按这个 → 全缓冲区相同词都加光标
+   ("C-c C->" . mc/mark-all-like-this)
 
-(use-package pangu-spacing
-  :demand 0.2
+   ;; 选中多行后 → 每行都出现光标（最实用的批量编辑）
+   ("C-S-c C-S-c" . mc/edit-lines)
+
+   ;; 其他常用（可选）
+   ("M-<down-mouse-1>" . mc/add-cursor-on-click)   ; 鼠标点哪哪出现光标（很爽）
+   ("C-!"          . mc/mark-all-dwim)            ; 智能全选（有区域就选区域，没区域就选全部）
+   )
+
   :config
-  (global-pangu-spacing-mode +1))
+  ;; 建议：让这些常用命令在 mc 模式下也能正常工作
+  (add-to-list 'mc/cmds-to-run-for-all 'forward-char)
+  (add-to-list 'mc/cmds-to-run-for-all 'backward-char)
+  (add-to-list 'mc/cmds-to-run-for-all 'delete-char)
+  (add-to-list 'mc/cmds-to-run-for-all 'backward-delete-char)
+  )
+
+(use-package undo-tree
+  :ensure t
+  :bind
+  (("C-x u"   . undo-tree-visualize)     ; 原 C-x u 改成可视化树
+   ("C-/"     . undo-tree-undo)           ; ← 很多人喜欢这个组合
+   ("C-?"     . undo-tree-redo))          ; ← redo
+
+  :config
+  ;; 全局开启 undo-tree 模式（强烈推荐）
+  (global-undo-tree-mode 1)
+
+  ;; 以下是常用优化（按个人喜好选择）
+  (setq undo-tree-auto-save-history t)
+
+  (setq undo-tree-visualizer-timestamps t)
+
+  (setq undo-tree-visualizer-diff t)
+
+  (setq undo-tree-limit 2048)           ; 每个缓冲区最多保存 2048 次修改
+  (setq undo-tree-strong-limit 4096)
+  (setq undo-tree-history nil)          ; 如果你不需要跨会话历史可以关掉
+  )
 
 ;; yasnippet ??TODO
 (use-package yasnippet)
@@ -956,31 +895,15 @@
   :config
   (amx-mode 1))
 
-;; expand region
-;; (use-package expand-region
-;;   :bind ("C-=" . er/expand-region))
-;; 
-;;
+
 (use-package expreg
   :bind ("C-=" . expreg-expand))
-
-;; (use-package mwim
-;;   :config
-;;   (global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
-;;   (global-set-key (kbd "C-e") 'mwim-end-of-code-or-line))
 
 (use-package mwim
   :ensure t
   :bind
   ("C-a" . mwim-beginning-of-code-or-line)
   ("C-e" . mwim-end-of-code-or-line))
-
-                                        ;
-                                        ;==============================================================================
-
-;;==============================================================================
-;;; 编程支持 (Programming Support) 
-;;==============================================================================
 
 (use-package flycheck
   :hook (prog-mode . flycheck-mode)
@@ -1002,10 +925,6 @@
   ;; (clojure-mode  . rainbow-delimiters-mode)
   ;; (inferior-ess-mode . rainbow-delimiters-mode)   ;; R 的 REPL
   )
-
-;;==============================================================================
-;;; 文件历史和自动恢复 (File History & Auto-revert)
-;;==============================================================================
 
 (use-package autorevert
   :ensure nil
@@ -1059,12 +978,10 @@
   :config
   (save-place-mode 1))
 
-;;==============================================================================
-  ;;; Terminal
-;;==============================================================================
 ;; eat
 ;; (use-package eat
 ;;   )
+
 ;; vterm
 (use-package vterm
   :config
@@ -1088,10 +1005,7 @@
   (add-hook 'vterm-mode-hook #'my-vterm--setup)
 
   )
-;;==============================================================================
 
-;;==============================================================================
-;; ibuffer
 (use-package ibuffer
   :ensure nil                  ; ibuffer 是 Emacs 内置，不需要从 MELPA 安装
   :bind
@@ -1105,17 +1019,6 @@
   (ibuffer-mode . ibuffer-auto-mode)                ; 打开 ibuffer 时自动开启分组并实时更新
   )
 
-;;解耦
-;; (add-to-list 'load-path (expand-file-name "elisp" user-emacs-directory)) 
-;; (require 'init-ime)
-
-;;==============================================================================
-;;==============================================================================
-(use-package nerd-icons-dired
-  :hook
-  (dired-mode . nerd-icons-dired-mode))
-;;==============================================================================
-;;
 (use-package treemacs
   :ensure t
   :defer t
@@ -1209,9 +1112,6 @@
         ("C-x t C-t" . treemacs-find-file)
         ("C-x t M-t" . treemacs-find-tag)))
 
-(use-package treemacs-evil
-  :after (treemacs evil)
-  :ensure t)
 
 (use-package treemacs-projectile
   :after (treemacs projectile)
@@ -1237,62 +1137,15 @@
 ;; 
 ;; (treemacs-start-on-boot)
 
+(use-package nerd-icons-dired
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
+
 (use-package dirvish
   :init
   (dirvish-override-dired-mode)
   :bind
   ("C-x C-d" . dirvish))
-;; (use-package dired
-;;   :ensure nil
-;;   :config
-;;   (setq dired-listing-switches
-;;         "-l --almost-all --human-readable --group-directories-first --no-group")
-;;   ;; this command is useful when you want to close the window of `dirvish-side'
-;;   ;; automatically when opening a file
-;;   (put 'dired-find-alternate-file 'disabled nil))
-;; 
-;; (use-package dirvish
-;;   :init
-;;   (dirvish-override-dired-mode)
-;;   :custom
-;;   (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
-;;    '(("h" "~/"                          "Home")
-;;      ("d" "~/Downloads/"                "Downloads")
-;;      ("m" "/mnt/"                       "Drives")
-;;      ("s" "/ssh:my-remote-server")      "SSH server"
-;;      ("e" "/sudo:root@localhost:/etc")  "Modify program settings"
-;;      ("t" "~/.local/share/Trash/files/" "TrashCan")))
-;;   :config
-;;   ;; (dirvish-peek-mode)             ; Preview files in minibuffer
-;;   ;; (dirvish-side-follow-mode)      ; similar to `treemacs-follow-mode'
-;;   (setq dirvish-mode-line-format
-;;         '(:left (sort symlink) :right (omit yank index)))
-;;   (setq dirvish-attributes           ; The order *MATTERS* for some attributes
-;;         '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
-;;         dirvish-side-attributes
-;;         '(vc-state nerd-icons collapse file-size))
-;;   ;; open large directory (over 20000 files) asynchronously with `fd' command
-;;   (setq dirvish-large-directory-threshold 20000)
-;;   :bind ; Bind `dirvish-fd|dirvish-side|dirvish-dwim' as you see fit
-;;   (("C-c f" . dirvish)
-;;    :map dirvish-mode-map               ; Dirvish inherits `dired-mode-map'
-;;    (";"   . dired-up-directory)        ; So you can adjust `dired' bindings here
-;;    ("?"   . dirvish-dispatch)          ; [?] a helpful cheatsheet
-;;    ("a"   . dirvish-setup-menu)        ; [a]ttributes settings:`t' toggles mtime, `f' toggles fullframe, etc.
-;;    ("f"   . dirvish-file-info-menu)    ; [f]ile info
-;;    ("o"   . dirvish-quick-access)      ; [o]pen `dirvish-quick-access-entries'
-;;    ("s"   . dirvish-quicksort)         ; [s]ort flie list
-;;    ("r"   . dirvish-history-jump)      ; [r]ecent visited
-;;    ("l"   . dirvish-ls-switches-menu)  ; [l]s command flags
-;;    ("v"   . dirvish-vc-menu)           ; [v]ersion control commands
-;;    ("*"   . dirvish-mark-menu)
-;;    ("y"   . dirvish-yank-menu)
-;;    ("N"   . dirvish-narrow)
-;;    ("^"   . dirvish-history-last)
-;;    ("TAB" . dirvish-subtree-toggle)
-;;    ("M-f" . dirvish-history-go-forward)
-;;    ("M-b" . dirvish-history-go-backward)
-;;    ("M-e" . dirvish-emerge-menu)))
 
 ;; (use-package emms
 ;;   :demand 0.2
@@ -1325,17 +1178,17 @@
 ;;   (setq emms-browser-thumbnail-small-size 80
 ;;         emms-browser-thumbnail-medium-size
 
-(use-package listen)  
-(use-package emms
-  :defer t
-  :config
-  
-
-  (emms-all)
-  (setq emms-player-list '(emms-player-mpv)
-        emms-info-functions '(emms-info-native))
-
-  )
+;; (use-package listen)  
+;; (use-package emms
+;;   :defer t
+;;   :config
+;;   
+;; 
+;;   (emms-all)
+;;   (setq emms-player-list '(emms-player-mpv)
+;;         emms-info-functions '(emms-info-native))
+;; 
+;;   )
 
 ;; mu4e 基本加载（复制粘贴，根据你的系统改路径）
 ;; (use-package mu4e
@@ -1356,8 +1209,10 @@
 ;;         ;; ... 更多配置见下面
 ;;         ))
 
+(global-set-key (kbd "S-SPC") #'toggle-input-method) 
+
 (use-package rime
-  :demand 1.0
+  ;;:demand 1.0
   :custom
   (default-input-method "rime")
   :config
@@ -1366,13 +1221,17 @@
   (setq rime-cursor-face '((t (:foreground "#00ff00"))))
   (setq rime-show-preedit t)
   (setq rime-user-data-dir "~/.config/fcitx/Rime/")
-  ;(setq rime-posframe-style ' simple)
-  ;(setq rime-show-preedit ' inline)
+                                        ;(setq rime-posframe-style ' simple)
+                                        ;(setq rime-show-preedit ' inline)
   ;; 默认值
   (setq rime-translate-keybindings
         '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
-
-   )
+  )
+;; 中文英文之间插入空格
+(use-package pangu-spacing
+  :demand 0.2
+  :config
+  (global-pangu-spacing-mode +1))
 
 (use-package quick-sdcv
   :ensure t
@@ -1397,9 +1256,9 @@
   :config
   (auth-source-pass-enable))
 
-(use-package pass
-  :ensure t
-  :bind ("C-c p p" . pass))          ; 打开 pass 浏览器模式
+;; (use-package pass
+;;   :ensure t
+;;   :bind ("C-c p p" . pass))
 
 (use-package password-store-menu
   :ensure t
