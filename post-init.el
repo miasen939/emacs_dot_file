@@ -288,7 +288,7 @@
           ))
   ;;org-agenda
   (setq org-agenda-files '
-        ("~/Documents/org-note/agenda/TODOs.org"))
+        ("~/Documents/org-agenda/TODOs.org")) ;;一定要注意，改这个同时要改org capture的目标文件
   :hook
   (org-mode . org-link-preview-refresh)
   
@@ -300,10 +300,10 @@
   :config
   (setq org-capture-templates
         '(("t" "Todo" entry
-           (file+headline "~/Documents/org-note/agenda/TODOs.org" "inbox:inbox:")
+           (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
            "* TODO %?\n  %U\n")
           ("s" "Someday" entry
-           (file+headline "~/Documents/org-note/agenda/TODOs.org" "inbox:inbox:")
+           (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
            "* SOMEDAY %?\n  %U\n"))))
 (use-package org-appear
 :hook (org-mode . org-appear-mode)
@@ -393,17 +393,30 @@
   ;; If using org-roam-protocol
   (require 'org-roam-protocol))
 
+;; (use-package org-roam-ui
+;;   :after org-roam ;; or :after org
+;;   ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;   ;;         a hookable mode anymore, you're advised to pick something yourself
+;;   ;;         if you don't care about startup time, use
+;;   ;;  :hook (after-init . org-roam-ui-mode)
+;;   :config
+;;   (setq org-roam-ui-sync-theme t
+;;         org-roam-ui-follow t
+;;         org-roam-ui-update-on-save t
+;;         org-roam-ui-open-on-start t))
+
 (use-package org-roam-ui
-  :after org-roam ;; or :after org
-  ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-  ;;         a hookable mode anymore, you're advised to pick something yourself
-  ;;         if you don't care about startup time, use
-  ;;  :hook (after-init . org-roam-ui-mode)
+  :vc (:url "https://github.com/org-roam/org-roam-ui.git"
+       :branch "main")   ; 可选：指定分支，默认是 main/master
+  :after org-roam
   :config
   (setq org-roam-ui-sync-theme t
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start t))
+        org-roam-ui-open-on-start t)
+  
+  ;; (org-roam-ui-mode +1)  ; 手动启用或加 hook
+  )
 
 ;;==============================================================================
 ;;; Markdown
@@ -572,10 +585,6 @@
   (projectile-mode +1)
   )
 
-;;==============================================================================
-;;; Embark - 上下文操作
-;;==============================================================================
-
 (use-package embark
   :bind (("C-," . embark-act)
          ;;("C-;" . embark-dwim)
@@ -617,10 +626,6 @@
   :after (embark consult)
   :demand t
   :hook (embark-collect-mode . consult-preview-at-point-mode))
-
-;;==============================================================================
-;;; Which-key - 按键提示
-;;==============================================================================
 
 (use-package which-key
   :demand t
@@ -857,10 +862,6 @@
     (burly-bookmark-windows
      (format "tab-%s" (alist-get 'name (tab-bar--current-tab))))))
 
-;;==============================================================================
-                 ;;; 导航和编辑增强 (Navigation & Editing)
-;;==============================================================================
-
 (use-package avy
   :bind (
          ("C-." . avy-goto-char-timer)
@@ -897,7 +898,8 @@
 
 
 (use-package expreg
-  :bind ("C-=" . expreg-expand))
+  :bind( ("C-=" . expreg-expand)
+         ("C--" . expreg-contract)))
 
 (use-package mwim
   :ensure t
@@ -1209,8 +1211,6 @@
 ;;         ;; ... 更多配置见下面
 ;;         ))
 
-(global-set-key (kbd "S-SPC") #'toggle-input-method) 
-
 (use-package rime
   ;;:demand 1.0
   :custom
@@ -1232,6 +1232,46 @@
   :demand 0.2
   :config
   (global-pangu-spacing-mode +1))
+
+;; (use-package ddskk
+;;   :demand t
+;;   :init
+;;   (global-set-key (kbd "C-x C-\\") 'skk-mode)
+;;   :config
+;;   (setq default-input-method "japanese-skk")
+;;   (setq skk-jisyo "~/.skk-jisyo")
+;;   ;; 词库学习
+;;   (setq skk-use-auto-fill t)
+;;   (setq skk-save-jisyo-instantly t)
+;;   )
+
+;; (use-package ddskk
+;; :ensure t
+;; :init
+;; (global-set-key (kbd "C-x C-\\") 'skk-mode)
+;; ;; 👇 移到 :init，确保加载前就设好
+;; (setq skk-jisyo "~/.skk-jisyo")
+;; (setq skk-large-jisyo "/usr/share/skk/SKK-JISYO.L")
+;; (setq skk-extra-jisyo-file-list
+;;       '("/usr/share/skk/SKK-JISYO.jinmei"
+;;         "/usr/share/skk/SKK-JISYO.geo"))
+
+(global-set-key (kbd "C-x C-\\") 'skk-mode)
+
+
+(use-package ddskk
+  :ensure t
+  :init
+  ;; 👇 移到 :init，确保加载前就设好
+  (setq skk-jisyo "~/.skk-jisyo")
+  (setq skk-large-jisyo "~/.emacs.d/skk-get-jisyo/SKK-JISYO.L")
+
+  (setq skk-extra-jisyo-file-list
+        '("/usr/share/skk/SKK-JISYO.jinmei"
+          "/usr/share/skk/SKK-JISYO.geo"))
+  :config
+  (setq skk-use-auto-fill t)
+  (setq skk-save-jisyo-instantly t))
 
 (use-package quick-sdcv
   :ensure t

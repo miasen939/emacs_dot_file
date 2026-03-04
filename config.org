@@ -16,7 +16,7 @@
     (require 'use-package))
 
   ;;确保 ELPA 路径优先
-  (setq package-install-upgrade-built-in t)
+;;  (setq package-install-upgrade-built-in t)
 
   ;;不验证签名
   (setq package-check-signature nil)
@@ -410,7 +410,7 @@ org attach 有点意思
             ))
     ;;org-agenda
     (setq org-agenda-files '
-          ("~/Documents/org-note/agenda/TODOs.org"))
+          ("~/Documents/org-agenda/TODOs.org")) ;;一定要注意，改这个同时要改org capture的目标文件
     :hook
     (org-mode . org-link-preview-refresh)
     
@@ -422,10 +422,10 @@ org attach 有点意思
     :config
     (setq org-capture-templates
           '(("t" "Todo" entry
-             (file+headline "~/Documents/org-note/agenda/TODOs.org" "inbox:inbox:")
+             (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
              "* TODO %?\n  %U\n")
             ("s" "Someday" entry
-             (file+headline "~/Documents/org-note/agenda/TODOs.org" "inbox:inbox:")
+             (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
              "* SOMEDAY %?\n  %U\n"))))
   (use-package org-appear
   :hook (org-mode . org-appear-mode)
@@ -538,17 +538,30 @@ CachyOS需要 wl-clipboard
 
 #+begin_src emacs-lisp :tangle ./post-init.el
 
+  ;; (use-package org-roam-ui
+  ;;   :after org-roam ;; or :after org
+  ;;   ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+  ;;   ;;         a hookable mode anymore, you're advised to pick something yourself
+  ;;   ;;         if you don't care about startup time, use
+  ;;   ;;  :hook (after-init . org-roam-ui-mode)
+  ;;   :config
+  ;;   (setq org-roam-ui-sync-theme t
+  ;;         org-roam-ui-follow t
+  ;;         org-roam-ui-update-on-save t
+  ;;         org-roam-ui-open-on-start t))
+
   (use-package org-roam-ui
-    :after org-roam ;; or :after org
-    ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-    ;;         a hookable mode anymore, you're advised to pick something yourself
-    ;;         if you don't care about startup time, use
-    ;;  :hook (after-init . org-roam-ui-mode)
+    :vc (:url "https://github.com/org-roam/org-roam-ui.git"
+         :branch "main")   ; 可选：指定分支，默认是 main/master
+    :after org-roam
     :config
     (setq org-roam-ui-sync-theme t
           org-roam-ui-follow t
           org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+          org-roam-ui-open-on-start t)
+    
+    ;; (org-roam-ui-mode +1)  ; 手动启用或加 hook
+    )
 #+end_src
 
 ** markdown
@@ -1082,10 +1095,6 @@ pangu 这个是用来给中英文之间自动加空格的.
 expand-region的缩小选择功能我还挺喜欢的
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-  ;;==============================================================================
-                   ;;; 导航和编辑增强 (Navigation & Editing)
-  ;;==============================================================================
-
   (use-package avy
     :bind (
            ("C-." . avy-goto-char-timer)
@@ -1122,7 +1131,8 @@ expand-region的缩小选择功能我还挺喜欢的
 
 
   (use-package expreg
-    :bind ("C-=" . expreg-expand))
+    :bind( ("C-=" . expreg-expand)
+           ("C--" . expreg-contract)))
 
   (use-package mwim
     :ensure t
@@ -1475,6 +1485,7 @@ eat我听说很厉害,但是没有怎么使用过.
 
 * 输入法
 
+** rime
 配置了一小时。
 使用了雾凇拼音的词库。
 果然是有点小问题问题，emacs的快捷键完全不生效了，只能用pageup和pagedown来翻页。
@@ -1483,7 +1494,8 @@ eat我听说很厉害,但是没有怎么使用过.
 我顺带也把ubuntu的输入法也配置上雾凇了，在 =~/.config/ibus/rime/=
 
 #+begin_src emacs-lisp :tangle ./post-init.el
-  (global-set-key (kbd "S-SPC") #'toggle-input-method) 
+
+  
 
   (use-package rime
     ;;:demand 1.0
@@ -1507,8 +1519,67 @@ eat我听说很厉害,但是没有怎么使用过.
     :config
     (global-pangu-spacing-mode +1))
 #+end_src
+** ddskk
+
+大写触发汉字，小写继续补假名
+=C-j l q /=
+
+[[https://ddskk.readthedocs.io/ja/latest/05_basic.html][ddskk教程]]
+
+送り仮名が有る：
+比如输入 食べる
+输入方法是：TabeRu
 
 
+#+begin_src emacs-lisp :tangle ./post-init.el
+
+    ;; (use-package ddskk
+    ;;   :demand t
+    ;;   :init
+    ;;   (global-set-key (kbd "C-x C-\\") 'skk-mode)
+    ;;   :config
+    ;;   (setq default-input-method "japanese-skk")
+    ;;   (setq skk-jisyo "~/.skk-jisyo")
+    ;;   ;; 词库学习
+    ;;   (setq skk-use-auto-fill t)
+    ;;   (setq skk-save-jisyo-instantly t)
+    ;;   )
+
+    ;; (use-package ddskk
+    ;; :ensure t
+    ;; :init
+    ;; (global-set-key (kbd "C-x C-\\") 'skk-mode)
+    ;; ;; 👇 移到 :init，确保加载前就设好
+    ;; (setq skk-jisyo "~/.skk-jisyo")
+    ;; (setq skk-large-jisyo "/usr/share/skk/SKK-JISYO.L")
+    ;; (setq skk-extra-jisyo-file-list
+    ;;       '("/usr/share/skk/SKK-JISYO.jinmei"
+    ;;         "/usr/share/skk/SKK-JISYO.geo"))
+
+    (global-set-key (kbd "C-x C-\\") 'skk-mode)
+
+
+    (use-package ddskk
+      :ensure t
+      :init
+      ;; 👇 移到 :init，确保加载前就设好
+      (setq skk-jisyo "~/.skk-jisyo")
+      (setq skk-large-jisyo "~/.emacs.d/skk-get-jisyo/SKK-JISYO.L")
+
+      (setq skk-extra-jisyo-file-list
+            '("/usr/share/skk/SKK-JISYO.jinmei"
+              "/usr/share/skk/SKK-JISYO.geo"))
+      :config
+      (setq skk-use-auto-fill t)
+      (setq skk-save-jisyo-instantly t))
+  
+
+
+#+end_src
+
+
+
+** mozc
 
 
 * quick-sdcv emacs内置词典
@@ -1569,24 +1640,16 @@ t* password manage
   ;;; post-init.el ends here
 #+end_src
 
-
-* 待办
-crux/easy-kill 似乎能优化编辑体验,可以试试.
-在emacs里处理电子邮件也没弄.
+* 键位规划
+=M-n M-p= 这俩特别好用的键还没用呢
 
 
-
-
-
-
-
-** 查缺补漏
+* 查缺补漏
 
 结构化编辑
 
 =smartparens / paredit=
 
-=corfu + cape + kind-icon=
 
 项目内导航
 
@@ -1614,9 +1677,8 @@ crux/easy-kill 似乎能优化编辑体验,可以试试.
 
 =olivetti / writeroom=
 
-🧩 开发体验（比 LSP 更细一层）
 
-语法高亮（现代核心）
+ISP
 
 tree-sitter（内置）
 
@@ -1632,18 +1694,13 @@ tree-sitter（内置）
 
 =hideshow / origami=
 
-📦 系统工具 / 运维
 
-文件历史 / 版本回溯
-
-=vc=（很多人忽略，其实很强）
+=vc= （很多人忽略，其实很强）
 
 环境变量管理
 
 =direnv / envrc=
 
-
-🌐 网络 / 信息流（可以补强）
 
 HTTP 客户端
 
@@ -1670,7 +1727,6 @@ API 调试
 
 =citar / org-cite=
 
-🕒 时间 / 习惯系统（你只写了 agenda）
 
 可以升级成完整 GTD：
 
@@ -1683,8 +1739,6 @@ API 调试
 
 =org-journal=
 
-🔐 安全 / 加密
-
 文件加密
 
 =epa / gpg=
@@ -1693,7 +1747,6 @@ org 加密
 
 =org-crypt=
 
-🎨 UI / 体验细节（提升“常住感”）
 
 动态美化
 
