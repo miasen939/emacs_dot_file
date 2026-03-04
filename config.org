@@ -11,7 +11,7 @@
 
 
 
-
+    
   (eval-when-compile
     (require 'use-package))
 
@@ -55,7 +55,7 @@ benchmark 用来分析启动时间
 
 #+end_src
 
-* 不使用package的设置
+* 不使用package的一些设置
 
 
 
@@ -108,15 +108,26 @@ benchmark 用来分析启动时间
   (setq history-length 500)
   ;; 启动全屏
   (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
-  ;;像素滚动
-  (pixel-scroll-precision-mode 1)
-
 #+end_src
-
-** TODO 温和删词
+** 翻页优化
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-  (global-subword-mode 1)
+  ;; 翻页保留5行重叠，不显得太跳
+  (setq next-screen-context-lines 5)
+
+  ;; 滚动时距边缘保留3行
+  (setq scroll-margin 3)
+
+  ;; 避免翻页时重新居中
+  (setq scroll-conservatively 101)
+
+  ;; 翻页时光标跟着走，不乱跳
+  (setq scroll-preserve-screen-position t)
+  ;; other-window 保持一致
+  (setq other-window-scroll-default nil)
+  (setq scroll-other-window-lines 3)
+  ;;
+  (pixel-scroll-precision-mode 1)
 
 #+end_src
 ** use-package emacs
@@ -136,6 +147,38 @@ benchmark 用来分析启动时间
   (setq large-file-warning-threshold nil)
   (column-number-mode 1) 
 #+end_src
+* 温和删词
+CLOSED: [2026-03-04 水 23:21]
+- State "DONE"       from "TODO"       [2026-03-04 水 23:21]
+#+begin_src emacs-lisp :tangle ./post-init.el
+
+  (global-subword-mode 1)
+
+  ;; (use-package hungry-delete
+  ;; :config
+  ;; (global-hungry-delete-mode))
+
+
+
+  (defun my/backward-kill-word ()
+    "中英混排友好的向后删词，其余行为与默认 C-backspace 完全一致。"
+    (interactive)
+    (let ((ch (char-before)))
+      (if (and ch (string-match-p "[\\u3000-\\u9fff\\uff00-\\uffef]" (string ch)))
+          ;; 只有光标前是中日文时，删连续中日字符
+          (delete-region (point)
+                         (save-excursion
+                           (while (and (not (bobp))
+                                       (string-match-p "[\\u3000-\\u9fff\\uff00-\\uffef]"
+                                                       (string (char-before))))
+                             (backward-char))
+                           (point)))
+        ;; 其他一切交给原生            
+        (backward-kill-word 1))))
+
+  (global-set-key (kbd "C-<backspace>") #'my/backward-kill-word)
+#+end_src
+
 
 
 
@@ -237,7 +280,7 @@ benchmark 用来分析启动时间
 
   ;; (use-package mood-line
   ;; :hook (after-init . mood-line-mode))
-  
+
 
 #+end_src
 * Dashboard
@@ -274,22 +317,22 @@ dashboard的banner最好自己手动压缩为500x500以下
 #+end_src
 * helpful 更易用的help界面
 #+begin_src emacs-lisp :tangle ./post-init.el
-(use-package helpful
-  :ensure t
-  :commands (helpful-callable
-             helpful-variable
-             helpful-key
-             helpful-command
-             helpful-at-point
-             helpful-function)
-  :bind
-  ([remap describe-command] . helpful-command)
-  ([remap describe-function] . helpful-callable)
-  ([remap describe-key] . helpful-key)
-  ([remap describe-symbol] . helpful-symbol)
-  ([remap describe-variable] . helpful-variable)
-  :custom
-  (helpful-max-buffers 7))
+  (use-package helpful
+    :ensure t
+    :commands (helpful-callable
+               helpful-variable
+               helpful-key
+               helpful-command
+               helpful-at-point
+               helpful-function)
+    :bind
+    ([remap describe-command] . helpful-command)
+    ([remap describe-function] . helpful-callable)
+    ([remap describe-key] . helpful-key)
+    ([remap describe-symbol] . helpful-symbol)
+    ([remap describe-variable] . helpful-variable)
+    :custom
+    (helpful-max-buffers 7))
 #+end_src
 
 * 不要乱动我的窗口！ good scroll
@@ -417,11 +460,11 @@ org attach 有点意思
              (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
              "* SOMEDAY %?\n  %U\n"))))
   (use-package org-appear
-  :hook (org-mode . org-appear-mode)
-  :config
-  (setq org-appear-autoemphasis t   ;; *bold* / /italic/
-        org-appear-autolinks t      ;; 链接
-        org-appear-autosubmarkers t))
+    :hook (org-mode . org-appear-mode)
+    :config
+    (setq org-appear-autoemphasis t   ;; *bold* / /italic/
+          org-appear-autolinks t      ;; 链接
+          org-appear-autosubmarkers t))
 
 
 #+end_src
@@ -529,7 +572,7 @@ CachyOS需要 wl-clipboard
 
   (use-package org-roam-ui
     :vc (:url "https://github.com/org-roam/org-roam-ui.git"
-         :branch "main")   ; 可选：指定分支，默认是 main/master
+              :branch "main")   ; 可选：指定分支，默认是 main/master
     :after org-roam
     :config
     (setq org-roam-ui-sync-theme t
@@ -652,7 +695,7 @@ casual-compile-tmenu
 
 
     )
-           #+end_src
+#+end_src
 
 #+begin_src emacs-lisp :tangle ./post-init.el
   (org-babel-do-load-languages
@@ -892,7 +935,7 @@ pangu 这个是用来给中英文之间自动加空格的.
            ("C-c p s" . cape-symbol)
            ("C-c p a" . cape-abbrev)
            ("C-c p l" . cape-line)))
-  
+
 #+end_src
 * multiple-cursors and undo-tree
 #+begin_src emacs-lisp :tangle ./post-init.el
@@ -1134,7 +1177,7 @@ eat我听说很厉害,但是没有怎么使用过.
   ;; eat
   ;; (use-package eat
   ;;   )
-  
+
   ;; vterm
   (use-package vterm
     :config
@@ -1320,7 +1363,7 @@ CLOSED: [2026-03-04 水 15:43]
 
   不过在emacs里把音乐文件当字符一样处理和整理是很有必要的，所以未来我可能会重新启用emacs music
 #+begin_src emacs-lisp :tangle ./post-init.el
-  
+
 
   ;; (use-package listen)  
   ;; (use-package emms
@@ -1356,7 +1399,7 @@ CLOSED: [2026-03-04 水 15:43]
 
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-  
+
 
   (use-package rime
     ;;:demand 1.0
@@ -1394,21 +1437,21 @@ CLOSED: [2026-03-04 水 15:43]
 
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-    (global-set-key (kbd "C-x C-\\") 'skk-mode)
+  (global-set-key (kbd "C-x C-\\") 'skk-mode)
 
 
-    (use-package ddskk
-      :ensure t
-      :init
-      (setq skk-jisyo "~/.skk-jisyo")
-      (setq skk-large-jisyo "~/.emacs.d/skk-get-jisyo/SKK-JISYO.L")
+  (use-package ddskk
+    :ensure t
+    :init
+    (setq skk-jisyo "~/.skk-jisyo")
+    (setq skk-large-jisyo "~/.emacs.d/skk-get-jisyo/SKK-JISYO.L")
 
-      (setq skk-extra-jisyo-file-list
-            '("/usr/share/skk/SKK-JISYO.jinmei"
-              "/usr/share/skk/SKK-JISYO.geo"))
-      :config
-      (setq skk-use-auto-fill t)
-      (setq skk-save-jisyo-instantly t))
+    (setq skk-extra-jisyo-file-list
+          '("/usr/share/skk/SKK-JISYO.jinmei"
+            "/usr/share/skk/SKK-JISYO.geo"))
+    :config
+    (setq skk-use-auto-fill t)
+    (setq skk-save-jisyo-instantly t))
 
 #+end_src
 
@@ -1449,7 +1492,7 @@ t* password manage
 一定不要忘了pass phrase
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-    ;; 推荐组合：auth-source + pass 的桥接 + 好用的界面
+  ;; 推荐组合：auth-source + pass 的桥接 + 好用的界面
   (use-package auth-source
     :ensure t
     :config
@@ -1477,6 +1520,8 @@ t* password manage
   (provide 'post-init)
   ;;; post-init.el ends here
 #+end_src
+
+
 
 * 键位规划
 =M-n M-p= 这俩特别好用的键还没用呢
@@ -1590,6 +1635,8 @@ org 加密
 动态美化
 
 =hl-todo / rainbow-delimiters=
+
+
 
 
 * 依赖

@@ -50,10 +50,23 @@
 (setq history-length 500)
 ;; 启动全屏
 (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
-;;像素滚动
-(pixel-scroll-precision-mode 1)
 
-(global-subword-mode 1)
+;; 翻页保留5行重叠，不显得太跳
+(setq next-screen-context-lines 5)
+
+;; 滚动时距边缘保留3行
+(setq scroll-margin 3)
+
+;; 避免翻页时重新居中
+(setq scroll-conservatively 101)
+
+;; 翻页时光标跟着走，不乱跳
+(setq scroll-preserve-screen-position t)
+;; other-window 保持一致
+(setq other-window-scroll-default nil)
+(setq scroll-other-window-lines 3)
+;;
+(pixel-scroll-precision-mode 1)
 
 (use-package emacs
   :bind ("M-o" . other-window)
@@ -64,6 +77,32 @@
 ;; steal from system crafter
 (setq large-file-warning-threshold nil)
 (column-number-mode 1)
+
+(global-subword-mode 1)
+
+;; (use-package hungry-delete
+;; :config
+;; (global-hungry-delete-mode))
+
+
+
+(defun my/backward-kill-word ()
+  "中英混排友好的向后删词，其余行为与默认 C-backspace 完全一致。"
+  (interactive)
+  (let ((ch (char-before)))
+    (if (and ch (string-match-p "[\\u3000-\\u9fff\\uff00-\\uffef]" (string ch)))
+        ;; 只有光标前是中日文时，删连续中日字符
+        (delete-region (point)
+                       (save-excursion
+                         (while (and (not (bobp))
+                                     (string-match-p "[\\u3000-\\u9fff\\uff00-\\uffef]"
+                                                     (string (char-before))))
+                           (backward-char))
+                         (point)))
+      ;; 其他一切交给原生            
+      (backward-kill-word 1))))
+
+(global-set-key (kbd "C-<backspace>") #'my/backward-kill-word)
 
 (custom-set-faces
  '(gnus-group-news-low ((t (:foreground "cyan"))))
@@ -295,11 +334,11 @@
            (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
            "* SOMEDAY %?\n  %U\n"))))
 (use-package org-appear
-:hook (org-mode . org-appear-mode)
-:config
-(setq org-appear-autoemphasis t   ;; *bold* / /italic/
-      org-appear-autolinks t      ;; 链接
-      org-appear-autosubmarkers t))
+  :hook (org-mode . org-appear-mode)
+  :config
+  (setq org-appear-autoemphasis t   ;; *bold* / /italic/
+        org-appear-autolinks t      ;; 链接
+        org-appear-autosubmarkers t))
 
 (use-package org-download
   :ensure t
@@ -384,7 +423,7 @@
 
 (use-package org-roam-ui
   :vc (:url "https://github.com/org-roam/org-roam-ui.git"
-       :branch "main")   ; 可选：指定分支，默认是 main/master
+            :branch "main")   ; 可选：指定分支，默认是 main/master
   :after org-roam
   :config
   (setq org-roam-ui-sync-theme t
