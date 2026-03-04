@@ -8,7 +8,7 @@
   (eval-when-compile
     (require 'use-package))
 
-  ;;确保 ELPA 路径优先
+  ;;更新内置包
 ;;  (setq package-install-upgrade-built-in t)
 
   ;;不验证签名

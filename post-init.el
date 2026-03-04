@@ -53,8 +53,6 @@
 ;;像素滚动
 (pixel-scroll-precision-mode 1)
 
-;;==============================================================================
-
 (global-subword-mode 1)
 
 (use-package emacs
@@ -151,18 +149,10 @@
 ;; (use-package mood-line
 ;; :hook (after-init . mood-line-mode))
 
-;; (use-package esup
-;;   :demand t)
-
 (use-package dashboard
   :demand t
   :custom
   (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
-  ;; (dashboard-startup-banner
-  ;;  (let ((images '("~/Pictures/icon/miyamori300.png"
-  ;;                  "~/Pictures/icon/shirobako.png"
-  ;;                  "~/Pictures/icon/newgamenene.png")))
-  ;;    (seq-random-elt (seq-filter #'file-exists-p images))))
 
   
 
@@ -172,7 +162,7 @@
      (if images
          (seq-random-elt images)
        (message "No images found in %s" image-dir)
-       nil)))   ; 或换成你想要的默认图
+       nil)))   
 
   (dashboard-items '(
                      (agenda . 10)
@@ -270,7 +260,6 @@
   ;; img
   
   ;;org-todo
-  ;; TODO states
   (setq org-todo-keywords
         '((sequence "TODO(t)" "SOMEDAY(s)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
                     "BLOCKED(b@)" "|" "DONE(d!)" "CANCELED(c@!)")))
@@ -288,7 +277,7 @@
           ))
   ;;org-agenda
   (setq org-agenda-files '
-        ("~/Documents/org-agenda/TODOs.org")) ;;一定要注意，改这个同时要改org capture的目标文件
+        ("~/Documents/org-agenda/TODOs.org")) ;;一定要注意，改这个路径的同时要改org capture的路径
   :hook
   (org-mode . org-link-preview-refresh)
   
@@ -393,18 +382,6 @@
   ;; If using org-roam-protocol
   (require 'org-roam-protocol))
 
-;; (use-package org-roam-ui
-;;   :after org-roam ;; or :after org
-;;   ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-;;   ;;         a hookable mode anymore, you're advised to pick something yourself
-;;   ;;         if you don't care about startup time, use
-;;   ;;  :hook (after-init . org-roam-ui-mode)
-;;   :config
-;;   (setq org-roam-ui-sync-theme t
-;;         org-roam-ui-follow t
-;;         org-roam-ui-update-on-save t
-;;         org-roam-ui-open-on-start t))
-
 (use-package org-roam-ui
   :vc (:url "https://github.com/org-roam/org-roam-ui.git"
        :branch "main")   ; 可选：指定分支，默认是 main/master
@@ -413,14 +390,9 @@
   (setq org-roam-ui-sync-theme t
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start t)
-  
+        org-roam-ui-open-on-start nil)
   ;; (org-roam-ui-mode +1)  ; 手动启用或加 hook
   )
-
-;;==============================================================================
-;;; Markdown
-;;==============================================================================
 
 (use-package markdown-mode
   :mode (("README\\.md\\'" . gfm-mode)
@@ -491,10 +463,6 @@
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((dot . t)))
-
-;;==============================================================================
-;;; 补全框架 (Completion Framework)
-;;==============================================================================
 
 ;; Vertico - 垂直补全界面
 (use-package vertico
@@ -569,9 +537,6 @@
   (setq consult-async-min-input 2)
   (setq consult-narrow-key "<"))
 
-;;==============================================================================
-;;; Projectile - 项目管理
-;;==============================================================================
 (use-package projectile
   :demand 0.2
   ;; 常用设置（可以根据需要增删）
@@ -638,10 +603,6 @@
   :init
   (which-key-mode))
 
-;;==============================================================================
-;;; 代码补全 (Code Completion)
-;;==============================================================================
-
 (use-package corfu
   :demand t
   :bind (:map corfu-map
@@ -705,57 +666,6 @@
 (use-package corfu-terminal
   :ensure t)
 
-;; (use-package corfu
-;;   ;; Optional customizations
-;;   ;; :custom
-;;   ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-;;   ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-;;   ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-;;   ;; (corfu-preview-current nil)    ;; Disable current candidate preview
-;;   ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
-;;   ;; (corfu-on-exact-match 'insert) ;; Configure handling of exact matches
-;; 
-;;   ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
-;;   ;; :hook ((prog-mode . corfu-mode)
-;;   ;;        (shell-mode . corfu-mode)
-;;   ;;        (eshell-mode . corfu-mode))
-;; 
-;;   :init
-;; 
-;;   ;; Recommended: Enable Corfu globally.  Recommended since many modes provide
-;;   ;; Capfs and Dabbrev can be used globally (M-/).  See also the customization
-;;   ;; variable `global-corfu-modes' to exclude certain modes.
-;;   (global-corfu-mode)
-;; 
-;;   ;; Enable optional extension modes:
-;;   ;; (corfu-history-mode)
-;;   ;; (corfu-popupinfo-mode)
-;;   )
-
-;; A few more useful configurations...
-;; (use-package emacs
-;;   :custom
-;;   ;; TAB cycle if there are only few candidates
-;;   ;; (completion-cycle-threshold 3)
-;; 
-;;   ;; Enable indentation+completion using the TAB key.
-;;   ;; `completion-at-point' is often bound to M-TAB.
-;;   (tab-always-indent 'complete)
-;; 
-;;   ;; Emacs 30 and newer: Disable Ispell completion function.
-;;   ;; Try `cape-dict' as an alternative.
-;;   (text-mode-ispell-word-completion nil)
-;; 
-;;   ;; Hide commands in M-x which do not apply to the current mode.  Corfu
-;;   ;; commands are hidden, since they are not used via M-x. This setting is
-;;   ;; useful beyond Corfu.
-;;   (read-extended-command-predicate #'command-completion-default-include-p))
-;; Optionally:
-
-;;         ;; If you add an entry for t, the library uses that as fallback.
-;;         ;; The default fallback (when it's not specified) is the ? symbol.
-
-;; The Custom interface is also supported for tuning the variable above.
 
 (use-package cape
   :init
@@ -821,12 +731,6 @@
 ;; yasnippet ??TODO
 (use-package yasnippet)
 (use-package yasnippet-snippets)
-
-;;==============================================================================
-;;; 工作区管理 (Workspace Management)
-;;==============================================================================
-
-
 
 (use-package tab-bar
   :ensure nil
@@ -1149,37 +1053,6 @@
   :bind
   ("C-x C-d" . dirvish))
 
-;; (use-package emms
-;;   :demand 0.2
-;;   :config
-;;   (require 'emms-setup)
-;;   (emms-all)                      ; 开启几乎所有稳定功能
-;; 
-;;   ;; 播放器优先顺序（mpv 最好，vlc 次之）
-;;   (setq emms-player-list '(
-;;                            emms-player-mpv
-;;                            ))
-;; 
-;;   ;; 元数据读取（native 是纯 elisp 的，速度还可以）
-;;   (setq emms-info-functions '(emms-info-exiftool
-;;                               emms-info-ogginfo
-;;                               emms-info-opusinfo   ; 如果你有 opus 文件
-;;                               ))
-;; 
-;;   ;; 默认音乐目录（很重要！）
-;;   (setq emms-source-file-default-directory "~/Music/music/")
-;; 
-;;   ;; 显示封面（需要 ImageMagick 或 Image backend）
-;;   (setq emms-browser-covers 'emms-browser-cache-thumbnail-async
-;;         emms-show-format "Playing: %s")
-;;   (setq emms-browser-thumbnail-program "ffmpegthumbnailer")
-;; 
-;;   ;; 可选：modeline 显示当前歌曲（很实用）
-;;   (emms-mode-line 1)
-;;   (emms-playing-time 1)
-;;   (setq emms-browser-thumbnail-small-size 80
-;;         emms-browser-thumbnail-medium-size
-
 ;; (use-package listen)  
 ;; (use-package emms
 ;;   :defer t
@@ -1192,24 +1065,7 @@
 ;; 
 ;;   )
 
-;; mu4e 基本加载（复制粘贴，根据你的系统改路径）
-;; (use-package mu4e
-;;   :ensure nil                ; 因为不是 package.el 装的
-;;   :load-path "/usr/share/emacs/site-lisp/elpa-src/mu4e-1.10.8"
-;; 
-;;   :config
-;;   ;; 指定 mu 二进制路径（通常不需要，但保险起见）
-;;   (setq mu4e-mu-binary (executable-find "mu"))
-;; 
-;;   ;; 最小配置示例（后面再细调）
-;;   (setq mu4e-maildir "~/Mail"                  ; 你的邮件存储目录
-;;         mu4e-get-mail-command "mbsync -a"      ; 用 isync/mbsync 拉邮件（或 offlineimap）
-;;         mu4e-update-interval 300               ; 每 5 分钟检查一次
-;;         mu4e-headers-auto-update t
-;;         message-send-mail-function 'smtpmail-send-it
-;;         smtpmail-default-smtp-server "smtp.gmail.com"  ; 根据你的邮箱改
-;;         ;; ... 更多配置见下面
-;;         ))
+
 
 (use-package rime
   ;;:demand 1.0
@@ -1233,36 +1089,12 @@
   :config
   (global-pangu-spacing-mode +1))
 
-;; (use-package ddskk
-;;   :demand t
-;;   :init
-;;   (global-set-key (kbd "C-x C-\\") 'skk-mode)
-;;   :config
-;;   (setq default-input-method "japanese-skk")
-;;   (setq skk-jisyo "~/.skk-jisyo")
-;;   ;; 词库学习
-;;   (setq skk-use-auto-fill t)
-;;   (setq skk-save-jisyo-instantly t)
-;;   )
-
-;; (use-package ddskk
-;; :ensure t
-;; :init
-;; (global-set-key (kbd "C-x C-\\") 'skk-mode)
-;; ;; 👇 移到 :init，确保加载前就设好
-;; (setq skk-jisyo "~/.skk-jisyo")
-;; (setq skk-large-jisyo "/usr/share/skk/SKK-JISYO.L")
-;; (setq skk-extra-jisyo-file-list
-;;       '("/usr/share/skk/SKK-JISYO.jinmei"
-;;         "/usr/share/skk/SKK-JISYO.geo"))
-
 (global-set-key (kbd "C-x C-\\") 'skk-mode)
 
 
 (use-package ddskk
   :ensure t
   :init
-  ;; 👇 移到 :init，确保加载前就设好
   (setq skk-jisyo "~/.skk-jisyo")
   (setq skk-large-jisyo "~/.emacs.d/skk-get-jisyo/SKK-JISYO.L")
 
