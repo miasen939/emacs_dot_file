@@ -268,7 +268,14 @@
   :config
   ;; (setq org-startup-with-inline-images t)
   
+  ;; phone refile
+  
+  (setq org-refile-targets
+        '((nil :maxlevel . 1)
+          (org-agenda-files :maxlevel . 1)))
 
+  (setq org-refile-use-outline-path 'file)        ; 显示文件名前缀
+  (setq org-outline-path-complete-in-steps nil)   ; 关键！一次性显示所有候选
   
 
   (setq image-use-external-converter t)
@@ -300,23 +307,27 @@
   
   ;;org-todo
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "SOMEDAY(s)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
-                    "BLOCKED(b@)" "|" "DONE(d!)" "CANCELED(c@!)")))
+        '((sequence "TODO(t)" "NEXT(n)" "SOMEDAY(s)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
+                    "BLOCKED(b@)" "WAITING(w@)" "|" "DONE(d!)" "CANCELED(c@!)")))
   (setq org-log-done 'note) 
   ;; TODO colors
   (setq org-todo-keyword-faces
         '(
           ("TODO" . (:foreground "GoldenRod" :weight bold))
+          ("NEXT" . (:foreground "DeepSkyBlue1" :weight bold)) ;蓝色
           ("SOMEDAY" . (:foreground "RosyBrown" :weight bold))
           ("PLANNING" . (:foreground "DeepPink" :weight bold))
           ("IN-PROGRESS" . (:foreground "Cyan" :weight bold))
           ("BLOCKED" . (:foreground "Red" :weight bold))
+          ("WAITING" . (:foreground "khaki4" :weight bold)) ;
           ("DONE" . (:foreground "LimeGreen" :weight bold))
           ("CANCELED" . (:foreground "DimGrey" :weight bold))
           ))
   ;;org-agenda
-  (setq org-agenda-files '
-        ("~/Documents/org-agenda/TODOs.org")) ;;一定要注意，改这个路径的同时要改org capture的路径
+  (setq org-agenda-files 
+        '("~/Documents/org-agenda/TODOs.org"
+          "~/Documents/org-agenda/habits.org")
+        ) ;;一定要注意，改这个路径的同时要改org capture的路径
   :hook
   (org-mode . org-link-preview-refresh)
   
@@ -929,6 +940,8 @@
 
 ;; vterm
 (use-package vterm
+  :bind
+  ("C-c t" . vterm)
   :config
   (add-hook 'vterm-mode-hook
             (lambda ()
