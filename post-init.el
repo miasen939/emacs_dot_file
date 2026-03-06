@@ -131,7 +131,10 @@
     (dolist (charset '(kana han symbol cjk-misc bopomofo))
       (set-fontset-font t charset
                         (font-spec :family "Sarasa Fixed SC"
-                                   :height 130)))))
+                                   )))))
+
+(use-package valign
+:hook (org-mode . valign-mode))         ;像素级对齐，解决
 
 ;;(add-to-list 'default-frame-alist '(undecorated . t))
 
@@ -1129,12 +1132,17 @@
   (setq rime-cursor-face '((t (:foreground "#00ff00"))))
   (setq rime-show-preedit t)
   (setq rime-user-data-dir "~/.config/fcitx/Rime/")
-                                        ;(setq rime-posframe-style ' simple)
-                                        ;(setq rime-show-preedit ' inline)
   ;; 默认值
   (setq rime-translate-keybindings
         '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
+  
+  (defun my/update-cursor-by-ime ()
+    "根据当前输入法状态实时更新光标颜色."
+    (set-cursor-color (if current-input-method "#a7c080" "#51afef")))
+
+  (add-hook 'post-command-hook #'my/update-cursor-by-ime)
   )
+
 ;; 中文英文之间插入空格
 (use-package pangu-spacing
   :demand 0.2
