@@ -51,6 +51,8 @@
 ;; 启动全屏
 (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
 
+(setq recent-keys-length 1000)          ;C-h l 保存的历史快捷键数量
+
 (use-package emacs
   :bind ("M-o" . other-window)
   :hook (after-make-frame-functions . (lambda (frame)
@@ -88,7 +90,7 @@
 (global-set-key (kbd "C-<backspace>") #'my/backward-kill-word)
 
 (use-package beacon
-  :demand 1.0
+  :defer 0.5
   :config
   (beacon-mode 1)
   ;; 可选配置
@@ -110,7 +112,7 @@
 ;; other-window 保持一致
 (setq other-window-scroll-default nil)
 (setq scroll-other-window-lines 3)
-;;
+;; 像素级平滑滚动
 (pixel-scroll-precision-mode 1)
 
 (custom-set-faces
@@ -244,97 +246,59 @@
   :custom
   (helpful-max-buffers 7))
 
-(use-package good-scroll
-  :ensure t
-  :if window-system     ; 在图形化界面时才使用这个插件
-  :init (good-scroll-mode))
-
 (use-package popper
-  :ensure t ; or :straight t
   :bind (("C-`"   . popper-toggle)
          ("M-`"   . popper-cycle)
          ("C-M-`" . popper-toggle-type))
   :init
-  (setq popper-reference-buffers
-        '("\\*Messages\\*"
-          "Output\\*$"
-          "\\*Async Shell Command\\*"
-          "\\*Warnings\\*"
-          "\\*Backtrace\\*"
-          
-          calendar-mode
-          flymake-diagnostics-buffer-mode
-          flycheck-error-list-mode
-          pdf-outline-buffer-mode
-          help-mode
-          compilation-mode))
+    (setq popper-reference-buffers
+      '(;; 基础
+        "\\*Messages\\*"
+        "Output\\*$"
+        "\\*Async Shell Command\\*"
+        "\\*Warnings\\*"
+        "\\*Backtrace\\*"
+        calendar-mode
+        flymake-diagnostics-buffer-mode
+        flycheck-error-list-mode
+        pdf-outline-buffer-mode
+        help-mode
+        compilation-mode
 
-  (setq popper-reference-buffers
-        (append popper-reference-buffers
-                '("^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
-                  "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
-                  "^\\*term.*\\*$"   term-mode   ;term as a popup
-                  "^\\*vterm.*\\*$"  vterm-mode  ;vterm as a popup
-                  )))
+        ;; 终端
+        "^\\*eshell.*\\*$" eshell-mode
+        "^\\*shell.*\\*$"  shell-mode
+        "^\\*term.*\\*$"   term-mode
+        "^\\*vterm.*\\*$"  vterm-mode
 
-  ;; 大全但是冗余
-  (setq popper-reference-buffers
-    (append popper-reference-buffers
-            '(
-              ;; LSP / 代码工具
-              "\\*lsp-help\\*"
-              "\\*lsp.*\\*"
-              lsp-browser-mode
-              "\\*eldoc.*\\*"          eldoc-mode
-              "\\*xref\\*"
-              "\\*Flymake diagnostics.*\\*"
+        ;; LSP
+        "\\*eldoc.*\\*"    eldoc-mode
+        "\\*xref\\*"
+        "\\*Flymake diagnostics.*\\*"
 
-              ;; Org
-              "\\*Org Agenda\\*"
-              "\\*Org Select\\*"
-              "\\*Capture\\*"
-              "\\*org-roam\\*"
+        ;; Org
+        "\\*Org Agenda\\*"
+        "\\*Capture\\*"
+        "\\*org-roam\\*"
 
-              ;; Emacs 内置
-              "\\*Completions\\*"
-              "\\*Command History\\*"
-              "\\*Occur\\*"            occur-mode
-              "\\*grep\\*"             grep-mode
-              "\\*ripgrep-search\\*"
-              "\\*vc-diff\\*"
-              "\\*vc-change-log\\*"
-              "\\*diff\\*"             diff-mode
+        ;; 搜索
+        "\\*Occur\\*"      occur-mode
+        "\\*grep\\*"       grep-mode
+        "\\*ripgrep-search\\*"
 
-              ;; Helpful（增强版 help）
-              helpful-mode
+        ;; Magit
+        "\\*magit-diff.*\\*"
+        "\\*magit-process.*\\*"
 
-              ;; Dired 辅助
-              "\\*Dired log\\*"
+        ;; Helpful
+        helpful-mode
 
-              ;; Magit
-              "\\*magit-diff.*\\*"
-              "\\*magit-process.*\\*"
-              "\\*magit-log.*\\*"
-
-              ;; 包管理
-              "\\*Packages\\*"
-              "\\*Package-Lint\\*"
-
-              ;; Python / Jupyter
-              "\\*Python\\*"           inferior-python-mode
-              "\\*ein:output\\*"
-
-              ;; 其他
-              "\\*Dictionary\\*"
-              "\\*tldr\\*"
-              "\\*devdocs\\*"
-
-              ;;password
-              "\\.gpg$"
-              ;;sdcv
-              "^\\*sdcv:.*\\*$"  sdcv-mode
-              
-              )))
+        ;; 其他
+        "\\*Dictionary\\*"
+        "^\\*sdcv:.*\\*$"  sdcv-mode
+        "\\.gpg$"
+        "\\*Python\\*"     inferior-python-mode))
+  
   (popper-mode +1)
   (popper-echo-mode +1))                ; For echo area hints
 
@@ -444,7 +408,10 @@
            "* TODO %?\n  %U\n")
           ("s" "Someday" entry
            (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
-           "* SOMEDAY %?\n  %U\n"))))
+           "* SOMEDAY %?\n  %U\n")
+          ("n" "Next" entry
+           (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
+           "* NEXT %?\n  %U\n"))))
 (use-package org-appear
   :hook (org-mode . org-appear-mode)
   :config
@@ -484,7 +451,6 @@
     (apply #'org-roam-node-insert args)))
 
 (use-package org-roam
-  :ensure t
   :custom
   (org-roam-directory (file-truename "~/Documents/roam-note/"))
   (org-roam-capture-templates
@@ -495,29 +461,36 @@
           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                              "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Study:
 
-      ")
+          ")
           :unnarrowed t)
          ("e" "Emacs" plain "%?"
           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                              "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Emacs:
 
-      ")
+          ")
           :unnarrowed t)
          ("c" "COD note" plain "%?"
           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                              "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :textbook:Computer Organization and Design MIPS Edition:Computer Architecture:Study:\n\n#+book:Computer Organization and Design MIPS Edition
-  ")
+      ")
           :unnarrowed t)))
 
   :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n p" . org-roam-buffer-display-dedicated)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
-         ("C-c n i" . org-roam-node-insert)
+         ("C-c n I" . org-roam-node-insert)
          ("C-c n c" . org-roam-capture)
          ("C-c n t" . org-roam-tag-add)
+         ("C-c n a" . org-roam-alias-add)
+         ("C-c n A" . org-roam-alias-remove)
          ;; Dailies
          ("C-c n j" . org-roam-dailies-capture-today)
-         ("C-c n i" . org-roam-node-insert-immediate))
+         ("C-c n i" . org-roam-node-insert-immediate)
+         ("C-c n N" . org-roam-dailies-goto-next-note)
+         ("C-c n B" . org-roam-dailies-goto-previous-note)
+         ("C-c n T" . org-roam-dailies-goto-today))
+  
   :bind-keymap
   ("C-c n d" . org-roam-dailies-map)
   :config
@@ -689,7 +662,7 @@
   (setq consult-narrow-key "<"))
 
 (use-package projectile
-  :demand 0.2
+  :defer 0.2
   ;; 常用设置（可以根据需要增删）
   :custom
   (projectile-project-search-path '("~/projects/" "~/work/" "~/playground" "~/Documents/"))
@@ -947,7 +920,7 @@
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
 (use-package amx
-  :demand 0.2
+  :defer 0.2
   :config
   (amx-mode 1))
 
@@ -1078,121 +1051,121 @@
   (ibuffer-mode . ibuffer-auto-mode)                ; 打开 ibuffer 时自动开启分组并实时更新
   )
 
-(use-package treemacs
-  :ensure t
-  :defer t
-  :init
-  (with-eval-after-load 'winum
-    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
-  :config
-  (progn
-    (setq treemacs-buffer-name-function            #'treemacs-default-buffer-name
-          treemacs-buffer-name-prefix              " *Treemacs-Buffer-"
-          treemacs-collapse-dirs                   (if treemacs-python-executable 3 0)
-          treemacs-deferred-git-apply-delay        0.5
-          treemacs-directory-name-transformer      #'identity
-          treemacs-display-in-side-window          t
-          treemacs-eldoc-display                   'simple
-          treemacs-file-event-delay                2000
-          treemacs-file-extension-regex            treemacs-last-period-regex-value
-          treemacs-file-follow-delay               0.2
-          treemacs-file-name-transformer           #'identity
-          treemacs-follow-after-init               t
-          treemacs-expand-after-init               t
-          treemacs-find-workspace-method           'find-for-file-or-pick-first
-          treemacs-git-command-pipe                ""
-          treemacs-goto-tag-strategy               'refetch-index
-          treemacs-header-scroll-indicators        '(nil . "^^^^^^")
-          treemacs-hide-dot-git-directory          t
-          treemacs-hide-dot-jj-directory           t
-          treemacs-indentation                     2
-          treemacs-indentation-string              " "
-          treemacs-is-never-other-window           nil
-          treemacs-max-git-entries                 5000
-          treemacs-missing-project-action          'ask
-          treemacs-move-files-by-mouse-dragging    t
-          treemacs-move-forward-on-expand          nil
-          treemacs-no-png-images                   nil
-          treemacs-no-delete-other-windows         t
-          treemacs-project-follow-cleanup          nil
-          treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
-          treemacs-position                        'left
-          treemacs-read-string-input               'from-child-frame
-          treemacs-recenter-distance               0.1
-          treemacs-recenter-after-file-follow      nil
-          treemacs-recenter-after-tag-follow       nil
-          treemacs-recenter-after-project-jump     'always
-          treemacs-recenter-after-project-expand   'on-distance
-          treemacs-litter-directories              '("/node_modules" "/.venv" "/.cask")
-          treemacs-project-follow-into-home        nil
-          treemacs-show-cursor                     nil
-          treemacs-show-hidden-files               t
-          treemacs-silent-filewatch                nil
-          treemacs-silent-refresh                  nil
-          treemacs-sorting                         'alphabetic-asc
-          treemacs-select-when-already-in-treemacs 'move-back
-          treemacs-space-between-root-nodes        t
-          treemacs-tag-follow-cleanup              t
-          treemacs-tag-follow-delay                1.5
-          treemacs-text-scale                      nil
-          treemacs-user-mode-line-format           nil
-          treemacs-user-header-line-format         nil
-          treemacs-wide-toggle-width               70
-          treemacs-width                           35
-          treemacs-width-increment                 1
-          treemacs-width-is-initially-locked       t
-          treemacs-workspace-switch-cleanup        nil)
+;; (use-package treemacs
+;;   :ensure t
+;;   :defer t
+;;   :init
+;;   (with-eval-after-load 'winum
+;;     (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+;;   :config
+;;   (progn
+;;     (setq treemacs-buffer-name-function            #'treemacs-default-buffer-name
+;;           treemacs-buffer-name-prefix              " *Treemacs-Buffer-"
+;;           treemacs-collapse-dirs                   (if treemacs-python-executable 3 0)
+;;           treemacs-deferred-git-apply-delay        0.5
+;;           treemacs-directory-name-transformer      #'identity
+;;           treemacs-display-in-side-window          t
+;;           treemacs-eldoc-display                   'simple
+;;           treemacs-file-event-delay                2000
+;;           treemacs-file-extension-regex            treemacs-last-period-regex-value
+;;           treemacs-file-follow-delay               0.2
+;;           treemacs-file-name-transformer           #'identity
+;;           treemacs-follow-after-init               t
+;;           treemacs-expand-after-init               t
+;;           treemacs-find-workspace-method           'find-for-file-or-pick-first
+;;           treemacs-git-command-pipe                ""
+;;           treemacs-goto-tag-strategy               'refetch-index
+;;           treemacs-header-scroll-indicators        '(nil . "^^^^^^")
+;;           treemacs-hide-dot-git-directory          t
+;;           treemacs-hide-dot-jj-directory           t
+;;           treemacs-indentation                     2
+;;           treemacs-indentation-string              " "
+;;           treemacs-is-never-other-window           nil
+;;           treemacs-max-git-entries                 5000
+;;           treemacs-missing-project-action          'ask
+;;           treemacs-move-files-by-mouse-dragging    t
+;;           treemacs-move-forward-on-expand          nil
+;;           treemacs-no-png-images                   nil
+;;           treemacs-no-delete-other-windows         t
+;;           treemacs-project-follow-cleanup          nil
+;;           treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+;;           treemacs-position                        'left
+;;           treemacs-read-string-input               'from-child-frame
+;;           treemacs-recenter-distance               0.1
+;;           treemacs-recenter-after-file-follow      nil
+;;           treemacs-recenter-after-tag-follow       nil
+;;           treemacs-recenter-after-project-jump     'always
+;;           treemacs-recenter-after-project-expand   'on-distance
+;;           treemacs-litter-directories              '("/node_modules" "/.venv" "/.cask")
+;;           treemacs-project-follow-into-home        nil
+;;           treemacs-show-cursor                     nil
+;;           treemacs-show-hidden-files               t
+;;           treemacs-silent-filewatch                nil
+;;           treemacs-silent-refresh                  nil
+;;           treemacs-sorting                         'alphabetic-asc
+;;           treemacs-select-when-already-in-treemacs 'move-back
+;;           treemacs-space-between-root-nodes        t
+;;           treemacs-tag-follow-cleanup              t
+;;           treemacs-tag-follow-delay                1.5
+;;           treemacs-text-scale                      nil
+;;           treemacs-user-mode-line-format           nil
+;;           treemacs-user-header-line-format         nil
+;;           treemacs-wide-toggle-width               70
+;;           treemacs-width                           35
+;;           treemacs-width-increment                 1
+;;           treemacs-width-is-initially-locked       t
+;;           treemacs-workspace-switch-cleanup        nil)
+;; 
+;;     ;; The default width and height of the icons is 22 pixels. If you are
+;;     ;; using a Hi-DPI display, uncomment this to double the icon size.
+;;     ;;(treemacs-resize-icons 44)
+;; 
+;;     (treemacs-follow-mode t)
+;;     (treemacs-filewatch-mode t)
+;;     (treemacs-fringe-indicator-mode 'always)
+;;     (when treemacs-python-executable
+;;       (treemacs-git-commit-diff-mode t))
+;; 
+;;     (pcase (cons (not (null (executable-find "git")))
+;;                  (not (null treemacs-python-executable)))
+;;       (`(t . t)
+;;        (treemacs-git-mode 'deferred))
+;;       (`(t . _)
+;;        (treemacs-git-mode 'simple)))
+;; 
+;;     (treemacs-hide-gitignored-files-mode nil))
+;;   :bind
+;;   (:map global-map
+;;         ("M-0"       . treemacs-select-window)
+;;         ("C-x t 1"   . treemacs-delete-other-windows)
+;;         ("C-x t t"   . treemacs)
+;;         ("C-x t d"   . treemacs-select-directory)
+;;         ("C-x t B"   . treemacs-bookmark)
+;;         ("C-x t C-t" . treemacs-find-file)
+;;         ("C-x t M-t" . treemacs-find-tag)))
 
-    ;; The default width and height of the icons is 22 pixels. If you are
-    ;; using a Hi-DPI display, uncomment this to double the icon size.
-    ;;(treemacs-resize-icons 44)
 
-    (treemacs-follow-mode t)
-    (treemacs-filewatch-mode t)
-    (treemacs-fringe-indicator-mode 'always)
-    (when treemacs-python-executable
-      (treemacs-git-commit-diff-mode t))
-
-    (pcase (cons (not (null (executable-find "git")))
-                 (not (null treemacs-python-executable)))
-      (`(t . t)
-       (treemacs-git-mode 'deferred))
-      (`(t . _)
-       (treemacs-git-mode 'simple)))
-
-    (treemacs-hide-gitignored-files-mode nil))
-  :bind
-  (:map global-map
-        ("M-0"       . treemacs-select-window)
-        ("C-x t 1"   . treemacs-delete-other-windows)
-        ("C-x t t"   . treemacs)
-        ("C-x t d"   . treemacs-select-directory)
-        ("C-x t B"   . treemacs-bookmark)
-        ("C-x t C-t" . treemacs-find-file)
-        ("C-x t M-t" . treemacs-find-tag)))
-
-
-(use-package treemacs-projectile
-  :after (treemacs projectile)
-  :ensure t)
-
-(use-package treemacs-icons-dired
-  :hook (dired-mode . treemacs-icons-dired-enable-once)
-  :ensure t)
-
-(use-package treemacs-magit
-  :after (treemacs magit)
-  :ensure t)
-
-(use-package treemacs-persp ;;treemacs-perspective if you use perspective.el vs. persp-mode
-  :after (treemacs persp-mode) ;;or perspective vs. persp-mode
-  :ensure t
-  :config (treemacs-set-scope-type 'Perspectives))
-
-(use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
-  :after (treemacs)
-  :ensure t
-  :config (treemacs-set-scope-type 'Tabs))
+;; (use-package treemacs-projectile
+;;   :after (treemacs projectile)
+;;   :ensure t)
+;; 
+;; (use-package treemacs-icons-dired
+;;   :hook (dired-mode . treemacs-icons-dired-enable-once)
+;;   :ensure t)
+;; 
+;; (use-package treemacs-magit
+;;   :after (treemacs magit)
+;;   :ensure t)
+;; 
+;; (use-package treemacs-persp ;;treemacs-perspective if you use perspective.el vs. persp-mode
+;;   :after (treemacs persp-mode) ;;or perspective vs. persp-mode
+;;   :ensure t
+;;   :config (treemacs-set-scope-type 'Perspectives))
+;; 
+;; (use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
+;;   :after (treemacs)
+;;   :ensure t
+;;   :config (treemacs-set-scope-type 'Tabs))
 ;; 
 ;; (treemacs-start-on-boot)
 
@@ -1221,7 +1194,6 @@
 
 
 (use-package rime
-  ;;:demand 1.0
   :custom
   (default-input-method "rime")
   :config
@@ -1243,7 +1215,7 @@
 
 ;; 中文英文之间插入空格
 (use-package pangu-spacing
-  :demand 0.2p
+  :defer 0.3
   :config
   (global-pangu-spacing-mode +1))
 
