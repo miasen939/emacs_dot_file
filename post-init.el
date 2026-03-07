@@ -249,6 +249,95 @@
   :if window-system     ; 在图形化界面时才使用这个插件
   :init (good-scroll-mode))
 
+(use-package popper
+  :ensure t ; or :straight t
+  :bind (("C-`"   . popper-toggle)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :init
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+          "\\*Warnings\\*"
+          "\\*Backtrace\\*"
+          
+          calendar-mode
+          flymake-diagnostics-buffer-mode
+          flycheck-error-list-mode
+          pdf-outline-buffer-mode
+          help-mode
+          compilation-mode))
+
+  (setq popper-reference-buffers
+        (append popper-reference-buffers
+                '("^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
+                  "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
+                  "^\\*term.*\\*$"   term-mode   ;term as a popup
+                  "^\\*vterm.*\\*$"  vterm-mode  ;vterm as a popup
+                  )))
+
+  ;; 大全但是冗余
+  (setq popper-reference-buffers
+    (append popper-reference-buffers
+            '(
+              ;; LSP / 代码工具
+              "\\*lsp-help\\*"
+              "\\*lsp.*\\*"
+              lsp-browser-mode
+              "\\*eldoc.*\\*"          eldoc-mode
+              "\\*xref\\*"
+              "\\*Flymake diagnostics.*\\*"
+
+              ;; Org
+              "\\*Org Agenda\\*"
+              "\\*Org Select\\*"
+              "\\*Capture\\*"
+              "\\*org-roam\\*"
+
+              ;; Emacs 内置
+              "\\*Completions\\*"
+              "\\*Command History\\*"
+              "\\*Occur\\*"            occur-mode
+              "\\*grep\\*"             grep-mode
+              "\\*ripgrep-search\\*"
+              "\\*vc-diff\\*"
+              "\\*vc-change-log\\*"
+              "\\*diff\\*"             diff-mode
+
+              ;; Helpful（增强版 help）
+              helpful-mode
+
+              ;; Dired 辅助
+              "\\*Dired log\\*"
+
+              ;; Magit
+              "\\*magit-diff.*\\*"
+              "\\*magit-process.*\\*"
+              "\\*magit-log.*\\*"
+
+              ;; 包管理
+              "\\*Packages\\*"
+              "\\*Package-Lint\\*"
+
+              ;; Python / Jupyter
+              "\\*Python\\*"           inferior-python-mode
+              "\\*ein:output\\*"
+
+              ;; 其他
+              "\\*Dictionary\\*"
+              "\\*tldr\\*"
+              "\\*devdocs\\*"
+
+              ;;password
+              "\\.gpg$"
+              ;;sdcv
+              "^\\*sdcv:.*\\*$"  sdcv-mode
+              
+              )))
+  (popper-mode +1)
+  (popper-echo-mode +1))                ; For echo area hints
+
 (use-package pdf-tools
   :mode ("\\.pdf\\'" . pdf-view-mode)
 
