@@ -1,34 +1,35 @@
 ;;; FILENAME.el --- DESCRIPTION -*- no-byte-compile: t; lexical-binding: t; -*-
-  ;(setq debug-on-error t)
-  ;; use-package
+                                        ;(setq debug-on-error t)
+;; use-package
 
 
 
-    
-  (eval-when-compile
-    (require 'use-package))
 
-  ;;更新内置包
+(eval-when-compile
+  (require 'use-package))
+
+;;更新内置包
 ;;  (setq package-install-upgrade-built-in t)
 
-  ;;不验证签名
-  (setq package-check-signature nil)
-  ;; melpa 和 host
-  (require 'package)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-  (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/") t)
+;;不验证签名
+(setq package-check-signature nil)
+;; melpa 和 host
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/") t)
 
-  (setq url-proxy-services '(("no_proxy" . "^\\(192\\.168\\..*\\)")
-                ("http" . "127.0.0.1:7897")
-     ("https" . "127.0.0.1:7897")))
+(setq url-proxy-services '(("no_proxy" . "^\\(192\\.168\\..*\\)")
+                           ("http" . "127.0.0.1:7897")
+                           ("https" . "127.0.0.1:7897")))
 
 
-  ;;; Reducing clutter in ~/.emacs.d by redirecting files to ~/.emacs.d/var/
-  ;; NOTE: This must be placed in 'pre-early-init.el'.
-  (setq user-emacs-directory (expand-file-name "var/" minimal-emacs-user-directory))
-  (setq package-user-dir (expand-file-name "elpa" user-emacs-directory))
+    ;;; Reducing clutter in ~/.emacs.d by redirecting files to ~/.emacs.d/var/
+;; NOTE: This must be placed in 'pre-early-init.el'.
+(setq user-emacs-directory (expand-file-name "var/" minimal-emacs-user-directory))
+(setq package-user-dir (expand-file-name "elpa" user-emacs-directory))
 
-  ;; 移除的标题栏
-  ;;(add-to-list 'default-frame-alist '(undecorated . t))
+;; 移除的标题栏
+;;(add-to-list 'default-frame-alist '(undecorated . t))
+  
   (provide 'pre-early-init.el)
-  ;;; pre-early-init.el ends here
+    ;;; pre-early-init.el ends here

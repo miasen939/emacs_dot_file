@@ -51,23 +51,6 @@
 ;; 启动全屏
 (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
 
-;; 翻页保留5行重叠，不显得太跳
-(setq next-screen-context-lines 5)
-
-;; 滚动时距边缘保留3行
-(setq scroll-margin 3)
-
-;; 避免翻页时重新居中
-(setq scroll-conservatively 101)
-
-;; 翻页时光标跟着走，不乱跳
-(setq scroll-preserve-screen-position t)
-;; other-window 保持一致
-(setq other-window-scroll-default nil)
-(setq scroll-other-window-lines 3)
-;;
-(pixel-scroll-precision-mode 1)
-
 (use-package emacs
   :bind ("M-o" . other-window)
   :hook (after-make-frame-functions . (lambda (frame)
@@ -103,6 +86,32 @@
       (backward-kill-word 1))))
 
 (global-set-key (kbd "C-<backspace>") #'my/backward-kill-word)
+
+(use-package beacon
+  :demand 1.0
+  :config
+  (beacon-mode 1)
+  ;; 可选配置
+  (setq beacon-color "#4a5060")      
+  (setq beacon-size 20)              
+  (setq beacon-blink-duration 0.3))
+
+;; 翻页保留5行重叠，不显得太跳
+(setq next-screen-context-lines 5)
+
+;; 滚动时距边缘保留3行
+(setq scroll-margin 3)
+
+;; 避免翻页时重新居中
+(setq scroll-conservatively 101)
+
+;; 翻页时光标跟着走，不乱跳
+(setq scroll-preserve-screen-position t)
+;; other-window 保持一致
+(setq other-window-scroll-default nil)
+(setq scroll-other-window-lines 3)
+;;
+(pixel-scroll-precision-mode 1)
 
 (custom-set-faces
  '(gnus-group-news-low ((t (:foreground "cyan"))))
@@ -1145,7 +1154,7 @@
 
 ;; 中文英文之间插入空格
 (use-package pangu-spacing
-  :demand 0.2
+  :demand 0.2p
   :config
   (global-pangu-spacing-mode +1))
 
