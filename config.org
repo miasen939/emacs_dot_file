@@ -1,7 +1,7 @@
 #+TITLE: emacs config
 这是 =post-init.el= 和 =pre-early-init.el= 的文学编程配置.
  ~C-c C-v~ 系列快捷键来使用trangle的功能(比如 ~C-c C-v C-t~ 把本文件的代码写入.)
-=C-c C-v C-v=
+=C-c '= 
 
 * pre-early-init.el
 
@@ -199,8 +199,6 @@ CLOSED: [2026-03-04 水 23:21]
 
 * 字体 主题 emacs的图标
 ** 字体
-字体一直让我有点头痛,dejavu倒是不错,但是这个sarasa实在是不是很好看,但是凑合用也够了.
-这里也安装了 ~nerd-icons~ 完全是默认配置,以后可以自定义一下图标.
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   (custom-set-faces
@@ -222,18 +220,17 @@ CLOSED: [2026-03-04 水 23:21]
     (when (display-graphic-p)
       ;; 英文字体
       (set-face-attribute 'default nil
-                          :height 130          ;; 14pt (Windows 上建议 140-160)
+                          :height 130          
                           :weight 'normal
                           :family "DejaVu Sans mono")
       
-      ;; 中文字体 - 使用更通用的字体
       (dolist (charset '(kana han symbol cjk-misc bopomofo))
         (set-fontset-font t charset
                           (font-spec :family "Sarasa Fixed SC"
                                      )))))
 
   (use-package valign
-  :hook (org-mode . valign-mode))         ;像素级对齐，解决
+  :hook (org-mode . valign-mode))         ;解决像素级对齐，让org sheet可以用中日文也对齐了
 
   ;;(add-to-list 'default-frame-alist '(undecorated . t))
 
@@ -309,10 +306,14 @@ CLOSED: [2026-03-04 水 23:21]
 
   
 #+end_src
-** 
 * Dashboard
+- Note taken on [2026-03-08 日 12:00] \\
+  我现在其实觉得，dashboard没什么用，我只想让emacs在启动时展示一些我想看的格言和图片
+
 启动界面
 dashboard的banner最好自己手动压缩为500x500以下
+
+
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   (use-package dashboard
@@ -362,9 +363,10 @@ dashboard的banner最好自己手动压缩为500x500以下
     (helpful-max-buffers 7))
 #+end_src
 
-* 不要乱动我的窗口！ pooper
+* 不要乱动我的窗口！ poper
 
 popper 的小问题： M-` 被kde截住了
+
 #+begin_src emacs-lisp :tangle ./post-init.el
 
 
@@ -401,7 +403,7 @@ popper 的小问题： M-` 被kde截住了
           ;; Org
           "\\*Org Agenda\\*"
           "\\*Capture\\*"
-          "\\*org-roam\\*"
+          ;;"\\*org-roam\\*"
 
           ;; 搜索
           "\\*Occur\\*"      occur-mode
@@ -475,16 +477,16 @@ org attach 有点意思
 
     :config
     ;; (setq org-startup-with-inline-images t)
-    
+
     ;; phone refile
-    
+
     (setq org-refile-targets
           '((nil :maxlevel . 1)
             (org-agenda-files :maxlevel . 1)))
 
     (setq org-refile-use-outline-path 'file)        ; 显示文件名前缀
     (setq org-outline-path-complete-in-steps nil)   ; 关键！一次性显示所有候选
-    
+
 
     (setq image-use-external-converter t)
     (setq org-image-actual-width nil   ;; 使用图片原始宽度，不强制缩放
@@ -503,16 +505,16 @@ org attach 有点意思
           org-habit-following-days 3
           org-habit-show-habits-only-for-today t
           org-habit-show-all-today t)
-    
+
 
                                           ;org-export
     (with-eval-after-load 'ox
       (require 'ox-md))
 
-    
-    
+
+
     ;; img
-    
+
     ;;org-todo
     (setq org-todo-keywords
           '((sequence "TODO(t)" "NEXT(n)" "SOMEDAY(s)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
@@ -538,7 +540,7 @@ org attach 有点意思
           ) ;;一定要注意，改这个路径的同时要改org capture的路径
     :hook
     (org-mode . org-link-preview-refresh)
-    
+
     )
 
   (use-package org-capture
@@ -561,8 +563,17 @@ org attach 有点意思
     (setq org-appear-autoemphasis t   ;; *bold* / /italic/
           org-appear-autolinks t      ;; 链接
           org-appear-autosubmarkers t))
+#+end_src
+** org-transclusion
+#+begin_src emacs-lisp :tangle ./post-init.el
+  (use-package org-transclusion
+    :after org
+    :bind (("S-<f12>" . org-transclusion-add)
+           ("C-.  m" . org-transclusion-transient-menu)
+           ("C-.  t" . org-transclusion-mode)
+    ))
 
-
+  
 #+end_src
 ** org-download
 需要外部依赖
@@ -729,16 +740,13 @@ CachyOS需要 wl-clipboard
 - org-cite and  org-citar
 - org-babel
 - +org-element+
-- org-super-agenda
-- org-modern / org-superstar
+- 美化：org-super-agenda org-modern / org-superstar
 - deft / consult-notes
-- org-appear
   
   冷门：
-- org-clock 时间追踪系统
 - org-attach
 
-* casual
+* casua
 
 - casual-image
 - casual-isearch-tmenu
@@ -768,37 +776,81 @@ casual-compile-tmenu
 
 #+begin_src emacs-lisp :tangle ./post-init.el
 
+  ;; (use-package casual-suite
+  ;; 
+  ;;     :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
+  ;;            ("M-j" . casual-avy-tmenu)
+  ;;            ("C-o" . casual-editkit-main-tmenu)
+  ;;            ("M-m" ' casual-suite-tmenu)
+  ;;            ;; 如果你习惯在特定模式下使用更直观的快捷键
+  ;;            :map calc-mode-map ("M-m" . casual-calc-tmenu)
+  ;; ;;           :map isearch-mode-map ("M-m" . )
+  ;;            :map dired-mode-map ("M-m" . casual-dired-tmenu)
+  ;;            :map org-mode-map ("M-m" . casual-org-tmenu)
+  ;;            :map org-table-fedit-map ("M-m" . casual-org-table-fedit-tmenu)
+  ;;            :map org-agenda-mode-map ("M-m" . casual-agenda-tmenu)
+  ;;            :map ibuffer-mode-map ("M-m" . casual-ibuffer-tmenu)
+  ;;            :map bookmark-bmenu-mode-map ("M-m" . casual-bookmarks-tmenu)
+  ;;            :map calendar-mode-map ("M-m" . casual-calendar-tmenu)
+  ;;            :map compilation-mode-map ("M-m" . casual-compile-tmenu)
+  ;;            ;;           :map eww-mode-map ("M-m" . casual-eww-tmenu)
+  ;;            :map help-mode-map ("M-m" . casual-help-tmenu)
+  ;;            :map Info-mode-map ("M-m" . casual-info-tmenu)
+  ;;            ;;:map re-builder-mode-map ("M-m" . casual-re-builder-tmenu)
+  ;;            ;;  :map shell-mode-map ("M-m" . casual-eshell-tmenu)
+  ;;            :map image-mode-map ("M-m" . casual-image-tmenu)
+  ;;            )
+  ;; 
+  ;;     :config
+  ;;     )
+
   (use-package casual-suite
-    :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
-           ("M-j" . casual-avy-tmenu)
-           ("C-o" . casual-editkit-main-tmenu)
-           
-           ("M-m" . casual-suite-tmenu)
-           ;; 如果你习惯在特定模式下使用更直观的快捷键
-           :map calc-mode-map ("M-m" . casual-calc-tmenu)
-           ;;:map isearch-mode-map ("M-m" . )
-           :map dired-mode-map ("M-m" . casual-dired-tmenu)
-           :map org-mode-map ("M-m" . casual-org-tmenu)
-           :map org-table-fedit-map ("M-m" . casual-org-table-fedit-tmenu)
-           :map org-agenda-mode-map ("M-m" . casual-agenda-tmenu)
-           :map ibuffer-mode-map ("M-m" . casual-ibuffer-tmenu)
-           :map bookmark-bmenu-mode-map ("M-m" . casual-bookmarks-tmenu)
-           :map calendar-mode-map ("M-m" . casual-calendar-tmenu)
-           :map compilation-mode-map ("M-m" . casual-compile-tmenu)
-           ;;           :map eww-mode-map ("M-m" . casual-eww-tmenu)
-           :map help-mode-map ("M-m" . casual-help-tmenu)
-           :map Info-mode-map ("M-m" . casual-info-tmenu)
-           ;;:map re-builder-mode-map ("M-m" . casual-re-builder-tmenu)
-           ;;  :map shell-mode-map ("M-m" . casual-eshell-tmenu)
-           :map image-mode-map ("M-m" . casual-image-tmenu)
-           )
-
-    :config
+  :bind
+  (("M-j" . casual-avy-tmenu)
+   ("C-o" . casual-editkit-main-tmenu)
+   ("M-m" . casual-suite-tmenu)
 
 
-    )
+   
+   :map calc-mode-map
+   ("M-m" . casual-calc-tmenu)
+
+   :map dired-mode-map
+   ("M-m" . casual-dired-tmenu)
+
+   :map org-mode-map
+   ("M-m" . casual-org-tmenu)
+
+   :map org-table-fedit-map
+   ("M-m" . casual-org-table-fedit-tmenu)
+
+   :map org-agenda-mode-map
+   ("M-m" . casual-agenda-tmenu)
+
+   :map ibuffer-mode-map
+   ("M-m" . casual-ibuffer-tmenu)
+
+   :map bookmark-bmenu-mode-map
+   ("M-m" . casual-bookmarks-tmenu)
+
+   :map calendar-mode-map
+   ("M-m" . casual-calendar-tmenu)
+
+   :map compilation-mode-map
+   ("M-m" . casual-compile-tmenu)
+
+   :map help-mode-map
+   ("M-m" . casual-help-tmenu)
+
+   :map Info-mode-map
+   ("M-m" . casual-info-tmenu)
+
+   :map image-mode-map
+   ("M-m" . casual-image-tmenu)))
+
+
 #+end_src
-
+** 画图用
 #+begin_src emacs-lisp :tangle ./post-init.el
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -901,19 +953,56 @@ M-RET 提交精确输入
 embark 还没配置好
 #+begin_src emacs-lisp :tangle ./post-init.el
 
+  ;; (use-package embark
+  ;;   :bind (("C-," . embark-act)
+  ;;          ;;("C-;" . embark-dwim)
+  ;;          ("C-h B" . embark-bindings)
+  ;;          :map minibuffer-local-map
+  ;;          ("C-." . embark-act)
+  ;;          ("C-c C-e" . embark-export))
+  ;;   :custom
+  ;;   (embark-quit-after-action nil)
+  ;;   (prefix-help-command #'embark-prefix-help-command)
+  ;;   :init
+  ;;   ;; Which-key 集成
+  ;;   (defun embark-which-key-indicator ()
+  ;;     (lambda (&optional keymap targets prefix)
+  ;;       (if (null keymap)
+  ;;           (which-key--hide-popup-ignore-command)
+  ;;         (which-key--show-keymap
+  ;;          (if (eq (plist-get (car targets) :type) 'embark-become)
+  ;;              "Become"
+  ;;            (format "Act on %s '%s'%s"
+  ;;                    (plist-get (car targets) :type)
+  ;;                    (embark--truncate-target (plist-get (car targets) :target))
+  ;;                    (if (cdr targets) "…" "")))
+  ;;          keymap nil nil 'no-paging)
+  ;;         #'which-key--hide-popup-ignore-command)))
+  ;;   (setq embark-indicators
+  ;;         '(embark-which-key-indicator
+  ;;           embark-highlight-indicator
+  ;;           embark-isearch-highlight-indicator))
+  ;;   (setq embark-action-indicator #'embark-which-key-indicator
+  ;;         embark-become-indicator #'embark-which-key-indicator)
+  ;;   :config
+  ;;   (defun embark--truncate-target (target)
+  ;;     (if (and (stringp target) (> (length target) 30))
+  ;;         (concat (substring target 0 27) "...")
+  ;;       target)))
 
   (use-package embark
-    :bind (("C-," . embark-act)
-           ;;("C-;" . embark-dwim)
-           ("C-h B" . embark-bindings)
+    :bind (("C-,"   . embark-act)
+           ("C-M-," . embark-dwim)        ; 智能猜测最可能的操作
+           ("C-h B" . embark-bindings)    ; 列出所有可用绑定
            :map minibuffer-local-map
-           ("C-." . embark-act)
-           ("C-c C-e" . embark-export))
+           ("C-."   . embark-act)         ; minibuffer 里用 C-.
+           ("C-c C-e" . embark-export)
+           :map org-mode-map
+           ("C-," . embark-act))   ; 导出候选列表
     :custom
-    (embark-quit-after-action nil)
+    (embark-quit-after-action nil)        ; 执行 action 后不退出，方便连续操作
     (prefix-help-command #'embark-prefix-help-command)
     :init
-    ;; Which-key 集成
     (defun embark-which-key-indicator ()
       (lambda (&optional keymap targets prefix)
         (if (null keymap)
@@ -925,8 +1014,8 @@ embark 还没配置好
                      (plist-get (car targets) :type)
                      (embark--truncate-target (plist-get (car targets) :target))
                      (if (cdr targets) "…" "")))
-           keymap nil nil 'no-paging)
-          #'which-key--hide-popup-ignore-command)))
+           keymap nil nil 'no-paging))
+        #'which-key--hide-popup-ignore-command))  ; ← 修复：移到外层括号之后
     (setq embark-indicators
           '(embark-which-key-indicator
             embark-highlight-indicator
@@ -1090,11 +1179,11 @@ pangu 这个是用来给中英文之间自动加空格的.
     (setq undo-tree-history nil)          ; 如果你不需要跨会话历史可以关掉
     )
 #+end_src
-* TODO yasnippet
+* yasnippet
 未实际使用..
+
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-  ;; yasnippet ??TODO
   (use-package yasnippet)
   (use-package yasnippet-snippets)
 #+end_src
@@ -1144,11 +1233,14 @@ expand-region的缩小选择功能我还挺喜欢的
 
   (use-package avy
     :bind (
-           ("C-." . avy-goto-char-timer)
+  ;;         ("C-." . avy-goto-char-timer)
                                           ;     ("C-。". avy-goto-char-timer)
            ("C-;" . avy-goto-line)
                                           ;           ("C-u C-;" . avy-goto-word-0)
            ("M-g w" . avy-goto-word-0)
+           ("M-g W" . avy-goto-char)
+           ("M-g 2" . avy-goto-char-2)
+           ("M-g c" . avy-goto-char-timer)
            ("M-g k" . avy-kill-region)
            ("M-g K" . avy-kill-ring-save-region)
            ;;             avy-goto-char-in-line
@@ -1163,8 +1255,14 @@ expand-region的缩小选择功能我还挺喜欢的
     (avy-single-candidate-jump t)
     (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
     :config
-    (define-key isearch-mode-map (kbd "C-'") 'avy-isearch)
+    ;;(define-key isearch-mode-map (kbd "C-'") 'avy-isearch)
     )
+(use-package ace-pinyin
+  :ensure t
+  :after avy
+  :config
+  (setq ace-pinyin-use-avy t)           ;; 明确用 avy 后端
+  (ace-pinyin-global-mode +1))          ;; 全局开启
 
   (use-package ace-window
     :bind ("C-x o" . ace-window)
@@ -1181,7 +1279,7 @@ expand-region的缩小选择功能我还挺喜欢的
     :bind( ("C-=" . expreg-expand)
            ("C--" . expreg-contract)))
 #+end_src
-** mwim 智能C-a C-e
+** mwim 能智能C-a C-e
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   (use-package mwim
@@ -1633,7 +1731,9 @@ t* password manage
 
 * 键位规划
 =M-n M-p= 这俩特别好用的键还没用呢
+=C-. M-j M-g C-o= 都可用来作transient菜单
 
+* 
 
 * 查缺补漏
 
@@ -1757,7 +1857,6 @@ Org download 在 CachyOS需要 wl-clipboard
 词典依赖Sdcv
 pass：sudo pacman -S pass gnupg git
 
-emms： ImageMagick
-=sudo pacman -S perl-image-exiftool=
-=sudo pacman -Syu vorbis-tools opus-tools=
-=yay -S mp3info=
+
+
+

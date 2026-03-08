@@ -134,18 +134,17 @@
   (when (display-graphic-p)
     ;; 英文字体
     (set-face-attribute 'default nil
-                        :height 130          ;; 14pt (Windows 上建议 140-160)
+                        :height 130          
                         :weight 'normal
                         :family "DejaVu Sans mono")
     
-    ;; 中文字体 - 使用更通用的字体
     (dolist (charset '(kana han symbol cjk-misc bopomofo))
       (set-fontset-font t charset
                         (font-spec :family "Sarasa Fixed SC"
                                    )))))
 
 (use-package valign
-:hook (org-mode . valign-mode))         ;像素级对齐，解决
+:hook (org-mode . valign-mode))         ;解决像素级对齐，让org sheet可以用中日文也对齐了
 
 ;;(add-to-list 'default-frame-alist '(undecorated . t))
 
@@ -279,7 +278,7 @@
         ;; Org
         "\\*Org Agenda\\*"
         "\\*Capture\\*"
-        "\\*org-roam\\*"
+        ;;"\\*org-roam\\*"
 
         ;; 搜索
         "\\*Occur\\*"      occur-mode
@@ -332,16 +331,16 @@
 
   :config
   ;; (setq org-startup-with-inline-images t)
-  
+
   ;; phone refile
-  
+
   (setq org-refile-targets
         '((nil :maxlevel . 1)
           (org-agenda-files :maxlevel . 1)))
 
   (setq org-refile-use-outline-path 'file)        ; 显示文件名前缀
   (setq org-outline-path-complete-in-steps nil)   ; 关键！一次性显示所有候选
-  
+
 
   (setq image-use-external-converter t)
   (setq org-image-actual-width nil   ;; 使用图片原始宽度，不强制缩放
@@ -360,16 +359,16 @@
         org-habit-following-days 3
         org-habit-show-habits-only-for-today t
         org-habit-show-all-today t)
-  
+
 
                                         ;org-export
   (with-eval-after-load 'ox
     (require 'ox-md))
 
-  
-  
+
+
   ;; img
-  
+
   ;;org-todo
   (setq org-todo-keywords
         '((sequence "TODO(t)" "NEXT(n)" "SOMEDAY(s)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
@@ -395,7 +394,7 @@
         ) ;;一定要注意，改这个路径的同时要改org capture的路径
   :hook
   (org-mode . org-link-preview-refresh)
-  
+
   )
 
 (use-package org-capture
@@ -418,6 +417,13 @@
   (setq org-appear-autoemphasis t   ;; *bold* / /italic/
         org-appear-autolinks t      ;; 链接
         org-appear-autosubmarkers t))
+
+(use-package org-transclusion
+  :after org
+  :bind (("S-<f12>" . org-transclusion-add)
+         ("C-.  m" . org-transclusion-transient-menu)
+         ("C-.  t" . org-transclusion-mode)
+  ))
 
 (use-package org-download
   :ensure t
@@ -554,35 +560,75 @@
   :custom
   (valign-fancy-bar t))
 
+;; (use-package casual-suite
+;; 
+;;     :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
+;;            ("M-j" . casual-avy-tmenu)
+;;            ("C-o" . casual-editkit-main-tmenu)
+;;            ("M-m" ' casual-suite-tmenu)
+;;            ;; 如果你习惯在特定模式下使用更直观的快捷键
+;;            :map calc-mode-map ("M-m" . casual-calc-tmenu)
+;; ;;           :map isearch-mode-map ("M-m" . )
+;;            :map dired-mode-map ("M-m" . casual-dired-tmenu)
+;;            :map org-mode-map ("M-m" . casual-org-tmenu)
+;;            :map org-table-fedit-map ("M-m" . casual-org-table-fedit-tmenu)
+;;            :map org-agenda-mode-map ("M-m" . casual-agenda-tmenu)
+;;            :map ibuffer-mode-map ("M-m" . casual-ibuffer-tmenu)
+;;            :map bookmark-bmenu-mode-map ("M-m" . casual-bookmarks-tmenu)
+;;            :map calendar-mode-map ("M-m" . casual-calendar-tmenu)
+;;            :map compilation-mode-map ("M-m" . casual-compile-tmenu)
+;;            ;;           :map eww-mode-map ("M-m" . casual-eww-tmenu)
+;;            :map help-mode-map ("M-m" . casual-help-tmenu)
+;;            :map Info-mode-map ("M-m" . casual-info-tmenu)
+;;            ;;:map re-builder-mode-map ("M-m" . casual-re-builder-tmenu)
+;;            ;;  :map shell-mode-map ("M-m" . casual-eshell-tmenu)
+;;            :map image-mode-map ("M-m" . casual-image-tmenu)
+;;            )
+;; 
+;;     :config
+;;     )
+
 (use-package casual-suite
-  :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
-         ("M-j" . casual-avy-tmenu)
-         ("C-o" . casual-editkit-main-tmenu)
-         
-         ("M-m" . casual-suite-tmenu)
-         ;; 如果你习惯在特定模式下使用更直观的快捷键
-         :map calc-mode-map ("M-m" . casual-calc-tmenu)
-         ;;:map isearch-mode-map ("M-m" . )
-         :map dired-mode-map ("M-m" . casual-dired-tmenu)
-         :map org-mode-map ("M-m" . casual-org-tmenu)
-         :map org-table-fedit-map ("M-m" . casual-org-table-fedit-tmenu)
-         :map org-agenda-mode-map ("M-m" . casual-agenda-tmenu)
-         :map ibuffer-mode-map ("M-m" . casual-ibuffer-tmenu)
-         :map bookmark-bmenu-mode-map ("M-m" . casual-bookmarks-tmenu)
-         :map calendar-mode-map ("M-m" . casual-calendar-tmenu)
-         :map compilation-mode-map ("M-m" . casual-compile-tmenu)
-         ;;           :map eww-mode-map ("M-m" . casual-eww-tmenu)
-         :map help-mode-map ("M-m" . casual-help-tmenu)
-         :map Info-mode-map ("M-m" . casual-info-tmenu)
-         ;;:map re-builder-mode-map ("M-m" . casual-re-builder-tmenu)
-         ;;  :map shell-mode-map ("M-m" . casual-eshell-tmenu)
-         :map image-mode-map ("M-m" . casual-image-tmenu)
-         )
+:bind
+(("M-j" . casual-avy-tmenu)
+ ("C-o" . casual-editkit-main-tmenu)
+ ("M-m" . casual-suite-tmenu)
 
-  :config
+ :map calc-mode-map
+ ("M-m" . casual-calc-tmenu)
 
+ :map dired-mode-map
+ ("M-m" . casual-dired-tmenu)
 
-  )
+ :map org-mode-map
+ ("M-m" . casual-org-tmenu)
+
+ :map org-table-fedit-map
+ ("M-m" . casual-org-table-fedit-tmenu)
+
+ :map org-agenda-mode-map
+ ("M-m" . casual-agenda-tmenu)
+
+ :map ibuffer-mode-map
+ ("M-m" . casual-ibuffer-tmenu)
+
+ :map bookmark-bmenu-mode-map
+ ("M-m" . casual-bookmarks-tmenu)
+
+ :map calendar-mode-map
+ ("M-m" . casual-calendar-tmenu)
+
+ :map compilation-mode-map
+ ("M-m" . casual-compile-tmenu)
+
+ :map help-mode-map
+ ("M-m" . casual-help-tmenu)
+
+ :map Info-mode-map
+ ("M-m" . casual-info-tmenu)
+
+ :map image-mode-map
+ ("M-m" . casual-image-tmenu)))
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -674,18 +720,56 @@
   (projectile-mode +1)
   )
 
+;; (use-package embark
+;;   :bind (("C-," . embark-act)
+;;          ;;("C-;" . embark-dwim)
+;;          ("C-h B" . embark-bindings)
+;;          :map minibuffer-local-map
+;;          ("C-." . embark-act)
+;;          ("C-c C-e" . embark-export))
+;;   :custom
+;;   (embark-quit-after-action nil)
+;;   (prefix-help-command #'embark-prefix-help-command)
+;;   :init
+;;   ;; Which-key 集成
+;;   (defun embark-which-key-indicator ()
+;;     (lambda (&optional keymap targets prefix)
+;;       (if (null keymap)
+;;           (which-key--hide-popup-ignore-command)
+;;         (which-key--show-keymap
+;;          (if (eq (plist-get (car targets) :type) 'embark-become)
+;;              "Become"
+;;            (format "Act on %s '%s'%s"
+;;                    (plist-get (car targets) :type)
+;;                    (embark--truncate-target (plist-get (car targets) :target))
+;;                    (if (cdr targets) "…" "")))
+;;          keymap nil nil 'no-paging)
+;;         #'which-key--hide-popup-ignore-command)))
+;;   (setq embark-indicators
+;;         '(embark-which-key-indicator
+;;           embark-highlight-indicator
+;;           embark-isearch-highlight-indicator))
+;;   (setq embark-action-indicator #'embark-which-key-indicator
+;;         embark-become-indicator #'embark-which-key-indicator)
+;;   :config
+;;   (defun embark--truncate-target (target)
+;;     (if (and (stringp target) (> (length target) 30))
+;;         (concat (substring target 0 27) "...")
+;;       target)))
+
 (use-package embark
-  :bind (("C-," . embark-act)
-         ;;("C-;" . embark-dwim)
-         ("C-h B" . embark-bindings)
+  :bind (("C-,"   . embark-act)
+         ("C-M-," . embark-dwim)        ; 智能猜测最可能的操作
+         ("C-h B" . embark-bindings)    ; 列出所有可用绑定
          :map minibuffer-local-map
-         ("C-." . embark-act)
-         ("C-c C-e" . embark-export))
+         ("C-."   . embark-act)         ; minibuffer 里用 C-.
+         ("C-c C-e" . embark-export)
+         :map org-mode-map
+         ("C-," . embark-act))   ; 导出候选列表
   :custom
-  (embark-quit-after-action nil)
+  (embark-quit-after-action nil)        ; 执行 action 后不退出，方便连续操作
   (prefix-help-command #'embark-prefix-help-command)
   :init
-  ;; Which-key 集成
   (defun embark-which-key-indicator ()
     (lambda (&optional keymap targets prefix)
       (if (null keymap)
@@ -697,8 +781,8 @@
                    (plist-get (car targets) :type)
                    (embark--truncate-target (plist-get (car targets) :target))
                    (if (cdr targets) "…" "")))
-         keymap nil nil 'no-paging)
-        #'which-key--hide-popup-ignore-command)))
+         keymap nil nil 'no-paging))
+      #'which-key--hide-popup-ignore-command))  ; ← 修复：移到外层括号之后
   (setq embark-indicators
         '(embark-which-key-indicator
           embark-highlight-indicator
@@ -852,7 +936,6 @@
   (setq undo-tree-history nil)          ; 如果你不需要跨会话历史可以关掉
   )
 
-;; yasnippet ??TODO
 (use-package yasnippet)
 (use-package yasnippet-snippets)
 
@@ -891,43 +974,52 @@
      (format "tab-%s" (alist-get 'name (tab-bar--current-tab))))))
 
 (use-package avy
-  :bind (
-         ("C-." . avy-goto-char-timer)
-                                        ;     ("C-。". avy-goto-char-timer)
-         ("C-;" . avy-goto-line)
-                                        ;           ("C-u C-;" . avy-goto-word-0)
-         ("M-g w" . avy-goto-word-0)
-         ("M-g k" . avy-kill-region)
-         ("M-g K" . avy-kill-ring-save-region)
-         ;;             avy-goto-char-in-line
-         ;;               avy-zap
-                                        ;("C-c C-j" . avy-resume)
-         )
-  :custom
-  (avy-timeout-seconds 0.3)
-  (avy-style 'at-full)
-  (avy-all-windows t)
-  (avy-background t)
-  (avy-single-candidate-jump t)
-  (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+    :bind (
+  ;;         ("C-." . avy-goto-char-timer)
+                                          ;     ("C-。". avy-goto-char-timer)
+           ("C-;" . avy-goto-line)
+                                          ;           ("C-u C-;" . avy-goto-word-0)
+           ("M-g w" . avy-goto-word-0)
+           ("M-g W" . avy-goto-char)
+           ("M-g 2" . avy-goto-char-2)
+           ("M-g c" . avy-goto-char-timer)
+           ("M-g k" . avy-kill-region)
+           ("M-g K" . avy-kill-ring-save-region)
+           ;;             avy-goto-char-in-line
+           ;;               avy-zap
+                                          ;("C-c C-j" . avy-resume)
+           )
+    :custom
+    (avy-timeout-seconds 0.3)
+    (avy-style 'at-full)
+    (avy-all-windows t)
+    (avy-background t)
+    (avy-single-candidate-jump t)
+    (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+    :config
+    ;;(define-key isearch-mode-map (kbd "C-'") 'avy-isearch)
+    )
+(use-package ace-pinyin
+  :ensure t
+  :after avy
   :config
-  (define-key isearch-mode-map (kbd "C-'") 'avy-isearch)
-  )
+  (setq ace-pinyin-use-avy t)           ;; 明确用 avy 后端
+  (ace-pinyin-global-mode +1))          ;; 全局开启
 
-(use-package ace-window
-  :bind ("C-x o" . ace-window)
-  :custom
-  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+  (use-package ace-window
+    :bind ("C-x o" . ace-window)
+    :custom
+    (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
-(use-package amx
-  :defer 0.2
-  :config
-  (amx-mode 1))
+  (use-package amx
+    :defer 0.2
+    :config
+    (amx-mode 1))
 
 
-(use-package expreg
-  :bind( ("C-=" . expreg-expand)
-         ("C--" . expreg-contract)))
+  (use-package expreg
+    :bind( ("C-=" . expreg-expand)
+           ("C--" . expreg-contract)))
 
 (use-package mwim
   :ensure t
