@@ -461,26 +461,49 @@
   :custom
   (org-roam-directory (file-truename "~/Documents/roam-note/"))
   (org-roam-capture-templates
-   '(    ("d" "default" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
-          :unnarrowed t)
-         ("s" "Study" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Study:
-
-          ")
-          :unnarrowed t)
-         ("e" "Emacs" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :Emacs:
-
-          ")
-          :unnarrowed t)
-         ("c" "COD note" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :textbook:Computer Organization and Design MIPS Edition:Computer Architecture:Study:\n\n#+book:Computer Organization and Design MIPS Edition
-      ")
-          :unnarrowed t)))
+ '(    ("d" "default" plain "%?"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
+        :unnarrowed t)
+       
+       ("M" "MOC note" plain "%?"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :MOC:
+        ")
+        :unnarrowed t)
+       
+       ("D" "directory note" plain "%?"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :directory:
+    ")
+        :unnarrowed t)
+       
+       ("f" "fleeting note" plain "%?"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :fleeting:
+    ")
+        :unnarrowed t)
+       ("P" "person note" plain "%?"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :person:
+    ")
+        :unnarrowed t)
+       
+       ("p" "project notes" plain "%?"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :project:\n\n
+    ")
+        :unnarrowed t)
+       ("t" "terminology" plain "%?"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :terminology:
+    ")
+        :unnarrowed t)
+       ("r" "Reference" plain "%?"
+        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :terminology:\n\n* source
+    ")
+        :unnarrowed t)
+       ))
 
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n p" . org-roam-buffer-display-dedicated)
@@ -877,7 +900,11 @@
 (use-package corfu-terminal
   :ensure t)
 
-
+(use-package yasnippet-capf
+  :ensure t
+  :after yasnippet
+  :config
+  (add-to-list 'completion-at-point-functions #'yasnippet-capf))
 (use-package cape
   :init
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
@@ -889,7 +916,9 @@
          ("C-c p k" . cape-keyword)
          ("C-c p s" . cape-symbol)
          ("C-c p a" . cape-abbrev)
-         ("C-c p l" . cape-line)))
+         ("C-c p l" . cape-line))
+  :config
+  )
 
 (use-package multiple-cursors
   :ensure t
@@ -939,8 +968,60 @@
   (setq undo-tree-history nil)          ; 如果你不需要跨会话历史可以关掉
   )
 
-(use-package yasnippet)
-(use-package yasnippet-snippets)
+;; 关闭 小于号自动补全大于号
+(setq electric-pair-inhibit-predicate
+      (lambda (c)
+        (if (char-equal c ?<) t (electric-pair-default-inhibit c))))
+
+(use-package yasnippet
+  :ensure t
+  :hook
+  ;; 在常用模式下启用
+  ((prog-mode . yas-minor-mode)
+   (text-mode . yas-minor-mode)
+   (org-mode  . yas-minor-mode))
+  :config
+  ;; 自定义 snippets 目录（与内置目录共存）
+  (setq yas-snippet-dirs
+        '("~/.emacs.d/snippets"           ; 个人自定义 snippets
+          yasnippet-snippets-dir))         ; 官方 snippet 集合（见下方）
+
+  ;; 启动时加载所有 snippets
+  (yas-reload-all)
+
+  ;; 展开时不发出提示音
+  (setq yas-verbosity 1)
+
+  ;; 允许在任意位置嵌套展开
+  (setq yas-triggers-in-field t))
+
+
+;; 2. 安装官方 snippet 集合（强烈推荐）
+(use-package yasnippet-snippets
+  :ensure t
+  :after yasnippet)
+
+
+
+;; 4. 与 consult / vertico 集成（可选，用于搜索 snippet）
+(use-package consult-yasnippet
+  :ensure t
+  :after (consult yasnippet)
+  :bind ("C-c y" . consult-yasnippet))
+
+
+;; 5. 按键绑定
+(with-eval-after-load 'yasnippet
+  (define-key yas-minor-mode-map (kbd "C-c p TAB") 'yas-expand)
+
+  ;; 浏览所有可用 snippet
+  (global-set-key (kbd "C-c p i") 'yas-insert-snippet)
+
+  ;; 新建 snippet
+  (global-set-key (kbd "C-c p n") 'yas-new-snippet)
+
+  ;; 编辑已有 snippet
+  (global-set-key (kbd "C-c p v") 'yas-visit-snippet-file))
 
 (use-package tab-bar
   :ensure nil
