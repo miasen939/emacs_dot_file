@@ -112,12 +112,14 @@ benchmark 用来分析启动时间
   (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
 
   (setq recent-keys-length 1000)          ;C-h l 保存的历史快捷键数量
-#+end_src
+  #+end_src
 ** use-package emacs
 
+新frame自动全屏
 #+begin_src emacs-lisp :tangle ./post-init.el
   (use-package emacs
-    :bind ("M-o" . other-window)
+    :bind (("M-o" . other-window)
+           ("s-o" . other-frame))
     :hook (after-make-frame-functions . (lambda (frame)
                                           (select-frame frame)
                                           (toggle-frame-maximized))))
@@ -401,7 +403,7 @@ popper 的小问题： M-` 被kde截住了
           "\\*Flymake diagnostics.*\\*"
 
           ;; Org
-          "\\*Org Agenda\\*"
+          ;;"\\*Org Agenda\\*"
           "\\*Capture\\*"
           ;;"\\*org-roam\\*"
 
@@ -600,8 +602,8 @@ CachyOS需要 wl-clipboard
     (setq org-download-timestamp "_%Y%m%d_%H%M%S")
 
     ;; Mac/Linux 剪贴板截图特别推荐再加这一行
-    (when (eq system-type 'darwin)   ; macOS
-      (setq org-download-screenshot-method "screencapture -i %s"))
+    ;; (when (eq system-type 'darwin)   ; macOS
+    ;;   (setq org-download-screenshot-method "screencapture -i %s"))
     (setq org-image-actual-width '(600))
     ) 
 #+end_src
@@ -1383,9 +1385,17 @@ eat我听说很厉害,但是没有怎么使用过.
     :bind
     ("C-c t" . vterm)
     :config
-    (add-hook 'vterm-mode-hook
-              (lambda ()
-                (setq-local global-hl-line-mode nil))) ;解决vterm闪烁
+    ;; (add-hook 'vterm-mode-hook
+    ;;           (lambda ()
+    ;;             (setq-local global-hl-line-mode nil)))
+                                          ;解决vterm闪烁
+    
+
+    :init
+    
+    (setq vterm-timer-delay 0.05)  ; Faster vterm
+    (setq vterm-kill-buffer-on-exit t)
+    (setq vterm-max-scrollback 5000)
     (defun my-vterm--setup ()
 
       ;; Inhibit early horizontal scrolling
@@ -1393,13 +1403,6 @@ eat我听说很厉害,但是没有怎么使用过.
 
       ;; Suppress prompts for terminating active processes when closing vterm
       (setq-local confirm-kill-processes nil))
-
-    :init
-    
-    (setq vterm-timer-delay 0.05)  ; Faster vterm
-    (setq vterm-kill-buffer-on-exit t)
-    (setq vterm-max-scrollback 5000)
-    
     (add-hook 'vterm-mode-hook #'my-vterm--setup)
 
     )
@@ -1856,7 +1859,6 @@ Org download 在 CachyOS需要 wl-clipboard
 
 词典依赖Sdcv
 pass：sudo pacman -S pass gnupg git
-
 
 
 

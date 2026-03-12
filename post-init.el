@@ -54,7 +54,8 @@
 (setq recent-keys-length 1000)          ;C-h l 保存的历史快捷键数量
 
 (use-package emacs
-  :bind ("M-o" . other-window)
+  :bind (("M-o" . other-window)
+         ("s-o" . other-frame))
   :hook (after-make-frame-functions . (lambda (frame)
                                         (select-frame frame)
                                         (toggle-frame-maximized))))
@@ -276,7 +277,7 @@
         "\\*Flymake diagnostics.*\\*"
 
         ;; Org
-        "\\*Org Agenda\\*"
+        ;;"\\*Org Agenda\\*"
         "\\*Capture\\*"
         ;;"\\*org-roam\\*"
 
@@ -444,8 +445,8 @@
   (setq org-download-timestamp "_%Y%m%d_%H%M%S")
 
   ;; Mac/Linux 剪贴板截图特别推荐再加这一行
-  (when (eq system-type 'darwin)   ; macOS
-    (setq org-download-screenshot-method "screencapture -i %s"))
+  ;; (when (eq system-type 'darwin)   ; macOS
+  ;;   (setq org-download-screenshot-method "screencapture -i %s"))
   (setq org-image-actual-width '(600))
   )
 
@@ -594,6 +595,8 @@
  ("C-o" . casual-editkit-main-tmenu)
  ("M-m" . casual-suite-tmenu)
 
+
+ 
  :map calc-mode-map
  ("M-m" . casual-calc-tmenu)
 
@@ -1109,9 +1112,17 @@
   :bind
   ("C-c t" . vterm)
   :config
-  (add-hook 'vterm-mode-hook
-            (lambda ()
-              (setq-local global-hl-line-mode nil))) ;解决vterm闪烁
+  ;; (add-hook 'vterm-mode-hook
+  ;;           (lambda ()
+  ;;             (setq-local global-hl-line-mode nil)))
+                                        ;解决vterm闪烁
+  
+
+  :init
+  
+  (setq vterm-timer-delay 0.05)  ; Faster vterm
+  (setq vterm-kill-buffer-on-exit t)
+  (setq vterm-max-scrollback 5000)
   (defun my-vterm--setup ()
 
     ;; Inhibit early horizontal scrolling
@@ -1119,13 +1130,6 @@
 
     ;; Suppress prompts for terminating active processes when closing vterm
     (setq-local confirm-kill-processes nil))
-
-  :init
-  
-  (setq vterm-timer-delay 0.05)  ; Faster vterm
-  (setq vterm-kill-buffer-on-exit t)
-  (setq vterm-max-scrollback 5000)
-  
   (add-hook 'vterm-mode-hook #'my-vterm--setup)
 
   )
