@@ -112,7 +112,14 @@ benchmark 用来分析启动时间
   (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
 
   (setq recent-keys-length 1000)          ;C-h l 保存的历史快捷键数量
-  #+end_src
+#+end_src
+* 测试load包
+#+begin_src emacs-lisp :tangle ./post-init.el
+  (add-to-list 'load-path "~/.emacs.d/lisp/")
+
+  (require 'my-dashboard)
+  ;;(load "~/.emacs.d/lisp/my-dash.el")
+#+end_src
 ** use-package emacs
 
 新frame自动全屏
@@ -764,7 +771,7 @@ CachyOS需要 wl-clipboard
    'org-babel-load-languages
    '((dot . t)))
 #+end_src
-* use-package
+* use-packages
 
 ** multiple-cursors and undo-fu 
 #+begin_src emacs-lisp :tangle ./post-init.el
@@ -826,7 +833,8 @@ CachyOS需要 wl-clipboard
           (if (char-equal c ?<) t (electric-pair-default-inhibit c))))
 
   (use-package yasnippet
-    :ensure t
+    :bind
+    
     :hook
     ;; 在常用模式下启用
     ((prog-mode . yas-minor-mode)
@@ -859,7 +867,9 @@ CachyOS需要 wl-clipboard
   (use-package consult-yasnippet
     :ensure t
     :after (consult yasnippet)
-    :bind ("C-c y" . consult-yasnippet))
+    :bind (("C-c y" . consult-yasnippet)
+           ("C-c p y" . consult-yasnippet)
+           ))
 
 
   ;; 5. 按键绑定
@@ -1792,32 +1802,24 @@ dashboard的banner最好自己手动压缩为500x500以下
 
 #+begin_src emacs-lisp :tangle ./post-init.el
 
-  (use-package dashboard
-    :demand t
-    :custom
-    (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
+  
+#+end_src
+** bufferfile
+#+begin_src emacs-lisp :tangle ./post-init.el
+(use-package bufferfile
+  :ensure t
+  :commands (bufferfile-copy
+             bufferfile-rename
+             bufferfile-delete)
+  :custom
+  ;; If non-nil, display messages during file renaming operations
+  (bufferfile-verbose nil)
 
-    
+  ;; If non-nil, enable using version control (VC) when available
+  (bufferfile-use-vc nil)
 
-    (dashboard-startup-banner
-     (let* ((image-dir (expand-file-name "~/Pictures/icon/"))
-            (images (directory-files image-dir t "\\.\\(png\\|jpg\\|jpeg\\|gif\\|webp\\)$" t)))
-       (if images
-           (seq-random-elt images)
-         (message "No images found in %s" image-dir)
-         nil)))   
-
-    ;; (dashboard-items '(
-    ;;                    (agenda . 10)
-    ;;                    (recents . 8)
-    ;;                    (bookmarks . 5)
-    ;;                    (projects . 5)))
-    (dashboard-center-content t)
-    (dashboard-vertically-center-content t)
-
-    :config
-    (dashboard-setup-startup-hook)
-    )
+  ;; Specifies the action taken after deleting a file and killing its buffer.
+  (bufferfile-delete-switch-to 'parent-directory))
 #+end_src
 * post-init.el ends here
 #+begin_src emacs-lisp :tangle ./post-init.el

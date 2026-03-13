@@ -4,6 +4,8 @@
 !static/**
 !snippets/
 !snippets/**
+!lisp/
+!lisp/**
 !README.md
 !README.org
 !early-init.el
