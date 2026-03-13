@@ -679,14 +679,14 @@ CachyOS需要 wl-clipboard
            ("C-c n p" . org-roam-buffer-display-dedicated)
            ("C-c n f" . org-roam-node-find)
            ("C-c n g" . org-roam-graph)
-           ("C-c n I" . org-roam-node-insert)
+           ("C-c n i" . org-roam-node-insert)
            ("C-c n c" . org-roam-capture)
            ("C-c n t" . org-roam-tag-add)
            ("C-c n a" . org-roam-alias-add)
            ("C-c n A" . org-roam-alias-remove)
            ;; Dailies
            ("C-c n j" . org-roam-dailies-capture-today)
-           ("C-c n i" . org-roam-node-insert-immediate)
+           ("C-c n I" . org-roam-node-insert-immediate)
            ("C-c n N" . org-roam-dailies-goto-next-note)
            ("C-c n B" . org-roam-dailies-goto-previous-note)
            ("C-c n T" . org-roam-dailies-goto-today))
@@ -1161,7 +1161,7 @@ pangu 这个是用来给中英文之间自动加空格的.
     )
 
 #+end_src
-* multiple-cursors and undo-tree
+* multiple-cursors and undo-fu
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   (use-package multiple-cursors
@@ -1189,28 +1189,26 @@ pangu 这个是用来给中英文之间自动加空格的.
     (add-to-list 'mc/cmds-to-run-for-all 'backward-delete-char)
     )
 
-  (use-package undo-tree
-    :ensure t
+
+
+  (use-package undo-fu
+    :init
+    (global-unset-key (kbd "C-z"))
     :bind
-    (("C-x u"   . undo-tree-visualize)     ; 原 C-x u 改成可视化树
-     ("C-/"     . undo-tree-undo)           ; ← 很多人喜欢这个组合
-     ("C-?"     . undo-tree-redo))          ; ← redo
-
-    :config
-    ;; 全局开启 undo-tree 模式（强烈推荐）
-    (global-undo-tree-mode 1)
-
-    ;; 以下是常用优化（按个人喜好选择）
-    (setq undo-tree-auto-save-history t)
-
-    (setq undo-tree-visualizer-timestamps t)
-
-    (setq undo-tree-visualizer-diff t)
-
-    (setq undo-tree-limit 2048)           ; 每个缓冲区最多保存 2048 次修改
-    (setq undo-tree-strong-limit 4096)
-    (setq undo-tree-history nil)          ; 如果你不需要跨会话历史可以关掉
+    ("C-/"   . undo-fu-only-undo)
+    ("C-S-/" . undo-fu-only-redo)
+    ("C-z"   . undo-fu-only-undo)
+    ("C-S-z" . undo-fu-only-redo)
     )
+
+  (use-package undo-fu-session
+    :ensure t
+    :config
+    (setq undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
+    (setq undo-strong-limit (* 16 1024 1024))
+    (setq undo-fu-session-compression 'gz)
+    (undo-fu-session-global-mode))
+
 #+end_src
 * yasnippet
 
