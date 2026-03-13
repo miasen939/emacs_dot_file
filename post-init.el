@@ -202,114 +202,101 @@
 ;; (use-package mood-line
 ;; :hook (after-init . mood-line-mode))
 
-(use-package dashboard
+(use-package tab-bar
+  :ensure nil
+  :demand t
+  :bind (
+         ("C-c s" . tab-bar-switch-to-tab)
+         ("C-c V" . tab-bar-close-tab)
+         )
+  :custom
+  (tab-bar-show nil)
+  (tab-bar-tab-hints t)
+  (tab-bar-new-tab-choice "*dashboard*")
+  :init
+  (tab-bar-mode 1))
+
+(use-package burly
+  :after tab-bar
+  :bind
+  (("C-c v" . my/create-workspace)
+   ("C-c r" . my/save-workspace)
+   )
+  :config
+  (defun my/create-workspace ()
+    "创建新的工作区标签."
+    (interactive)
+    (tab-bar-new-tab)
+    (let ((name (read-string "Workspace name: ")))
+      (tab-bar-rename-tab name)))
+
+  (defun my/save-workspace ()
+    "保存当前标签的窗口布局."
+    (interactive)
+    (burly-bookmark-windows
+     (format "tab-%s" (alist-get 'name (tab-bar--current-tab))))))
+
+(use-package autorevert
+  :ensure nil
   :demand t
   :custom
-  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
-
-  
-
-  (dashboard-startup-banner
-   (let* ((image-dir (expand-file-name "~/Pictures/icon/"))
-          (images (directory-files image-dir t "\\.\\(png\\|jpg\\|jpeg\\|gif\\|webp\\)$" t)))
-     (if images
-         (seq-random-elt images)
-       (message "No images found in %s" image-dir)
-       nil)))   
-
-  (dashboard-items '(
-                     (agenda . 10)
-                     (recents . 8)
-                     (bookmarks . 5)
-                     (projects . 5)))
-  (dashboard-center-content t)
-  (dashboard-vertically-center-content t)
-
+  (auto-revert-interval 3)
+  (auto-revert-remote-files nil)
+  (auto-revert-use-notify t)
+  (auto-revert-verbose nil)
   :config
-  (dashboard-setup-startup-hook)
-  )
+  (global-auto-revert-mode 1))
 
-(use-package helpful
-  :ensure t
-  :commands (helpful-callable
-             helpful-variable
-             helpful-key
-             helpful-command
-             helpful-at-point
-             helpful-function)
-  :bind
-  ([remap describe-command] . helpful-command)
-  ([remap describe-function] . helpful-callable)
-  ([remap describe-key] . helpful-key)
-  ([remap describe-symbol] . helpful-symbol)
-  ([remap describe-variable] . helpful-variable)
+(use-package recentf
+  :ensure nil
+  :demand t
   :custom
-  (helpful-max-buffers 7))
-
-(use-package popper
-  :bind (("C-`"   . popper-toggle)
-         ("M-`"   . popper-cycle)
-         ("C-M-`" . popper-toggle-type))
-  :init
-    (setq popper-reference-buffers
-      '(;; 基础
-        "\\*Messages\\*"
-        "Output\\*$"
-        "\\*Async Shell Command\\*"
-        "\\*Warnings\\*"
-        "\\*Backtrace\\*"
-        calendar-mode
-        flymake-diagnostics-buffer-mode
-        flycheck-error-list-mode
-        pdf-outline-buffer-mode
-        help-mode
-        compilation-mode
-
-        ;; 终端
-        "^\\*eshell.*\\*$" eshell-mode
-        "^\\*shell.*\\*$"  shell-mode
-        "^\\*term.*\\*$"   term-mode
-        "^\\*vterm.*\\*$"  vterm-mode
-
-        ;; LSP
-        "\\*eldoc.*\\*"    eldoc-mode
-        "\\*xref\\*"
-        "\\*Flymake diagnostics.*\\*"
-
-        ;; Org
-        ;;"\\*Org Agenda\\*"
-        "\\*Capture\\*"
-        ;;"\\*org-roam\\*"
-
-        ;; 搜索
-        "\\*Occur\\*"      occur-mode
-        "\\*grep\\*"       grep-mode
-        "\\*ripgrep-search\\*"
-
-        ;; Magit
-        "\\*magit-diff.*\\*"
-        "\\*magit-process.*\\*"
-
-        ;; Helpful
-        helpful-mode
-
-        ;; 其他
-        "\\*Dictionary\\*"
-        "^\\*sdcv:.*\\*$"  sdcv-mode
-        "\\.gpg$"
-        "\\*Python\\*"     inferior-python-mode))
-  
-  (popper-mode +1)
-  (popper-echo-mode +1))                ; For echo area hints
-
-(use-package pdf-tools
-  :mode ("\\.pdf\\'" . pdf-view-mode)
-
+  (recentf-auto-cleanup (if (daemonp) 300 'never))
+  (recentf-max-saved-items 100)
+  (recentf-exclude
+   '("\\.tar$" "\\.tbz2$" "\\.tgz$" "\\.bz2$" "\\.gz$"
+     "\\.zip$" "\\.7z$" "\\.rar$"
+     "COMMIT_EDITMSG\\'"
+     "\\.\\(?:gif\\|svg\\|png\\|jpe?g\\|bmp\\|xpm\\)$"
+     "-autoloads\\.el$" "autoload\\.el$"))
   :config
-  (pdf-tools-install :no-query)
-  )
-(use-package nov
-  :mode ("\\.epub\\'" . nov-mode))
+  (recentf-mode 1)
+  (add-hook 'kill-emacs-hook #'recentf-cleanup -90))
+
+(use-package savehist
+  :ensure nil
+  :demand t
+  :custom
+  (savehist-autosave-interval 600)
+  (savehist-additional-variables
+   '(kill-ring
+     register-alist
+     mark-ring
+     global-mark-ring
+     search-ring
+     regexp-search-ring
+     corfu-history
+     vertico-repeat-history))
+  :config
+  (savehist-mode 1))
+
+(use-package saveplace
+  :ensure nil
+  :demand t
+  :custom
+  (save-place-limit 400)
+  :config
+  (save-place-mode 1))
+
+(use-package nerd-icons-dired
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
+
+(use-package dirvish
+  :init
+  (dirvish-override-dired-mode)
+  :bind
+  ("C-x C-d" . dirvish))
 
 (use-package org
   :ensure t
@@ -461,49 +448,60 @@
   :custom
   (org-roam-directory (file-truename "~/Documents/roam-note/"))
   (org-roam-capture-templates
- '(    ("d" "default" plain "%?"
-        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
-        :unnarrowed t)
-       
-       ("M" "MOC note" plain "%?"
-        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :MOC:
+   '(    ("d" "default" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
+          :unnarrowed t)
+         
+         ("M" "MOC note" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :MOC:
         ")
-        :unnarrowed t)
-       
-       ("D" "directory note" plain "%?"
-        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :directory:
+          :unnarrowed t)
+         
+         ("D" "directory note" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :directory:
     ")
-        :unnarrowed t)
-       
-       ("f" "fleeting note" plain "%?"
-        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :fleeting:
+          :unnarrowed t)
+         
+         ("f" "fleeting note" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :fleeting:
     ")
-        :unnarrowed t)
-       ("P" "person note" plain "%?"
-        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :person:
+          :unnarrowed t)
+         ("P" "person note" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :person:
     ")
-        :unnarrowed t)
-       
-       ("p" "project notes" plain "%?"
-        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :project:\n\n
+          :unnarrowed t)
+         
+         ("p" "project notes" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :project:\n\n
     ")
-        :unnarrowed t)
-       ("t" "terminology" plain "%?"
-        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :terminology:
+          :unnarrowed t)
+         ("t" "terminology" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :terminology:
     ")
-        :unnarrowed t)
-       ("r" "Reference" plain "%?"
-        :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                           "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :terminology:\n\n* source
+          :unnarrowed t)
+         ("r" "Reference" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :reference:\n\n* source
     ")
-        :unnarrowed t)
-       ))
+          :unnarrowed t)
+         ("o" "anime/manga/game/visual novel note" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :otaku:\n\n* source
+    ")
+          :unnarrowed t)
+         ("T" "Thoughts note" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags:thoughts:
+    ")
+          :unnarrowed t)
+         )
+   )
 
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n p" . org-roam-buffer-display-dedicated)
@@ -584,341 +582,9 @@
   :custom
   (valign-fancy-bar t))
 
-;; (use-package casual-suite
-;; 
-;;     :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
-;;            ("M-j" . casual-avy-tmenu)
-;;            ("C-o" . casual-editkit-main-tmenu)
-;;            ("M-m" ' casual-suite-tmenu)
-;;            ;; 如果你习惯在特定模式下使用更直观的快捷键
-;;            :map calc-mode-map ("M-m" . casual-calc-tmenu)
-;; ;;           :map isearch-mode-map ("M-m" . )
-;;            :map dired-mode-map ("M-m" . casual-dired-tmenu)
-;;            :map org-mode-map ("M-m" . casual-org-tmenu)
-;;            :map org-table-fedit-map ("M-m" . casual-org-table-fedit-tmenu)
-;;            :map org-agenda-mode-map ("M-m" . casual-agenda-tmenu)
-;;            :map ibuffer-mode-map ("M-m" . casual-ibuffer-tmenu)
-;;            :map bookmark-bmenu-mode-map ("M-m" . casual-bookmarks-tmenu)
-;;            :map calendar-mode-map ("M-m" . casual-calendar-tmenu)
-;;            :map compilation-mode-map ("M-m" . casual-compile-tmenu)
-;;            ;;           :map eww-mode-map ("M-m" . casual-eww-tmenu)
-;;            :map help-mode-map ("M-m" . casual-help-tmenu)
-;;            :map Info-mode-map ("M-m" . casual-info-tmenu)
-;;            ;;:map re-builder-mode-map ("M-m" . casual-re-builder-tmenu)
-;;            ;;  :map shell-mode-map ("M-m" . casual-eshell-tmenu)
-;;            :map image-mode-map ("M-m" . casual-image-tmenu)
-;;            )
-;; 
-;;     :config
-;;     )
-
-(use-package casual-suite
-:bind
-(("M-j" . casual-avy-tmenu)
- ("C-o" . casual-editkit-main-tmenu)
- ("M-m" . casual-suite-tmenu)
-
-
- 
- :map calc-mode-map
- ("M-m" . casual-calc-tmenu)
-
- :map dired-mode-map
- ("M-m" . casual-dired-tmenu)
-
- :map org-mode-map
- ("M-m" . casual-org-tmenu)
-
- :map org-table-fedit-map
- ("M-m" . casual-org-table-fedit-tmenu)
-
- :map org-agenda-mode-map
- ("M-m" . casual-agenda-tmenu)
-
- :map ibuffer-mode-map
- ("M-m" . casual-ibuffer-tmenu)
-
- :map bookmark-bmenu-mode-map
- ("M-m" . casual-bookmarks-tmenu)
-
- :map calendar-mode-map
- ("M-m" . casual-calendar-tmenu)
-
- :map compilation-mode-map
- ("M-m" . casual-compile-tmenu)
-
- :map help-mode-map
- ("M-m" . casual-help-tmenu)
-
- :map Info-mode-map
- ("M-m" . casual-info-tmenu)
-
- :map image-mode-map
- ("M-m" . casual-image-tmenu)))
-
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((dot . t)))
-
-;; Vertico - 垂直补全界面
-(use-package vertico
-  :demand t
-  :bind (:map vertico-map
-              ("C-j" . vertico-next)
-              ("C-k" . vertico-previous)
-              ("C-f" . vertico-exit)
-              ("<escape>" . minibuffer-keyboard-quit))
-  :custom
-  (vertico-scroll-margin 0)
-  (vertico-count 15)
-  (vertico-cycle t)
-  :init
-  (vertico-mode))
-
-;; Orderless - 灵活的匹配样式
-(use-package orderless
-  :demand t
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
-
-;; Marginalia - 补全注释
-(use-package marginalia
-  :demand t
-  :bind (:map minibuffer-local-map
-              ("M-A" . marginalia-cycle))
-  :init
-  (marginalia-mode))
-
-;; Consult - 增强的搜索和导航
-(use-package consult
-  :bind (;; C-c 前缀
-         ("C-c h" . consult-history)
-         ("C-c m" . consult-mode-command)
-         ("C-c k" . consult-kmacro)
-         ;; C-x 前缀
-         ("C-x M-:" . consult-complex-command)
-         ("C-x b" . consult-buffer)
-         ("C-x 4 b" . consult-buffer-other-window)
-         ("C-x 5 b" . consult-buffer-other-frame)
-         ("C-x r b" . consult-bookmark)
-         ;; 其他
-         ("M-y" . consult-yank-pop)
-         ("C-s" . consult-line)
-         ("M-g g" . consult-goto-line)
-         ("M-g o" . consult-outline)
-         ("M-g i" . consult-imenu)
-         ;; M-s 前缀
-         ("M-s d" . consult-fd)
-         ("M-s r" . consult-ripgrep)
-         ("M-s l" . consult-line)
-         :map isearch-mode-map
-         ("M-e" . consult-isearch-history)
-         ("M-s l" . consult-line)
-         :map minibuffer-local-map
-         ("M-s" . consult-history)
-         ("M-r" . consult-history))
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-  :init
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref)
-
-  :config
-  (consult-customize
-   consult-theme :preview-key '(:debounce 0.2 any)
-   consult-ripgrep consult-git-grep consult-grep
-   consult-bookmark consult-recent-file consult-xref
-   :preview-key "M-.")
-  (setq consult-async-min-input 2)
-  (setq consult-narrow-key "<"))
-
-(use-package projectile
-  :defer 0.2
-  ;; 常用设置（可以根据需要增删）
-  :custom
-  (projectile-project-search-path '("~/projects/" "~/work/" "~/playground" "~/Documents/"))
-  (projectile-files-command "ripgrep --files --hidden --follow --glob '!.git'") 
-  :config
-  (define-key projectile-mode-map (kbd "C-c C-p") 'projectile-command-map)
-  (global-set-key (kbd "C-c C-p") 'projectile-command-map)
-
-  (projectile-mode +1)
-  )
-
-;; (use-package embark
-;;   :bind (("C-," . embark-act)
-;;          ;;("C-;" . embark-dwim)
-;;          ("C-h B" . embark-bindings)
-;;          :map minibuffer-local-map
-;;          ("C-." . embark-act)
-;;          ("C-c C-e" . embark-export))
-;;   :custom
-;;   (embark-quit-after-action nil)
-;;   (prefix-help-command #'embark-prefix-help-command)
-;;   :init
-;;   ;; Which-key 集成
-;;   (defun embark-which-key-indicator ()
-;;     (lambda (&optional keymap targets prefix)
-;;       (if (null keymap)
-;;           (which-key--hide-popup-ignore-command)
-;;         (which-key--show-keymap
-;;          (if (eq (plist-get (car targets) :type) 'embark-become)
-;;              "Become"
-;;            (format "Act on %s '%s'%s"
-;;                    (plist-get (car targets) :type)
-;;                    (embark--truncate-target (plist-get (car targets) :target))
-;;                    (if (cdr targets) "…" "")))
-;;          keymap nil nil 'no-paging)
-;;         #'which-key--hide-popup-ignore-command)))
-;;   (setq embark-indicators
-;;         '(embark-which-key-indicator
-;;           embark-highlight-indicator
-;;           embark-isearch-highlight-indicator))
-;;   (setq embark-action-indicator #'embark-which-key-indicator
-;;         embark-become-indicator #'embark-which-key-indicator)
-;;   :config
-;;   (defun embark--truncate-target (target)
-;;     (if (and (stringp target) (> (length target) 30))
-;;         (concat (substring target 0 27) "...")
-;;       target)))
-
-(use-package embark
-  :bind (("C-,"   . embark-act)
-         ("C-M-," . embark-dwim)        ; 智能猜测最可能的操作
-         ("C-h B" . embark-bindings)    ; 列出所有可用绑定
-         :map minibuffer-local-map
-         ("C-."   . embark-act)         ; minibuffer 里用 C-.
-         ("C-c C-e" . embark-export)
-         :map org-mode-map
-         ("C-," . embark-act))   ; 导出候选列表
-  :custom
-  (embark-quit-after-action nil)        ; 执行 action 后不退出，方便连续操作
-  (prefix-help-command #'embark-prefix-help-command)
-  :init
-  (defun embark-which-key-indicator ()
-    (lambda (&optional keymap targets prefix)
-      (if (null keymap)
-          (which-key--hide-popup-ignore-command)
-        (which-key--show-keymap
-         (if (eq (plist-get (car targets) :type) 'embark-become)
-             "Become"
-           (format "Act on %s '%s'%s"
-                   (plist-get (car targets) :type)
-                   (embark--truncate-target (plist-get (car targets) :target))
-                   (if (cdr targets) "…" "")))
-         keymap nil nil 'no-paging))
-      #'which-key--hide-popup-ignore-command))  ; ← 修复：移到外层括号之后
-  (setq embark-indicators
-        '(embark-which-key-indicator
-          embark-highlight-indicator
-          embark-isearch-highlight-indicator))
-  (setq embark-action-indicator #'embark-which-key-indicator
-        embark-become-indicator #'embark-which-key-indicator)
-  :config
-  (defun embark--truncate-target (target)
-    (if (and (stringp target) (> (length target) 30))
-        (concat (substring target 0 27) "...")
-      target)))
-
-(use-package embark-consult
-  :after (embark consult)
-  :demand t
-  :hook (embark-collect-mode . consult-preview-at-point-mode))
-
-(use-package which-key
-  :demand t
-  :custom
-  (which-key-idle-delay 0.5)
-  (which-key-popup-type 'side-window)
-  (which-key-side-window-location 'bottom)
-  (which-key-side-window-max-height 0.25)
-  (which-key-sort-order 'which-key-key-order-alpha)
-  :init
-  (which-key-mode))
-
-(use-package corfu
-  :demand t
-  :bind (:map corfu-map
-              ("TAB" . corfu-next)
-              ([tab] . corfu-next)
-              ("S-TAB" . corfu-previous)
-              ([backtab] . corfu-previous)
-              ("C-j" . corfu-next)
-              ("C-k" . corfu-previous)
-              ("RET" . corfu-insert)
-              ([return] . corfu-insert)
-              ("C-g" . corfu-quit)
-              ("M-SPC" . corfu-insert-separator)
-              ("M-d" . corfu-popupinfo-toggle)
-              ("M-n" . corfu-popupinfo-scroll-up)
-              ("M-p" . corfu-popupinfo-scroll-down)
-              ("M-q" . corfu-quick-complete)
-              ("C-q" . corfu-quick-insert))
-  :custom
-  (corfu-auto t)
-  (corfu-auto-delay 0.1)
-  (corfu-auto-prefix 2)
-  (corfu-cycle t)
-  (corfu-preselect 'prompt)
-  (corfu-scroll-margin 5)
-  (corfu-count 12)
-  (corfu-max-width 60)
-  (corfu-popupinfo-delay '(0.5 . 0.2))
-  (corfu-popupinfo-max-width 70)
-  (corfu-popupinfo-max-height 20)
-  :init
-  (global-corfu-mode)
-  (corfu-popupinfo-mode)
-  (corfu-history-mode)
-  :config
-  ;; 终端支持
-  (unless (display-graphic-p)
-    (require 'corfu-terminal)
-    (corfu-terminal-mode +1))
-  ;; 保存历史
-  (with-eval-after-load 'savehist
-    (add-to-list 'savehist-additional-variables 'corfu-history)))
-
-(use-package nerd-icons-corfu
-  :after corfu
-  :demand t
-  :config
-  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
-  (setq nerd-icons-corfu-mapping
-        '((array :style "cod" :icon "symbol_array" :face font-lock-type-face)
-          (boolean :style "cod" :icon "symbol_boolean" :face font-lock-builtin-face)
-          ;; You can alternatively specify a function to perform the mapping,
-          ;; use this when knowing the exact completion candidate is important.
-          ;; Don't pass `:face' if the function already returns string with the
-          ;; face property, though.
-          (file :fn nerd-icons-icon-for-file :face font-lock-string-face)
-          ;; ...
-          (t :style "cod" :icon "code" :face font-lock-warning-face)))
-  )
-
-(use-package corfu-terminal
-  :ensure t)
-
-(use-package yasnippet-capf
-  :ensure t
-  :after yasnippet
-  :config
-  (add-to-list 'completion-at-point-functions #'yasnippet-capf))
-(use-package cape
-  :init
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  (add-to-list 'completion-at-point-functions #'cape-file)
-  (add-to-list 'completion-at-point-functions #'cape-keyword)
-  :bind (("C-c p p" . completion-at-point)
-         ("C-c p d" . cape-dabbrev)
-         ("C-c p f" . cape-file)
-         ("C-c p k" . cape-keyword)
-         ("C-c p s" . cape-symbol)
-         ("C-c p a" . cape-abbrev)
-         ("C-c p l" . cape-line))
-  :config
-  )
 
 (use-package multiple-cursors
   :ensure t
@@ -1020,40 +686,6 @@
   ;; 编辑已有 snippet
   (global-set-key (kbd "C-c p v") 'yas-visit-snippet-file))
 
-(use-package tab-bar
-  :ensure nil
-  :demand t
-  :bind (
-         ("C-c s" . tab-bar-switch-to-tab)
-         ("C-c V" . tab-bar-close-tab)
-         )
-  :custom
-  (tab-bar-show nil)
-  (tab-bar-tab-hints t)
-  (tab-bar-new-tab-choice "*dashboard*")
-  :init
-  (tab-bar-mode 1))
-
-(use-package burly
-  :after tab-bar
-  :bind
-  (("C-c v" . my/create-workspace)
-   ("C-c r" . my/save-workspace)
-   )
-  :config
-  (defun my/create-workspace ()
-    "创建新的工作区标签."
-    (interactive)
-    (tab-bar-new-tab)
-    (let ((name (read-string "Workspace name: ")))
-      (tab-bar-rename-tab name)))
-
-  (defun my/save-workspace ()
-    "保存当前标签的窗口布局."
-    (interactive)
-    (burly-bookmark-windows
-     (format "tab-%s" (alist-get 'name (tab-bar--current-tab))))))
-
 (use-package avy
     :bind (
   ;;         ("C-." . avy-goto-char-timer)
@@ -1108,109 +740,424 @@
   ("C-a" . mwim-beginning-of-code-or-line)
   ("C-e" . mwim-end-of-code-or-line))
 
-(use-package flycheck
-  :hook (prog-mode . flycheck-mode)
-  :custom
-  (flycheck-display-errors-delay 0.3))
-
-(use-package magit
-  :bind ("C-x g" . magit-status)
-  :custom
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-(use-package rainbow-delimiters
-  :hook
-  ;; 最常用写法：在所有编程模式下自动启用（强烈推荐）
-  (prog-mode . rainbow-delimiters-mode)
-
-  ;; 可选：如果你还想在某些非 prog-mode 的地方也启用，比如 REPL、org-src 等
-  ;; (emacs-lisp-mode . rainbow-delimiters-mode)
-  ;; (clojure-mode  . rainbow-delimiters-mode)
-  ;; (inferior-ess-mode . rainbow-delimiters-mode)   ;; R 的 REPL
-  )
-
-(use-package autorevert
-  :ensure nil
+(use-package corfu
   :demand t
+  :bind (:map corfu-map
+              ("TAB" . corfu-next)
+              ([tab] . corfu-next)
+              ("S-TAB" . corfu-previous)
+              ([backtab] . corfu-previous)
+              ("C-j" . corfu-next)
+              ("C-k" . corfu-previous)
+              ("RET" . corfu-insert)
+              ([return] . corfu-insert)
+              ("C-g" . corfu-quit)
+              ("M-SPC" . corfu-insert-separator)
+              ("M-d" . corfu-popupinfo-toggle)
+              ("M-n" . corfu-popupinfo-scroll-up)
+              ("M-p" . corfu-popupinfo-scroll-down)
+              ("M-q" . corfu-quick-complete)
+              ("C-q" . corfu-quick-insert))
   :custom
-  (auto-revert-interval 3)
-  (auto-revert-remote-files nil)
-  (auto-revert-use-notify t)
-  (auto-revert-verbose nil)
-  :config
-  (global-auto-revert-mode 1))
-
-(use-package recentf
-  :ensure nil
-  :demand t
-  :custom
-  (recentf-auto-cleanup (if (daemonp) 300 'never))
-  (recentf-max-saved-items 100)
-  (recentf-exclude
-   '("\\.tar$" "\\.tbz2$" "\\.tgz$" "\\.bz2$" "\\.gz$"
-     "\\.zip$" "\\.7z$" "\\.rar$"
-     "COMMIT_EDITMSG\\'"
-     "\\.\\(?:gif\\|svg\\|png\\|jpe?g\\|bmp\\|xpm\\)$"
-     "-autoloads\\.el$" "autoload\\.el$"))
-  :config
-  (recentf-mode 1)
-  (add-hook 'kill-emacs-hook #'recentf-cleanup -90))
-
-(use-package savehist
-  :ensure nil
-  :demand t
-  :custom
-  (savehist-autosave-interval 600)
-  (savehist-additional-variables
-   '(kill-ring
-     register-alist
-     mark-ring
-     global-mark-ring
-     search-ring
-     regexp-search-ring
-     corfu-history
-     vertico-repeat-history))
-  :config
-  (savehist-mode 1))
-
-(use-package saveplace
-  :ensure nil
-  :demand t
-  :custom
-  (save-place-limit 400)
-  :config
-  (save-place-mode 1))
-
-;; eat
-;; (use-package eat
-;;   )
-
-;; vterm
-(use-package vterm
-  :bind
-  ("C-c t" . vterm)
-  :config
-  ;; (add-hook 'vterm-mode-hook
-  ;;           (lambda ()
-  ;;             (setq-local global-hl-line-mode nil)))
-                                        ;解决vterm闪烁
-  
-
+  (corfu-auto t)
+  (corfu-auto-delay 0.1)
+  (corfu-auto-prefix 2)
+  (corfu-cycle t)
+  (corfu-preselect 'prompt)
+  (corfu-scroll-margin 5)
+  (corfu-count 12)
+  (corfu-max-width 60)
+  (corfu-popupinfo-delay '(0.5 . 0.2))
+  (corfu-popupinfo-max-width 70)
+  (corfu-popupinfo-max-height 20)
   :init
-  
-  (setq vterm-timer-delay 0.05)  ; Faster vterm
-  (setq vterm-kill-buffer-on-exit t)
-  (setq vterm-max-scrollback 5000)
-  (defun my-vterm--setup ()
+  (global-corfu-mode)
+  (corfu-popupinfo-mode)
+  (corfu-history-mode)
+  :config
+  ;; 终端支持
+  (unless (display-graphic-p)
+    (require 'corfu-terminal)
+    (corfu-terminal-mode +1))
+  ;; 保存历史
+  (with-eval-after-load 'savehist
+    (add-to-list 'savehist-additional-variables 'corfu-history)))
 
-    ;; Inhibit early horizontal scrolling
-    (setq-local hscroll-margin 0)
-
-    ;; Suppress prompts for terminating active processes when closing vterm
-    (setq-local confirm-kill-processes nil))
-  (add-hook 'vterm-mode-hook #'my-vterm--setup)
-
+(use-package nerd-icons-corfu
+  :after corfu
+  :demand t
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
+  (setq nerd-icons-corfu-mapping
+        '((array :style "cod" :icon "symbol_array" :face font-lock-type-face)
+          (boolean :style "cod" :icon "symbol_boolean" :face font-lock-builtin-face)
+          ;; You can alternatively specify a function to perform the mapping,
+          ;; use this when knowing the exact completion candidate is important.
+          ;; Don't pass `:face' if the function already returns string with the
+          ;; face property, though.
+          (file :fn nerd-icons-icon-for-file :face font-lock-string-face)
+          ;; ...
+          (t :style "cod" :icon "code" :face font-lock-warning-face)))
   )
+
+(use-package corfu-terminal
+  :ensure t)
+
+(use-package yasnippet-capf
+  :ensure t
+  :after yasnippet
+  :config
+  (add-to-list 'completion-at-point-functions #'yasnippet-capf))
+(use-package cape
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-keyword)
+  :bind (("C-c p p" . completion-at-point)
+         ("C-c p d" . cape-dabbrev)
+         ("C-c p f" . cape-file)
+         ("C-c p k" . cape-keyword)
+         ("C-c p s" . cape-symbol)
+         ("C-c p a" . cape-abbrev)
+         ("C-c p l" . cape-line))
+  :config
+  )
+
+;; (use-package embark
+;;   :bind (("C-," . embark-act)
+;;          ;;("C-;" . embark-dwim)
+;;          ("C-h B" . embark-bindings)
+;;          :map minibuffer-local-map
+;;          ("C-." . embark-act)
+;;          ("C-c C-e" . embark-export))
+;;   :custom
+;;   (embark-quit-after-action nil)
+;;   (prefix-help-command #'embark-prefix-help-command)
+;;   :init
+;;   ;; Which-key 集成
+;;   (defun embark-which-key-indicator ()
+;;     (lambda (&optional keymap targets prefix)
+;;       (if (null keymap)
+;;           (which-key--hide-popup-ignore-command)
+;;         (which-key--show-keymap
+;;          (if (eq (plist-get (car targets) :type) 'embark-become)
+;;              "Become"
+;;            (format "Act on %s '%s'%s"
+;;                    (plist-get (car targets) :type)
+;;                    (embark--truncate-target (plist-get (car targets) :target))
+;;                    (if (cdr targets) "…" "")))
+;;          keymap nil nil 'no-paging)
+;;         #'which-key--hide-popup-ignore-command)))
+;;   (setq embark-indicators
+;;         '(embark-which-key-indicator
+;;           embark-highlight-indicator
+;;           embark-isearch-highlight-indicator))
+;;   (setq embark-action-indicator #'embark-which-key-indicator
+;;         embark-become-indicator #'embark-which-key-indicator)
+;;   :config
+;;   (defun embark--truncate-target (target)
+;;     (if (and (stringp target) (> (length target) 30))
+;;         (concat (substring target 0 27) "...")
+;;       target)))
+
+(use-package embark
+  :bind (("C-,"   . embark-act)
+         ("C-M-," . embark-dwim)        ; 智能猜测最可能的操作
+         ("C-h B" . embark-bindings)    ; 列出所有可用绑定
+         :map minibuffer-local-map
+         ("C-."   . embark-act)         ; minibuffer 里用 C-.
+         ("C-c C-e" . embark-export)
+         :map org-mode-map
+         ("C-," . embark-act))   ; 导出候选列表
+  :custom
+  (embark-quit-after-action nil)        ; 执行 action 后不退出，方便连续操作
+  (prefix-help-command #'embark-prefix-help-command)
+  :init
+  (defun embark-which-key-indicator ()
+    (lambda (&optional keymap targets prefix)
+      (if (null keymap)
+          (which-key--hide-popup-ignore-command)
+        (which-key--show-keymap
+         (if (eq (plist-get (car targets) :type) 'embark-become)
+             "Become"
+           (format "Act on %s '%s'%s"
+                   (plist-get (car targets) :type)
+                   (embark--truncate-target (plist-get (car targets) :target))
+                   (if (cdr targets) "…" "")))
+         keymap nil nil 'no-paging))
+      #'which-key--hide-popup-ignore-command))  ; ← 修复：移到外层括号之后
+  (setq embark-indicators
+        '(embark-which-key-indicator
+          embark-highlight-indicator
+          embark-isearch-highlight-indicator))
+  (setq embark-action-indicator #'embark-which-key-indicator
+        embark-become-indicator #'embark-which-key-indicator)
+  :config
+  (defun embark--truncate-target (target)
+    (if (and (stringp target) (> (length target) 30))
+        (concat (substring target 0 27) "...")
+      target)))
+
+(use-package embark-consult
+  :after (embark consult)
+  :demand t
+  :hook (embark-collect-mode . consult-preview-at-point-mode))
+
+(use-package which-key
+  :demand t
+  :custom
+  (which-key-idle-delay 0.5)
+  (which-key-popup-type 'side-window)
+  (which-key-side-window-location 'bottom)
+  (which-key-side-window-max-height 0.25)
+  (which-key-sort-order 'which-key-key-order-alpha)
+  :init
+  (which-key-mode))
+
+(use-package projectile
+  :defer 0.2
+  ;; 常用设置（可以根据需要增删）
+  :custom
+  (projectile-project-search-path '("~/projects/" "~/work/" "~/playground" "~/Documents/"))
+  (projectile-files-command "ripgrep --files --hidden --follow --glob '!.git'") 
+  :config
+  (define-key projectile-mode-map (kbd "C-c C-p") 'projectile-command-map)
+  (global-set-key (kbd "C-c C-p") 'projectile-command-map)
+
+  (projectile-mode +1)
+  )
+
+;; Vertico - 垂直补全界面
+(use-package vertico
+  :demand t
+  :bind (:map vertico-map
+              ("C-j" . vertico-next)
+              ("C-k" . vertico-previous)
+              ("C-f" . vertico-exit)
+              ("<escape>" . minibuffer-keyboard-quit))
+  :custom
+  (vertico-scroll-margin 0)
+  (vertico-count 15)
+  (vertico-cycle t)
+  :init
+  (vertico-mode))
+
+;; Orderless - 灵活的匹配样式
+(use-package orderless
+  :demand t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))))
+
+;; Marginalia - 补全注释
+(use-package marginalia
+  :demand t
+  :bind (:map minibuffer-local-map
+              ("M-A" . marginalia-cycle))
+  :init
+  (marginalia-mode))
+
+;; Consult - 增强的搜索和导航
+(use-package consult
+  :bind (;; C-c 前缀
+         ("C-c h" . consult-history)
+         ("C-c m" . consult-mode-command)
+         ("C-c k" . consult-kmacro)
+         ;; C-x 前缀
+         ("C-x M-:" . consult-complex-command)
+         ("C-x b" . consult-buffer)
+         ("C-x 4 b" . consult-buffer-other-window)
+         ("C-x 5 b" . consult-buffer-other-frame)
+         ("C-x r b" . consult-bookmark)
+         ;; 其他
+         ("M-y" . consult-yank-pop)
+         ("C-s" . consult-line)
+         ("M-g g" . consult-goto-line)
+         ("M-g o" . consult-outline)
+         ("M-g i" . consult-imenu)
+         ;; M-s 前缀
+         ("M-s d" . consult-fd)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)
+         ("M-s l" . consult-line)
+         :map minibuffer-local-map
+         ("M-s" . consult-history)
+         ("M-r" . consult-history))
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+  :init
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+
+  :config
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   :preview-key "M-.")
+  (setq consult-async-min-input 2)
+  (setq consult-narrow-key "<"))
+
+;; (use-package casual-suite
+;; 
+;;     :bind (;; 全局入口：在任何支持的 Buffer 中一键唤起
+;;            ("M-j" . casual-avy-tmenu)
+;;            ("C-o" . casual-editkit-main-tmenu)
+;;            ("M-m" ' casual-suite-tmenu)
+;;            ;; 如果你习惯在特定模式下使用更直观的快捷键
+;;            :map calc-mode-map ("M-m" . casual-calc-tmenu)
+;; ;;           :map isearch-mode-map ("M-m" . )
+;;            :map dired-mode-map ("M-m" . casual-dired-tmenu)
+;;            :map org-mode-map ("M-m" . casual-org-tmenu)
+;;            :map org-table-fedit-map ("M-m" . casual-org-table-fedit-tmenu)
+;;            :map org-agenda-mode-map ("M-m" . casual-agenda-tmenu)
+;;            :map ibuffer-mode-map ("M-m" . casual-ibuffer-tmenu)
+;;            :map bookmark-bmenu-mode-map ("M-m" . casual-bookmarks-tmenu)
+;;            :map calendar-mode-map ("M-m" . casual-calendar-tmenu)
+;;            :map compilation-mode-map ("M-m" . casual-compile-tmenu)
+;;            ;;           :map eww-mode-map ("M-m" . casual-eww-tmenu)
+;;            :map help-mode-map ("M-m" . casual-help-tmenu)
+;;            :map Info-mode-map ("M-m" . casual-info-tmenu)
+;;            ;;:map re-builder-mode-map ("M-m" . casual-re-builder-tmenu)
+;;            ;;  :map shell-mode-map ("M-m" . casual-eshell-tmenu)
+;;            :map image-mode-map ("M-m" . casual-image-tmenu)
+;;            )
+;; 
+;;     :config
+;;     )
+
+(use-package casual-suite
+:bind
+(("M-j" . casual-avy-tmenu)
+ ("C-o" . casual-editkit-main-tmenu)
+ ("M-m" . casual-suite-tmenu)
+
+
+ 
+ :map calc-mode-map
+ ("M-m" . casual-calc-tmenu)
+
+ :map dired-mode-map
+ ("M-m" . casual-dired-tmenu)
+
+ :map org-mode-map
+ ("M-m" . casual-org-tmenu)
+
+ :map org-table-fedit-map
+ ("M-m" . casual-org-table-fedit-tmenu)
+
+ :map org-agenda-mode-map
+ ("M-m" . casual-agenda-tmenu)
+
+ :map ibuffer-mode-map
+ ("M-m" . casual-ibuffer-tmenu)
+
+ :map bookmark-bmenu-mode-map
+ ("M-m" . casual-bookmarks-tmenu)
+
+ :map calendar-mode-map
+ ("M-m" . casual-calendar-tmenu)
+
+ :map compilation-mode-map
+ ("M-m" . casual-compile-tmenu)
+
+ :map help-mode-map
+ ("M-m" . casual-help-tmenu)
+
+ :map Info-mode-map
+ ("M-m" . casual-info-tmenu)
+
+ :map image-mode-map
+ ("M-m" . casual-image-tmenu)))
+
+
+
+(use-package rime
+  :custom
+  (default-input-method "rime")
+  :config
+  (setq rime-show-candidate 'posframe)
+  (setq rime-cursor "█")
+  (setq rime-cursor-face '((t (:foreground "#00ff00"))))
+  (setq rime-show-preedit t)
+  (setq rime-user-data-dir "~/.config/fcitx/Rime/")
+  ;; 默认值
+  (setq rime-translate-keybindings
+        '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
+  
+  (defun my/update-cursor-by-ime ()
+    "根据当前输入法状态实时更新光标颜色."
+    (set-cursor-color (if current-input-method "#a7c080" "#51afef")))
+
+  (add-hook 'post-command-hook #'my/update-cursor-by-ime)
+  )
+
+;; 中文英文之间插入空格
+(use-package pangu-spacing
+  :defer 0.3
+  :config
+  (global-pangu-spacing-mode +1))
+
+(global-set-key (kbd "C-x C-\\") 'skk-mode)
+
+
+(use-package ddskk
+  :ensure t
+  :init
+  (setq skk-jisyo "~/.skk-jisyo")
+  (setq skk-large-jisyo "~/.emacs.d/skk-get-jisyo/SKK-JISYO.L")
+
+  (setq skk-extra-jisyo-file-list
+        '("/usr/share/skk/SKK-JISYO.jinmei"
+          "/usr/share/skk/SKK-JISYO.geo"))
+  :config
+  (setq skk-use-auto-fill t)
+  (setq skk-save-jisyo-instantly t))
+
+(use-package quick-sdcv
+  :ensure t
+  :bind (("C-c D" . quick-sdcv-search-at-point)
+         ("C-c d" . quick-sdcv-search-input))
+  
+  :custom
+  (quick-sdcv-dictionary-data-dir "~/Ingrediant/dictionary/")
+  (quick-sdcv-unique-buffers t)
+  (quick-sdcv-dictionary-prefix-symbol "►")
+  (quick-sdcv-ellipsis " ▼"))
+
+;; 推荐组合：auth-source + pass 的桥接 + 好用的界面
+(use-package auth-source
+  :ensure t
+  :config
+  (add-to-list 'auth-sources 'password-store))   ; 关键这行
+
+(use-package auth-source-pass
+  :ensure t
+  :after auth-source
+  :config
+  (auth-source-pass-enable))
+
+;; (use-package pass
+;;   :ensure t
+;;   :bind ("C-c p p" . pass))
+
+(use-package password-store-menu
+  :ensure t
+  :bind ("C-c P" . password-store-menu))
+
+;; (use-package listen)  
+;; (use-package emms
+;;   :defer t
+;;   :config
+;;   
+;; 
+;;   (emms-all)
+;;   (setq emms-player-list '(emms-player-mpv)
+;;         emms-info-functions '(emms-info-native))
+;; 
+;;   )
 
 (use-package ibuffer
   :ensure nil                  ; ibuffer 是 Emacs 内置，不需要从 MELPA 安装
@@ -1343,102 +1290,166 @@
 ;; 
 ;; (treemacs-start-on-boot)
 
-(use-package nerd-icons-dired
-  :hook
-  (dired-mode . nerd-icons-dired-mode))
-
-(use-package dirvish
-  :init
-  (dirvish-override-dired-mode)
-  :bind
-  ("C-x C-d" . dirvish))
-
-;; (use-package listen)  
-;; (use-package emms
-;;   :defer t
-;;   :config
-;;   
-;; 
-;;   (emms-all)
-;;   (setq emms-player-list '(emms-player-mpv)
-;;         emms-info-functions '(emms-info-native))
-;; 
-;;   )
-
-
-
-(use-package rime
+(use-package flycheck
+  :hook (prog-mode . flycheck-mode)
   :custom
-  (default-input-method "rime")
-  :config
-  (setq rime-show-candidate 'posframe)
-  (setq rime-cursor "█")
-  (setq rime-cursor-face '((t (:foreground "#00ff00"))))
-  (setq rime-show-preedit t)
-  (setq rime-user-data-dir "~/.config/fcitx/Rime/")
-  ;; 默认值
-  (setq rime-translate-keybindings
-        '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
-  
-  (defun my/update-cursor-by-ime ()
-    "根据当前输入法状态实时更新光标颜色."
-    (set-cursor-color (if current-input-method "#a7c080" "#51afef")))
+  (flycheck-display-errors-delay 0.3))
 
-  (add-hook 'post-command-hook #'my/update-cursor-by-ime)
+(use-package magit
+  :bind ("C-x g" . magit-status)
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+(use-package rainbow-delimiters
+  :hook
+  ;; 最常用写法：在所有编程模式下自动启用（强烈推荐）
+  (prog-mode . rainbow-delimiters-mode)
+
+  ;; 可选：如果你还想在某些非 prog-mode 的地方也启用，比如 REPL、org-src 等
+  ;; (emacs-lisp-mode . rainbow-delimiters-mode)
+  ;; (clojure-mode  . rainbow-delimiters-mode)
+  ;; (inferior-ess-mode . rainbow-delimiters-mode)   ;; R 的 REPL
   )
 
-;; 中文英文之间插入空格
-(use-package pangu-spacing
-  :defer 0.3
+;; eat
+;; (use-package eat
+;;   )
+
+;; vterm
+(use-package vterm
+  :bind
+  ("C-c t" . vterm)
   :config
-  (global-pangu-spacing-mode +1))
-
-(global-set-key (kbd "C-x C-\\") 'skk-mode)
-
-
-(use-package ddskk
-  :ensure t
-  :init
-  (setq skk-jisyo "~/.skk-jisyo")
-  (setq skk-large-jisyo "~/.emacs.d/skk-get-jisyo/SKK-JISYO.L")
-
-  (setq skk-extra-jisyo-file-list
-        '("/usr/share/skk/SKK-JISYO.jinmei"
-          "/usr/share/skk/SKK-JISYO.geo"))
-  :config
-  (setq skk-use-auto-fill t)
-  (setq skk-save-jisyo-instantly t))
-
-(use-package quick-sdcv
-  :ensure t
-  :bind (("C-c D" . quick-sdcv-search-at-point)
-         ("C-c d" . quick-sdcv-search-input))
+  ;; (add-hook 'vterm-mode-hook
+  ;;           (lambda ()
+  ;;             (setq-local global-hl-line-mode nil)))
+                                        ;解决vterm闪烁
   
+
+  :init
+  
+  (setq vterm-timer-delay 0.05)  ; Faster vterm
+  (setq vterm-kill-buffer-on-exit t)
+  (setq vterm-max-scrollback 5000)
+  (defun my-vterm--setup ()
+
+    ;; Inhibit early horizontal scrolling
+    (setq-local hscroll-margin 0)
+
+    ;; Suppress prompts for terminating active processes when closing vterm
+    (setq-local confirm-kill-processes nil))
+  (add-hook 'vterm-mode-hook #'my-vterm--setup)
+
+  )
+
+(use-package popper
+  :bind (("C-`"   . popper-toggle)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :init
+    (setq popper-reference-buffers
+      '(;; 基础
+        "\\*Messages\\*"
+        "Output\\*$"
+        "\\*Async Shell Command\\*"
+        "\\*Warnings\\*"
+        "\\*Backtrace\\*"
+        calendar-mode
+        flymake-diagnostics-buffer-mode
+        flycheck-error-list-mode
+        pdf-outline-buffer-mode
+        help-mode
+        compilation-mode
+
+        ;; 终端
+        "^\\*eshell.*\\*$" eshell-mode
+        "^\\*shell.*\\*$"  shell-mode
+        "^\\*term.*\\*$"   term-mode
+        "^\\*vterm.*\\*$"  vterm-mode
+
+        ;; LSP
+        "\\*eldoc.*\\*"    eldoc-mode
+        "\\*xref\\*"
+        "\\*Flymake diagnostics.*\\*"
+
+        ;; Org
+        ;;"\\*Org Agenda\\*"
+        "\\*Capture\\*"
+        ;;"\\*org-roam\\*"
+
+        ;; 搜索
+        "\\*Occur\\*"      occur-mode
+        "\\*grep\\*"       grep-mode
+        "\\*ripgrep-search\\*"
+
+        ;; Magit
+        "\\*magit-diff.*\\*"
+        "\\*magit-process.*\\*"
+
+        ;; Helpful
+        helpful-mode
+
+        ;; 其他
+        "\\*Dictionary\\*"
+        "^\\*sdcv:.*\\*$"  sdcv-mode
+        "\\.gpg$"
+        "\\*Python\\*"     inferior-python-mode))
+  
+  (popper-mode +1)
+  (popper-echo-mode +1))                ; For echo area hints
+
+(use-package pdf-tools
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+
+  :config
+  (pdf-tools-install :no-query)
+  )
+(use-package nov
+  :mode ("\\.epub\\'" . nov-mode))
+
+(use-package helpful
+  :ensure t
+  :commands (helpful-callable
+             helpful-variable
+             helpful-key
+             helpful-command
+             helpful-at-point
+             helpful-function)
+  :bind
+  ([remap describe-command] . helpful-command)
+  ([remap describe-function] . helpful-callable)
+  ([remap describe-key] . helpful-key)
+  ([remap describe-symbol] . helpful-symbol)
+  ([remap describe-variable] . helpful-variable)
   :custom
-  (quick-sdcv-dictionary-data-dir "~/Ingrediant/dictionary/")
-  (quick-sdcv-unique-buffers t)
-  (quick-sdcv-dictionary-prefix-symbol "►")
-  (quick-sdcv-ellipsis " ▼"))
+  (helpful-max-buffers 7))
 
-;; 推荐组合：auth-source + pass 的桥接 + 好用的界面
-(use-package auth-source
-  :ensure t
+(use-package dashboard
+  :demand t
+  :custom
+  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
+
+  
+
+  (dashboard-startup-banner
+   (let* ((image-dir (expand-file-name "~/Pictures/icon/"))
+          (images (directory-files image-dir t "\\.\\(png\\|jpg\\|jpeg\\|gif\\|webp\\)$" t)))
+     (if images
+         (seq-random-elt images)
+       (message "No images found in %s" image-dir)
+       nil)))   
+
+  ;; (dashboard-items '(
+  ;;                    (agenda . 10)
+  ;;                    (recents . 8)
+  ;;                    (bookmarks . 5)
+  ;;                    (projects . 5)))
+  (dashboard-center-content t)
+  (dashboard-vertically-center-content t)
+
   :config
-  (add-to-list 'auth-sources 'password-store))   ; 关键这行
-
-(use-package auth-source-pass
-  :ensure t
-  :after auth-source
-  :config
-  (auth-source-pass-enable))
-
-;; (use-package pass
-;;   :ensure t
-;;   :bind ("C-c p p" . pass))
-
-(use-package password-store-menu
-  :ensure t
-  :bind ("C-c P" . password-store-menu))
+  (dashboard-setup-startup-hook)
+  )
 
 (provide 'post-init)
 ;;; post-init.el ends here
