@@ -21,11 +21,11 @@
          (message "No images found in %s" image-dir)
          nil)))
 
-    ;; (dashboard-items '(
-    ;;                    (agenda . 10)
-    ;;                    (recents . 8)
-    ;;                    (bookmarks . 5)
-    ;;                    (projects . 5)))
+     (dashboard-items '(
+                        (agenda . 0)
+                        (recents . 0)
+                        (bookmarks . 0)
+                        (projects . 0)))
     (dashboard-center-content t)
     (dashboard-vertically-center-content t)
 
@@ -35,5 +35,3 @@
 (provide 'my-dashboard)
 
 ;;; my-dashboard.el ends here
-
-
