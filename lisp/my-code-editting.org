@@ -1,5 +1,0 @@
-* avy
-* multiple-cursors
-* undo-fu
-* expand-region
-

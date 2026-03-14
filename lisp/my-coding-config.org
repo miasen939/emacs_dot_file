@@ -1,9 +1,12 @@
-* projectile
-* tramp
-* magit
+
 * flycheck
 * 跳转
 * 技巧编辑
-* 补全
 * tree-sitter eglot ISP
 * 高亮变量 源头跳转 彩虹括号
+
+* avy
+* multiple-cursors
+* undo-fu
+* expand-region
+

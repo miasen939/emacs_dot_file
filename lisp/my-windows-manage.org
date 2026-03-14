@@ -8,3 +8,5 @@
 * popper
 * new frame
 * ibuffer
+* 工作区管理
+* 书签
