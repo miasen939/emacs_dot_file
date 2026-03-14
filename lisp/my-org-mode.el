@@ -2,120 +2,122 @@
 
 ;;; Commentary:
 
-  ;; 测试
-  ;; 成功了！
+;; 
+;; 
 
    ;;; Code:
-  (use-package org
-    :ensure t
-    :pin gnu ;; 更新此内置包
-    :mode ("\\.org\\'" . org-mode)
-    :bind (("C-c l" . org-store-link)
-           ("C-c a" . org-agenda)
-           :map org-mode-map
-           ("C-c <up>" . org-priority-up)
-           ("C-c <down>" . org-priority-down)
-           ("C-c C-g C-r" . org-shiftmetaright))
-    :hook ((org-mode . org-indent-mode)
-           (org-mode . visual-line-mode))
-    :custom
-    (org-log-done 'time)
-    (org-return-follows-link t)
-    (org-hide-emphasis-markers t)
-    (org-return-follows-link t)
+(use-package org
+  :mode ("\\.org\\'" . org-mode)
+  :bind (("C-c l" . org-store-link)
+         ("C-c a" . org-agenda)
+         :map org-mode-map
+         ("C-c <up>" . org-priority-up)
+         ("C-c <down>" . org-priority-down)
+         ("C-c C-g C-r" . org-shiftmetaright))
+  :hook ((org-mode . org-indent-mode)
+         (org-mode . visual-line-mode)
+         (org-mode . org-link-preview-refresh)
+         )
+  :custom
+  (org-log-done 'time)
+  (org-return-follows-link t)
+  (org-hide-emphasis-markers t)
 
 
-    :config
-    ;; (setq org-startup-with-inline-images t)
+  :config
+  ;; (setq org-startup-with-inline-images t)
 
-    ;; phone refile
+  ;; phone refile
 
-    (setq org-refile-targets
-          '((nil :maxlevel . 1)
-            (org-agenda-files :maxlevel . 1)))
+  (setq org-refile-targets
+        '((nil :maxlevel . 1)
+          (org-agenda-files :maxlevel . 1)))
 
-    (setq org-refile-use-outline-path 'file)        ; 显示文件名前缀
-    (setq org-outline-path-complete-in-steps nil)   ; 关键！一次性显示所有候选
-
-
-    (setq image-use-external-converter t)
-    (setq org-image-actual-width nil   ;; 使用图片原始宽度，不强制缩放
-          image-transform-smoothing nil
-          max-image-size nil)
-
-    ;;(add-to-list 'org-modules 'org-habit)
-    (setq org-modules '(org-habit
-                        org-id      ;; 如果用 org-roam 或跨文件链接
-                        org-attach  ;; 如果用附件
-                        ))
-    (org-load-modules-maybe t)  ;; org-habit 此时才真正加载完毕
-
-    (setq org-habit-graph-column 50
-          org-habit-preceding-days 30
-          org-habit-following-days 3
-          org-habit-show-habits-only-for-today t
-          org-habit-show-all-today t)
+  (setq org-refile-use-outline-path 'file)        ; 显示文件名前缀
+  (setq org-outline-path-complete-in-steps nil)   ; 关键！一次性显示所有候选
 
 
-                                          ;org-export
-    (with-eval-after-load 'ox
-      (require 'ox-md))
+  (setq image-use-external-converter t)
+  (setq org-image-actual-width nil   ;; 使用图片原始宽度，不强制缩放
+        image-transform-smoothing nil
+        max-image-size nil)
+
+  ;;(add-to-list 'org-modules 'org-habit)
+  (setq org-modules '(org-habit
+                      org-id      ;; 如果用 org-roam 或跨文件链接
+                      org-attach  ;; 如果用附件
+                      ))
+  (org-load-modules-maybe t)  ;; org-habit 此时才真正加载完毕
+
+  (setq org-habit-graph-column 50
+        org-habit-preceding-days 30
+        org-habit-following-days 3
+        org-habit-show-habits-only-for-today t
+        org-habit-show-all-today t)
+
+
+                                        ;org-export
+  (with-eval-after-load 'ox
+    (require 'ox-md))
 
 
 
-    ;; img
+  ;; img
 
-    ;;org-todo
-    (setq org-todo-keywords
-          '((sequence "TODO(t)" "NEXT(n)" "SOMEDAY(s)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
-                      "BLOCKED(b@)" "WAITING(w@)" "|" "DONE(d!)" "CANCELED(c@!)")))
-    (setq org-log-done 'note) 
-    ;; TODO colors
-    (setq org-todo-keyword-faces
-          '(
-            ("TODO" . (:foreground "GoldenRod" :weight bold))
-            ("NEXT" . (:foreground "DeepSkyBlue1" :weight bold)) ;蓝色
-            ("SOMEDAY" . (:foreground "RosyBrown" :weight bold))
-            ("PLANNING" . (:foreground "DeepPink" :weight bold))
-            ("IN-PROGRESS" . (:foreground "Cyan" :weight bold))
-            ("BLOCKED" . (:foreground "Red" :weight bold))
-            ("WAITING" . (:foreground "khaki4" :weight bold)) ;
-            ("DONE" . (:foreground "LimeGreen" :weight bold))
-            ("CANCELED" . (:foreground "DimGrey" :weight bold))
-            ))
-    ;;org-agenda
-    (setq org-agenda-files 
-          '("~/Documents/org-agenda/TODOs.org"
-            "~/Documents/org-agenda/habits.org")
-          ) ;;一定要注意，改这个路径的同时要改org capture的路径
-    :hook
-    (org-mode . org-link-preview-refresh)
+  ;;org-todo
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "NEXT(n)" "SOMEDAY(s)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
+                    "BLOCKED(b@)" "WAITING(w@)" "|" "DONE(d!)" "CANCELED(c@!)")))
+  (setq org-log-done 'note) 
+  ;; TODO colors
+  (setq org-todo-keyword-faces
+        '(
+          ("TODO" . (:foreground "GoldenRod" :weight bold))
+          ("NEXT" . (:foreground "DeepSkyBlue1" :weight bold)) ;蓝色
+          ("SOMEDAY" . (:foreground "RosyBrown" :weight bold))
+          ("PLANNING" . (:foreground "DeepPink" :weight bold))
+          ("IN-PROGRESS" . (:foreground "Cyan" :weight bold))
+          ("BLOCKED" . (:foreground "Red" :weight bold))
+          ("WAITING" . (:foreground "khaki4" :weight bold)) ;
+          ("DONE" . (:foreground "LimeGreen" :weight bold))
+          ("CANCELED" . (:foreground "DimGrey" :weight bold))
+          ))
+  ;;org-agenda
+  (setq org-agenda-files 
+        '("~/Documents/org-agenda/TODOs.org"
+          "~/Documents/org-agenda/habits.org")
+        ) ;;一定要注意，改这个路径的同时要改org capture的路径
 
-    )
 
-  (use-package org-capture
-    :ensure nil
-    :bind ("C-c c" . org-capture)
-    :config
-    (setq org-capture-templates
-          '(("t" "Todo" entry
-             (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
-             "* TODO %?\n  %U\n")
-            ("s" "Someday" entry
-             (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
-             "* SOMEDAY %?\n  %U\n")
-            ("n" "Next" entry
-             (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
-             "* NEXT %?\n  %U\n"))))
-  (use-package org-appear
-    :hook (org-mode . org-appear-mode)
-    :config
-    (setq org-appear-autoemphasis t   ;; *bold* / /italic/
-          org-appear-autolinks t      ;; 链接
-          org-appear-autosubmarkers t))
+  ;; org mode 画图
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((dot . t)))
+  )
 
-  (use-package org-auto-tangle
-    :hook (org-mode . org-auto-tangle-mode))
+(use-package org-capture
+  :ensure nil
+  :bind ("C-c c" . org-capture)
+  :config
+  (setq org-capture-templates
+        '(("t" "Todo" entry
+           (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
+           "* TODO %?\n  %U\n")
+          ("s" "Someday" entry
+           (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
+           "* SOMEDAY %?\n  %U\n")
+          ("n" "Next" entry
+           (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
+           "* NEXT %?\n  %U\n"))))
+(use-package org-appear
+  :hook (org-mode . org-appear-mode)
+  :config
+  (setq org-appear-autoemphasis t   ;; *bold* / /italic/
+        org-appear-autolinks t      ;; 链接
+        org-appear-autosubmarkers t))
+
+(use-package org-auto-tangle
+  :hook (org-mode . org-auto-tangle-mode))
 
 (use-package org-transclusion
   :after org
@@ -125,7 +127,6 @@
          ))
 
 (use-package org-download
-  :ensure t
   :after org
   :bind (:map org-mode-map
               ("C-c C-M-y" . org-download-clipboard)   ; 推荐快捷键：粘贴剪贴板图片
@@ -147,13 +148,6 @@
   ;;   (setq org-download-screenshot-method "screencapture -i %s"))
   (setq org-image-actual-width '(600))
   )
-
-(defun org-roam-node-insert-immediate (arg &rest args)
-  (interactive "P")
-  (let ((args (cons arg args))
-        (org-roam-capture-templates (list (append (car org-roam-capture-templates)
-                                                  '(:immediate-finish t)))))
-    (apply #'org-roam-node-insert args)))
 
 (use-package org-roam
   :custom
@@ -233,7 +227,12 @@
   :bind-keymap
   ("C-c n d" . org-roam-dailies-map)
   :config
-  
+  (defun org-roam-node-insert-immediate (arg &rest args)
+    (interactive "P")
+    (let ((args (cons arg args))
+          (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+                                                    '(:immediate-finish t)))))
+      (apply #'org-roam-node-insert args)))    
   
   (setq org-id-locations-file "~/.emacs.d/var/.org-id-locations")
   ;; If you're using a vertical completion framework, you might want a more informative completion interface
@@ -245,10 +244,11 @@
   ;; If using org-roam-protocol
   (require 'org-roam-protocol))
 
-  (use-package org-roam-ui
+(use-package org-roam-ui
   :vc (:url "https://github.com/org-roam/org-roam-ui.git"
             :branch "main")   ; 可选：指定分支，默认是 main/master
   :after org-roam
+  :commands (org-roam-ui-mode) 
   :config
   (setq org-roam-ui-sync-theme t
         org-roam-ui-follow t
@@ -293,9 +293,6 @@
   :custom
   (valign-fancy-bar t))
 
-(org-babel-do-load-languages
-   'org-babel-load-languages
-   '((dot . t)))
-  (provide 'my-org-mode)
+(provide 'my-org-mode)
 
 ;;; my-org-mode.el ends here

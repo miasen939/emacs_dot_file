@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: auto tangle
+# key: #at
+# --
+#+auto_tangle: t

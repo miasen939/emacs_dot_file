@@ -1,11 +1,11 @@
 ;;; my-autocomplete.el --- auto compeletion -*- no-byte-compile: t; lexical-binding: t; -*-
 
-;;; Commentary:
+  ;;; Commentary:
 
 ;; 
 ;;
 
-;;; Code:
+  ;;; Code:
 
 
 ;; 关闭 小于号自动补全大于号
@@ -31,7 +31,6 @@
           yasnippet-snippets-dir))         ; 官方 snippet 集合（见下方）
 
   ;; 启动时加载所有 snippets
-  (yas-reload-all)
 
   ;; 展开时不发出提示音
   (setq yas-verbosity 1)
@@ -43,7 +42,10 @@
 ;; 2. 安装官方 snippet 集合（强烈推荐）
 (use-package yasnippet-snippets
   :ensure t
-  :after yasnippet)
+  :after yasnippet
+  :config
+  (yas-reload-all)
+  )
 
 
 
@@ -54,7 +56,7 @@
          ))
 
 (use-package corfu
-  :demand t
+  :hook (after-init . global-corfu-mode)
   :bind (:map corfu-map
               ("TAB" . corfu-next)
               ([tab] . corfu-next)
@@ -113,8 +115,7 @@
           (t :style "cod" :icon "code" :face font-lock-warning-face)))
   )
 
-(use-package corfu-terminal
-  :ensure t)
+
 
 (use-package yasnippet-capf
   :ensure t
@@ -133,16 +134,12 @@
          ("C-c p s" . cape-symbol)
          ("C-c p a" . cape-abbrev)
          ("C-c p l" . cape-line))
-  :config
   )
 
 ;; Vertico - 垂直补全界面
 (use-package vertico
   :demand t
   :bind (:map vertico-map
-              ("C-j" . vertico-next)
-              ("C-k" . vertico-previous)
-              ("C-f" . vertico-exit)
               ("<escape>" . minibuffer-keyboard-quit))
   :custom
   (vertico-scroll-margin 0)

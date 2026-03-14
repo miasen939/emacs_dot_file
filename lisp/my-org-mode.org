@@ -19,17 +19,15 @@ org attach 有点意思
 显示图片 可以用 =C-c C-x C-v=  手动打开
 
 #+begin_src emacs-lisp :tangle yes
-   ;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-
+     ;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-
 
-;;; Commentary:
+  ;;; Commentary:
 
-  ;; 测试
-  ;; 成功了！
+  ;; 
+  ;; 
 
-   ;;; Code:
+     ;;; Code:
   (use-package org
-    :ensure t
-    :pin gnu ;; 更新此内置包
     :mode ("\\.org\\'" . org-mode)
     :bind (("C-c l" . org-store-link)
            ("C-c a" . org-agenda)
@@ -38,12 +36,13 @@ org attach 有点意思
            ("C-c <down>" . org-priority-down)
            ("C-c C-g C-r" . org-shiftmetaright))
     :hook ((org-mode . org-indent-mode)
-           (org-mode . visual-line-mode))
+           (org-mode . visual-line-mode)
+           (org-mode . org-link-preview-refresh)
+           )
     :custom
     (org-log-done 'time)
     (org-return-follows-link t)
     (org-hide-emphasis-markers t)
-    (org-return-follows-link t)
 
 
     :config
@@ -109,9 +108,12 @@ org attach 有点意思
           '("~/Documents/org-agenda/TODOs.org"
             "~/Documents/org-agenda/habits.org")
           ) ;;一定要注意，改这个路径的同时要改org capture的路径
-    :hook
-    (org-mode . org-link-preview-refresh)
 
+
+    ;; org mode 画图
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((dot . t)))
     )
 
   (use-package org-capture
@@ -156,7 +158,6 @@ ubuntu需要下载 xclip
 CachyOS需要 wl-clipboard
 #+begin_src emacs-lisp :tangle yes
   (use-package org-download
-    :ensure t
     :after org
     :bind (:map org-mode-map
                 ("C-c C-M-y" . org-download-clipboard)   ; 推荐快捷键：粘贴剪贴板图片
@@ -189,12 +190,7 @@ CachyOS需要 wl-clipboard
 
 用 org-roam 配合 citar 或 org-ref 管理参考文献的话，文献模板还可以和 .bib 文件联动，自动填入作者、年份这些字段。
 #+begin_src emacs-lisp :tangle yes
-  (defun org-roam-node-insert-immediate (arg &rest args)
-    (interactive "P")
-    (let ((args (cons arg args))
-          (org-roam-capture-templates (list (append (car org-roam-capture-templates)
-                                                    '(:immediate-finish t)))))
-      (apply #'org-roam-node-insert args)))
+
 
   (use-package org-roam
     :custom
@@ -274,7 +270,12 @@ CachyOS需要 wl-clipboard
     :bind-keymap
     ("C-c n d" . org-roam-dailies-map)
     :config
-    
+    (defun org-roam-node-insert-immediate (arg &rest args)
+      (interactive "P")
+      (let ((args (cons arg args))
+            (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+                                                      '(:immediate-finish t)))))
+        (apply #'org-roam-node-insert args)))    
     
     (setq org-id-locations-file "~/.emacs.d/var/.org-id-locations")
     ;; If you're using a vertical completion framework, you might want a more informative completion interface
@@ -286,10 +287,11 @@ CachyOS需要 wl-clipboard
     ;; If using org-roam-protocol
     (require 'org-roam-protocol))
 
-    (use-package org-roam-ui
+  (use-package org-roam-ui
     :vc (:url "https://github.com/org-roam/org-roam-ui.git"
               :branch "main")   ; 可选：指定分支，默认是 main/master
     :after org-roam
+    :commands (org-roam-ui-mode) 
     :config
     (setq org-roam-ui-sync-theme t
           org-roam-ui-follow t
@@ -347,9 +349,7 @@ CachyOS需要 wl-clipboard
 - org-attach
 * org-mode 画图
 #+begin_src emacs-lisp :tangle yes
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((dot . t)))
+  
   (provide 'my-org-mode)
 
 ;;; my-org-mode.el ends here

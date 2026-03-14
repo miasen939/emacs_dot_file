@@ -1,7 +1,91 @@
-* calc
-* calendar
-* mu4e
-* quick sdcv
+#+auto_tangle: t
+
+
 * pass
+
+t* password manage
+=sudo pacman -S pass gnupg git=
+
+一定不要忘了备份（但是别分享）私钥
+一定不要忘了pass phrase
+
+#+begin_src emacs-lisp :tangle yes
+  ;;; my-living-in-emacs.el --- misc emacs pacakages -*- no-byte-compile: t; lexical-binding: t; -*-
+
+    ;;; Commentary:
+
+  ;; living in Emacs!
+  ;;
+
+  ;;; Code:
+  ;; 推荐组合：auth-source + pass 的桥接 + 好用的界面
+  (use-package auth-source
+    :ensure t
+    :config
+    (add-to-list 'auth-sources 'password-store))   ; 关键这行
+
+  (use-package auth-source-pass
+    :ensure t
+    :after auth-source
+    :config
+    (auth-source-pass-enable))
+
+  ;; (use-package pass
+  ;;   :ensure t
+  ;;   :bind ("C-c p p" . pass))
+
+  (use-package password-store-menu
+    :ensure t
+    :bind ("C-c P" . password-store-menu))
+#+end_src
+* quick-sdcv
+需要依赖 sdcv
+不是很好用，似乎识别不了一些词典的格式，而且样式有点丑，还不能折叠
+
+词典：quick-sdcv 或 dictionary + sdcv（更现代推荐 define-word 或 powerthesaurus）
+go-translate
+朗文词典
+#+begin_src emacs-lisp :tangle yes
+  (use-package quick-sdcv
+    :ensure t
+    :bind (("C-c D" . quick-sdcv-search-at-point)
+           ("C-c d" . quick-sdcv-search-input))
+    
+    :custom
+    (quick-sdcv-dictionary-data-dir "~/Ingrediant/dictionary/")
+    (quick-sdcv-unique-buffers t)
+    (quick-sdcv-dictionary-prefix-symbol "►")
+    (quick-sdcv-ellipsis " ▼"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle yes
+
+#+end_src
+
+在emacs里听歌不是什么刚需，但是在emacs里把音乐的元信息当字符串进行处理我认为用Emacs很方便。
+#+begin_src emacs-lisp :tangle yes
+
+  ;; (use-package listen)  
+  ;; (use-package emms
+  ;;   :defer t
+  ;;   :config
+  ;;   
+  ;; 
+  ;;   (emms-all)
+  ;;   (setq emms-player-list '(emms-player-mpv)
+  ;;         emms-info-functions '(emms-info-native))
+  ;; 
+  ;;   )
+
+  (provide 'my-living-in-emacs)
+
+  ;;; my-living-in-emacs.el ends here
+#+end_src
 * terminal
-* music player
+在 [[file:my-DevOps.org]]
+* TODO mu4e/notmuch
+* SOMEDAY calc
+* SOMEDAY calendar
+* SOMEDAY music player
+- emms
+- listen

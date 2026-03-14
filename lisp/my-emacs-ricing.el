@@ -22,9 +22,9 @@
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
   ;; Enable custom neotree theme (nerd-icons must be installed!)
-  (doom-themes-neotree-config)
+  ;;(doom-themes-neotree-config)
   ;; or for treemacs users
-  (doom-themes-treemacs-config)
+  ;;(doom-themes-treemacs-config)
   ;; Corrects (and improves) org-mode's native fontification.
 
   (doom-themes-org-config))
@@ -33,7 +33,8 @@
 
 
 (use-package doom-modeline
-  :init (doom-modeline-mode 1))
+  ;;:init (doom-modeline-mode 1)
+  :hook (after-init . doom-modeline-mode))
 
 
 
