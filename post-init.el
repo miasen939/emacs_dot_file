@@ -295,16 +295,6 @@
   :config
   (save-place-mode 1))
 
-(use-package nerd-icons-dired
-  :hook
-  (dired-mode . nerd-icons-dired-mode))
-
-(use-package dirvish
-  :init
-  (dirvish-override-dired-mode)
-  :bind
-  ("C-x C-d" . dirvish))
-
 (use-package multiple-cursors
   :ensure t
   :bind
@@ -1140,6 +1130,16 @@
 
   ;; Specifies the action taken after deleting a file and killing its buffer.
   (bufferfile-delete-switch-to 'parent-directory))
+
+(use-package nerd-icons-dired
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
+
+(use-package dirvish
+  :init
+  (dirvish-override-dired-mode)
+  :bind
+  ("C-x C-d" . dirvish))
 
 (provide 'post-init)
 ;;; post-init.el ends here

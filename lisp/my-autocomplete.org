@@ -1,0 +1,9 @@
+#+auto_tangle: t
+
+* corfu cape
+
+* yasnippt
+
+* vertico
+
+* amx

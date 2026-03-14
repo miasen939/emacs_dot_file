@@ -1,4 +1,6 @@
 #+auto_tangle: t
+
+*org-mode* 强大、综合、可拓展性极强的笔记系统
 * org 基础配置 
 需要依赖
 md需要安装 pandoc

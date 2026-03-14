@@ -1,0 +1,5 @@
+* dired
+* dirvish
+* bufferfile
+* treemacs
+* ripgrep/fd搜索文件

@@ -328,7 +328,7 @@ CLOSED: [2026-03-04 水 23:21]
 
   
 #+end_src
-** 工作区管理
+* 工作区管理
 使用内置的tab-bar进行工作区管理和切换,我把tab-bar的显示关掉了.
 #+begin_src emacs-lisp :tangle ./post-init.el
 
@@ -366,7 +366,7 @@ CLOSED: [2026-03-04 水 23:21]
       (burly-bookmark-windows
        (format "tab-%s" (alist-get 'name (tab-bar--current-tab))))))
 #+end_src
-** 自动恢复相关
+* 自动恢复相关
 #+begin_src emacs-lisp :tangle ./post-init.el
   (use-package autorevert
     :ensure nil
@@ -420,23 +420,6 @@ CLOSED: [2026-03-04 水 23:21]
     :config
     (save-place-mode 1))
 #+END_SRC
-** dired 相关
-#+begin_src emacs-lisp :tangle ./post-init.el
-
-  (use-package nerd-icons-dired
-    :hook
-    (dired-mode . nerd-icons-dired-mode))
-
-  (use-package dirvish
-    :init
-    (dirvish-override-dired-mode)
-    :bind
-    ("C-x C-d" . dirvish))
-
-#+end_src
-
-
-
 * use-packages
 
 ** multiple-cursors and undo-fu 
@@ -1464,6 +1447,23 @@ dashboard的banner最好自己手动压缩为500x500以下
   ;; Specifies the action taken after deleting a file and killing its buffer.
   (bufferfile-delete-switch-to 'parent-directory))
 #+end_src
+** dired 相关
+#+begin_src emacs-lisp :tangle ./post-init.el
+
+  (use-package nerd-icons-dired
+    :hook
+    (dired-mode . nerd-icons-dired-mode))
+
+  (use-package dirvish
+    :init
+    (dirvish-override-dired-mode)
+    :bind
+    ("C-x C-d" . dirvish))
+
+#+end_src
+
+
+
 * post-init.el ends here
 #+begin_src emacs-lisp :tangle ./post-init.el
 
@@ -1522,7 +1522,11 @@ tree-sitter（内置）
 
 代码格式化
 
-=apheleia / format-all=
+=aphelei时间追踪
+
+=org-clock=
+
+a / format-all=
 
 调试
 
@@ -1567,10 +1571,6 @@ API 调试
 
 
 可以升级成完整 GTD：
-
-时间追踪
-
-=org-clock=
 
 
 日志

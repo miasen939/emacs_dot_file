@@ -75,7 +75,7 @@ emacs功能之多拓展性之强，不可能掌握所有的概念和快捷键
 - +宏 =kmacro= .+
 - +思维导图 =org-mind-map / mindstream= 。+
 - +远程服务器 =tramp= 。+
-- 输入法 =rime= =mozc=
+- 输入法 =rime= =ddskk=
 - 贪吃蛇，乒乓，甚至是doom
 - 世界を変える
 

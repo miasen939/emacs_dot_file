@@ -1,0 +1,7 @@
+* calc
+* calendar
+* mu4e
+* quick sdcv
+* pass
+* terminal
+* music player
