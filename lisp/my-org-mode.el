@@ -1,11 +1,11 @@
 ;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-
 
-;;; Commentary:
+     ;;; Commentary:
 
 ;; 
 ;; 
 
-   ;;; Code:
+        ;;; Code:
 (use-package org
   :mode ("\\.org\\'" . org-mode)
   :bind (("C-c l" . org-store-link)
@@ -19,7 +19,7 @@
          (org-mode . org-link-preview-refresh)
          )
   :custom
-  (org-log-done 'time)
+
   (org-return-follows-link t)
   (org-hide-emphasis-markers t)
 
@@ -41,7 +41,6 @@
   (setq org-image-actual-width nil   ;; 使用图片原始宽度，不强制缩放
         image-transform-smoothing nil
         max-image-size nil)
-
   ;;(add-to-list 'org-modules 'org-habit)
   (setq org-modules '(org-habit
                       org-id      ;; 如果用 org-roam 或跨文件链接
@@ -66,9 +65,12 @@
 
   ;;org-todo
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "NEXT(n)" "SOMEDAY(s)" "PLANNING(p)" "IN-PROGRESS(i@/!)"
-                    "BLOCKED(b@)" "WAITING(w@)" "|" "DONE(d!)" "CANCELED(c@!)")))
-  (setq org-log-done 'note) 
+        '((sequence "TODO(t!)" "NEXT(n!)" "SOMEDAY(s!)" "PLANNING(p!)" "IN-PROGRESS(i@/!)"
+                    "BLOCKED(b@!)" "WAITING(w@!)" "|" "DONE(d!)" "CANCELED(c@!)")))
+  ;;(setq org-log-done 'note)
+  ;;(setq org-log-done 'time)
+  
+  (setq org-log-into-drawer t)
   ;; TODO colors
   (setq org-todo-keyword-faces
         '(
@@ -93,6 +95,17 @@
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((dot . t)))
+  
+  (with-eval-after-load 'org
+    (set-face-attribute 'org-document-title nil :height 1.8 :weight 'bold :family "Noto Serif CJK SC")
+    (set-face-attribute 'org-level-1 nil :height 1.4 :weight 'bold :family "Noto Sans CJK SC")
+    (set-face-attribute 'org-level-2 nil :height 1.25 :weight 'bold :family "Noto Sans CJK SC")
+    (set-face-attribute 'org-level-3 nil :height 1.15 :weight 'semi-bold :family "Noto Sans CJK SC")
+    (set-face-attribute 'org-level-4 nil :height 1.05 :family "Noto Sans CJK SC")
+    (set-face-attribute 'org-level-5 nil :height 1.0)
+    (set-face-attribute 'org-level-6 nil :height 1.0))
+
+  ;; org-mode conifg ends here
   )
 
 (use-package org-capture
@@ -109,6 +122,7 @@
           ("n" "Next" entry
            (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
            "* NEXT %?\n  %U\n"))))
+
 (use-package org-appear
   :hook (org-mode . org-appear-mode)
   :config
@@ -125,6 +139,35 @@
          ("C-.  m" . org-transclusion-transient-menu)
          ("C-.  t" . org-transclusion-mode)
          ))
+
+;; (use-package org-bullets
+;;   :ensure t
+;;   :hook (org-mode . org-bullets-mode)
+;;   :custom
+;;   (org-bullets-bullet-list '("◉" "○" "✿" "✸" "◆" "▶")))
+
+(use-package org-superstar
+  :ensure t
+  :hook (org-mode . org-superstar-mode)
+  :custom
+  ;; 标题符号（对应 1–8 级）
+  (org-superstar-headline-bullets-list '("◉" "○" "✿" "✸" "◆" "◇" "▶" "▷"))
+
+  ;; 列表符号
+  (org-superstar-item-bullet-alist '((?- . ?•)
+                                     (?+ . ?➤)
+                                     ;;(?* . ?◦)
+                                     ))
+
+  ;; checkbox 没美化
+  
+
+  ;; 隐藏前导星号，只显示最后一级的符号
+  (org-hide-leading-stars t)
+
+  ;; 让普通列表的 * 不被当作标题处理
+  (org-superstar-prettify-item-bullets t)
+  )
 
 (use-package org-download
   :after org

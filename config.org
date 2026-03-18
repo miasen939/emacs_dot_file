@@ -7,6 +7,7 @@
 
 byte-compile-file??
 
+
 * pre-early-init.el
 
 #+begin_src emacs-lisp :tangle ./pre-early-init.el
@@ -122,7 +123,6 @@ benchmark 用来分析启动时间
 #+begin_src emacs-lisp :tangle ./post-init.el
   (add-to-list 'load-path "~/.emacs.d/lisp/")
 #+end_src
-
 再挨个require各个分离的配置
 #+begin_src emacs-lisp :tangle ./post-init.el
 
@@ -151,9 +151,8 @@ benchmark 用来分析启动时间
   (require ' my-living-in-emacs)
 
   #+end_src
-
-
 从systemcrafet处偷的配置：[[https://github.com/daviwil/dotfiles/blob/master/Emacs.org][Emacs Configuration]]
+
 
 #+begin_src emacs-lisp :tangle ./post-init.el
   ;; steal from system crafter
@@ -383,16 +382,10 @@ expand-region的缩小选择功能我还挺喜欢的
     ("C-a" . mwim-beginning-of-code-or-line)
     ("C-e" . mwim-end-of-code-or-line))
 #+end_src
+* LSP/eglot
+* gptel/ai
 
-
-
-
-
-
-
-
-
-* flycheck rainbow-delimiters
+* flycheck rainbow-delimiters hight symbol? / symbol-overlay / hight thing
 #+begin_src emacs-lisp :tangle ./post-init.el
 
 
@@ -402,7 +395,6 @@ expand-region的缩小选择功能我还挺喜欢的
     :custom
     (flycheck-display-errors-delay 0.3))
 
-  
 
   (use-package rainbow-delimiters
     :hook
@@ -414,6 +406,28 @@ expand-region的缩小选择功能我还挺喜欢的
     ;; (clojure-mode  . rainbow-delimiters-mode)
     ;; (inferior-ess-mode . rainbow-delimiters-mode)   ;; R 的 REPL
     )
+
+  (use-package symbol-overlay
+    :bind (("M-i" . symbol-overlay-put)
+           ("M-n" . symbol-overlay-jump-next)
+           ("M-p" . symbol-overlay-jump-prev)
+           ("M-N" . symbol-overlay-switch-forward)
+           ("M-P" . symbol-overlay-switch-backward)
+           ("M-C" . symbol-overlay-remove-all))
+    :hook (prog-mode . symbol-overlay-mode))
+
+  (use-package colorful-mode
+    ;; :diminish
+    ;; :ensure t ; Optional
+    :custom
+    (colorful-use-prefix t)
+    (colorful-only-strings 'only-prog)
+    (css-fontify-colors nil)
+    :config
+    (global-colorful-mode t)
+    (add-to-list 'global-colorful-modes 'helpful-mode)
+    )
+  
 #+end_src
 
 
@@ -510,6 +524,8 @@ HTTP 客户端
 
 =restclient / verb=
 
+
+
 API 调试
 -（很多人直接用它替代 postman）
 
@@ -565,5 +581,11 @@ Org download 在 CachyOS需要 wl-clipboard
 词典依赖Sdcv
 pass：sudo pacman -S pass gnupg git
 
+ 
 
-
+* 未来的方向
+- dapmode 和更多debug用的包
+- tramp远程ssh
+- LSP elgot
+- projectile的优化
+- ai？

@@ -281,7 +281,6 @@
   (flycheck-display-errors-delay 0.3))
 
 
-
 (use-package rainbow-delimiters
   :hook
   ;; 最常用写法：在所有编程模式下自动启用（强烈推荐）
@@ -291,6 +290,27 @@
   ;; (emacs-lisp-mode . rainbow-delimiters-mode)
   ;; (clojure-mode  . rainbow-delimiters-mode)
   ;; (inferior-ess-mode . rainbow-delimiters-mode)   ;; R 的 REPL
+  )
+
+(use-package symbol-overlay
+  :bind (("M-i" . symbol-overlay-put)
+         ("M-n" . symbol-overlay-jump-next)
+         ("M-p" . symbol-overlay-jump-prev)
+         ("M-N" . symbol-overlay-switch-forward)
+         ("M-P" . symbol-overlay-switch-backward)
+         ("M-C" . symbol-overlay-remove-all))
+  :hook (prog-mode . symbol-overlay-mode))
+
+(use-package colorful-mode
+  ;; :diminish
+  ;; :ensure t ; Optional
+  :custom
+  (colorful-use-prefix t)
+  (colorful-only-strings 'only-prog)
+  (css-fontify-colors nil)
+  :config
+  (global-colorful-mode t)
+  (add-to-list 'global-colorful-modes 'helpful-mode)
   )
 
 (provide 'post-init)

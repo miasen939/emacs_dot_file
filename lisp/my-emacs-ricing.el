@@ -1,11 +1,11 @@
 ;;; my-emacs-ricing.el --- rice the toyota -*- no-byte-compile: t; lexical-binding: t; -*-
 
-;;; Commentary:
+  ;;; Commentary:
 
 ;; 
 ;;
 
-;;; Code:
+  ;;; Code:
 (use-package doom-themes
   :demand t
   :custom
@@ -22,12 +22,13 @@
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
   ;; Enable custom neotree theme (nerd-icons must be installed!)
-  ;;(doom-themes-neotree-config)
+  (doom-themes-neotree-config)
   ;; or for treemacs users
-  ;;(doom-themes-treemacs-config)
+  (doom-themes-treemacs-config)
   ;; Corrects (and improves) org-mode's native fontification.
 
-  (doom-themes-org-config))
+  (doom-themes-org-config)
+  )
 
 
 
@@ -55,17 +56,6 @@
 
 ;; (use-package mood-line
 ;; :hook (after-init . mood-line-mode))
-
-(use-package colorful-mode
-  ;; :diminish
-  ;; :ensure t ; Optional
-  :custom
-  (colorful-use-prefix t)
-  (colorful-only-strings 'only-prog)
-  (css-fontify-colors nil)
-  :config
-  (global-colorful-mode t)
-  (add-to-list 'global-colorful-modes 'helpful-mode))
 
 (custom-set-faces
  '(gnus-group-news-low ((t (:foreground "cyan"))))

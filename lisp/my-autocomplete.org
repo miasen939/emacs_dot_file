@@ -144,6 +144,8 @@
            ("C-c p l" . cape-line))
     )
 #+end_src
+
+文本展开：hippie、dabbrev
 * vertico
 vertico + consult + orderless + marginalia + embark现代 Emacs 的“灵魂四件套
 M-RET 提交精确输入

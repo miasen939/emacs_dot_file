@@ -5,14 +5,14 @@
 用来用去,感觉doom的默认主题是最好的,因为这个主题用的人最多,所以调教得也最多,性能和兼容性可能有点问题但是视觉效果是最好的.
 我也用过很久ef themes,但是稍逊于doom theme
 #+begin_src emacs-lisp :tangle yes
-  ;;; my-emacs-ricing.el --- rice the toyota -*- no-byte-compile: t; lexical-binding: t; -*-
+    ;;; my-emacs-ricing.el --- rice the toyota -*- no-byte-compile: t; lexical-binding: t; -*-
 
-  ;;; Commentary:
+    ;;; Commentary:
 
   ;; 
   ;;
 
-  ;;; Code:
+    ;;; Code:
   (use-package doom-themes
     :demand t
     :custom
@@ -34,7 +34,8 @@
     (doom-themes-treemacs-config)
     ;; Corrects (and improves) org-mode's native fontification.
 
-    (doom-themes-org-config))
+    (doom-themes-org-config)
+    )
 
 
 
@@ -63,16 +64,7 @@
   ;; (use-package mood-line
   ;; :hook (after-init . mood-line-mode))
 
-  (use-package colorful-mode
-    ;; :diminish
-    ;; :ensure t ; Optional
-    :custom
-    (colorful-use-prefix t)
-    (colorful-only-strings 'only-prog)
-    (css-fontify-colors nil)
-    :config
-    (global-colorful-mode t)
-    (add-to-list 'global-colorful-modes 'helpful-mode))
+
 #+end_src
 * 字体 + valign + nerd-icons + beacon
 .
