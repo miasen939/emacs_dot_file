@@ -93,7 +93,7 @@ benchmark 用来分析启动时间
   (delete-selection-mode 1)                 ;; 选中文本后输入会替换
   (global-auto-revert-mode 1)               ;; 自动刷新文件
   ;;  (setq display-line-numbers-type 'relative)  ;显示相对行号
-  ;;    (global-display-line-numbers-mode 1)
+  ;;  (global-display-line-numbers-mode 1)
 
   ;; 对选中文本使用括号引号自动放入
   ;; 备份和自动保存

@@ -20,7 +20,7 @@
     (doom-themes-enable-bold t)   ; if nil, bold is universally disabled
     (doom-themes-enable-italic t) ; if nil, italics is universally disabled
     ;; for treemacs users
-    (doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+    (doom-themes-treemacs-theme "doom-one") ; use "doom-colors" for less minimal icon theme
     :config
     (load-theme 'doom-vibrant t)
                                           ;  (load-theme 'doom-nord t)
@@ -131,31 +131,36 @@ dashboard的banner最好自己手动压缩为500x500以下
 #+begin_src emacs-lisp :tangle yes
 
   (use-package dashboard
-      :demand t
-      :custom
-      (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
+    :demand t
+    :custom
+    (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
 
-      
+    
 
-      (dashboard-startup-banner
-       (let* ((image-dir (expand-file-name "~/Pictures/icon/"))
-              (images (directory-files image-dir t "\\.\\(png\\|jpg\\|jpeg\\|gif\\|webp\\)$" t)))
-         (if images
-             (seq-random-elt images)
-           (message "No images found in %s" image-dir)
-           nil)))
+    (dashboard-startup-banner
+     (let* ((image-dir (expand-file-name "~/Pictures/icon/"))
+            (images (directory-files image-dir t "\\.\\(png\\|jpg\\|jpeg\\|gif\\|webp\\)$" t)))
+       (if images
+           (seq-random-elt images)
+         (message "No images found in %s" image-dir)
+         nil)))
 
-       (dashboard-items '(
-                          (agenda . 0)
-                          (recents . 0)
-                          (bookmarks . 0)
-                          (projects . 0)))
-      (dashboard-center-content t)
-      (dashboard-vertically-center-content t)
+    (dashboard-center-content t)
+    (dashboard-vertically-center-content t)
 
-      :config
-      (dashboard-setup-startup-hook)
-      )
+    :config
+    (setq dashboard-items nil)
+    
+    (setq initial-buffer-choice 'dashboard-open)
+    (add-hook 'server-after-make-frame-hook 'dashboard-open)
+
+    ;; show agenda
+    (setq dashboard-week-agenda t)
+    (setq dashboard-items '(
+                            (agenda    . 20)
+                            ))
+    (dashboard-setup-startup-hook)
+    )
 
   (provide 'my-emacs-ricing)
 

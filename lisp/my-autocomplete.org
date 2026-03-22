@@ -1,7 +1,7 @@
 #+auto_tangle: t
 
 * yasnippt
-
+yas-insert-snippet
 #+begin_src emacs-lisp :tangle yes
     ;;; my-autocomplete.el --- auto compeletion -*- no-byte-compile: t; lexical-binding: t; -*-
 

@@ -1,11 +1,11 @@
 ;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-
 
-     ;;; Commentary:
+       ;;; Commentary:
 
 ;; 
 ;; 
 
-        ;;; Code:
+          ;;; Code:
 (use-package org
   :mode ("\\.org\\'" . org-mode)
   :bind (("C-c l" . org-store-link)
@@ -66,7 +66,7 @@
   ;;org-todo
   (setq org-todo-keywords
         '((sequence "TODO(t!)" "NEXT(n!)" "SOMEDAY(s!)" "PLANNING(p!)" "IN-PROGRESS(i@/!)"
-                    "BLOCKED(b@!)" "WAITING(w@!)" "|" "DONE(d!)" "CANCELED(c@!)")))
+                    "BLOCKED(b@/!)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELED(c@/!)")))
   ;;(setq org-log-done 'note)
   ;;(setq org-log-done 'time)
   
@@ -105,23 +105,62 @@
     (set-face-attribute 'org-level-5 nil :height 1.0)
     (set-face-attribute 'org-level-6 nil :height 1.0))
 
+  (org-download-enable)
+
   ;; org-mode conifg ends here
   )
+
+
+(defun my/org-capture-link-to-current-heading ()
+  "在 capture 模板里调用，返回触发 capture 时所在 heading 的链接。"
+  (if (and my/org-capture-source-file
+           my/org-capture-source-heading)
+      (org-link-make-string
+       (concat "id:" my/org-capture-source-id)
+       my/org-capture-source-heading)
+    ""))
+
+(defvar my/org-capture-source-file nil)
+(defvar my/org-capture-source-heading nil)
+(defvar my/org-capture-source-id nil)
+
+(defun my/org-capture-save-context ()
+  "在 capture 打开前记录当前 buffer 的 heading 信息。"
+  (when (derived-mode-p 'org-mode)
+    (setq my/org-capture-source-file    (buffer-file-name)
+          my/org-capture-source-heading (org-get-heading t t t t)
+          my/org-capture-source-id      (org-id-get-create))))
+
+(add-hook 'org-capture-before-finalize-hook
+          (lambda () (setq my/org-capture-source-file    nil
+                           my/org-capture-source-heading nil
+                           my/org-capture-source-id      nil)))
+
+;; 关键：在 org-capture 被调用前先保存上下文
+(advice-add 'org-capture :before
+            (lambda (&rest _) (my/org-capture-save-context)))
 
 (use-package org-capture
   :ensure nil
   :bind ("C-c c" . org-capture)
   :config
   (setq org-capture-templates
-        '(("t" "Todo" entry
-           (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
-           "* TODO %?\n  %U\n")
-          ("s" "Someday" entry
-           (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
-           "* SOMEDAY %?\n  %U\n")
-          ("n" "Next" entry
-           (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
-           "* NEXT %?\n  %U\n"))))
+        '(   ("r" "roam-todo (链接到当前 heading)" entry
+              (file+headline "~/Documents/org-agenda/TODOs.org" "roam-todo")
+              "* TODO %?\n  来源: %(my/org-capture-link-to-current-heading)\n  %U\n"
+              :empty-lines 1)
+             
+             ("t" "Todo" entry
+              (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
+              "* TODO %?\n  %U\n")
+             ("s" "Someday" entry
+              (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
+              "* SOMEDAY %?\n  %U\n")
+             ("n" "Next" entry
+              (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
+              "* NEXT %?\n  %U\n"))))
+
+
 
 (use-package org-appear
   :hook (org-mode . org-appear-mode)
@@ -151,12 +190,12 @@
   :hook (org-mode . org-superstar-mode)
   :custom
   ;; 标题符号（对应 1–8 级）
-  (org-superstar-headline-bullets-list '("◉" "○" "✿" "✸" "◆" "◇" "▶" "▷"))
+  (org-superstar-headline-bullets-list '("◉" "✿" "○" "✸" "◆" "◇" "▶" "▷"))
 
   ;; 列表符号
   (org-superstar-item-bullet-alist '((?- . ?•)
                                      (?+ . ?➤)
-                                     ;;(?* . ?◦)
+                                     (?* . ?◦)
                                      ))
 
   ;; checkbox 没美化
@@ -167,30 +206,177 @@
 
   ;; 让普通列表的 * 不被当作标题处理
   (org-superstar-prettify-item-bullets t)
+
+  
   )
+
+(setq org-list-demote-modify-bullet
+      '(("-" . "+")     ; 第一级是 - ，降级/嵌套后变成 +
+        ("+" . "*")     ; 第二级 + 变成 *
+        ("*" . "-")     ; 第三级 * 再变回 - （循环）
+        ))
+
+(use-package org-modern
+  :hook (org-mode . org-modern-mode)
+  :custom
+  (org-modern-block t)
+  (org-modern-table nil)          ; 如果你喜欢原生表格就关掉
+  (org-modern-timestamp nil)
+  (org-modern-tag nil)
+  (org-modern-priority nil)
+  (org-modern-star nil)
+  (org-modern-checkbox nil)
+  (org-modern-todo nil)
+  (org-modern-list nil)
+  )
+
+
+
+(use-package org-ql
+  :bind()
+  :config
+  (setq org-ql-views
+        (list
+
+         ;; 今日待办
+         (cons "今日待办"
+               (list :buffers-files org-agenda-files
+                     :query '(and (todo "TODO" "NEXT")
+                                  (scheduled :on today))
+                     :sort '(priority date)
+                     :super-groups '((:auto-priority t))
+                     :title "今日待办"))
+
+         ;; 本周任务
+         (cons "本周任务"
+               (list :buffers-files org-agenda-files
+                     :query '(and (todo "TODO" "NEXT" "WAITING")
+                                  (scheduled :from today :to +7))
+                     :sort '(date priority)
+                     :title "本周任务"))
+
+         ;; 所有 NEXT 行动
+         (cons "下一步行动 (NEXT)"
+               (list :buffers-files org-agenda-files
+                     :query '(todo "NEXT")
+                     :sort '(priority date)
+                     :super-groups '((:auto-tags t))
+                     :title "下一步行动"))
+
+         ;; 已过期任务
+         (cons "已逾期"
+               (list :buffers-files org-agenda-files
+                     :query '(and (todo "TODO" "NEXT" "WAITING")
+                                  (deadline :to -1))
+                     :sort '(date priority)
+                     :title "已逾期任务"))
+
+         ;; 等待中
+         (cons "等待中 (WAITING)"
+               (list :buffers-files org-agenda-files
+                     :query '(todo "WAITING")
+                     :sort '(date)
+                     :title "等待中"))
+
+         ;; 近30天归档/完成
+         (cons "近期已完成"
+               (list :buffers-files org-agenda-files
+                     :query '(and (todo "DONE" "CANCELLED")
+                                  (closed :from -30 :to today))
+                     :sort '(date)
+                     :title "近期已完成（30天内）"))
+
+         ;; 高优先级
+         (cons "高优先级"
+               (list :buffers-files org-agenda-files
+                     :query '(and (todo "TODO" "NEXT")
+                                  (priority >= "B"))
+                     :sort '(priority date)
+                     :title "高优先级任务"))
+
+         ;; 卡片/笔记检索（标签为 :note:）
+         (cons "所有笔记"
+               (list :buffers-files org-agenda-files
+                     :query '(tags "note")
+                     :sort '(date)
+                     :title "笔记"))))
+  )
+
+(global-set-key (kbd "C-c q v") #'org-ql-view)          ;; 打开视图选择
+(global-set-key (kbd "C-c q s") #'org-ql-search)         ;; 即时搜索
+(global-set-key (kbd "C-c q f") #'org-ql-find)           ;; 模糊查找 heading
+
+
+(defun my/roam-todos ()
+  (interactive)
+  (org-ql-search (org-roam-list-files) '(todo)))
+
+(global-set-key (kbd "C-c q r") #'my/roam-todos)
+
+;; ============================================================
+;; org-ql-search 的常用查询示例（可直接在 M-x org-ql-search 输入）
+;; ============================================================
+
+;; 以下为注释示例，不需要执行，供参考：
+
+;; 查找包含 "项目X" 的 TODO
+;; (and (todo) (heading "项目X"))
+
+;; 查找带有 :work: 标签且未完成的任务
+;; (and (todo) (tags "work"))
+
+;; 查找 deadline 在未来7天内的任务
+;; (deadline :from today :to +7)
+
+;; 查找 priority A 的所有条目
+;; (priority "A")
+
+;; 全文搜索含有某关键词的条目
+;; (rifle "关键词")
+
+
+
+(use-package org-super-agenda
+  :ensure t
+  :config
+  (org-super-agenda-mode 1))
+
+;;示例：在 org-agenda 中启用超级分组
+(setq org-super-agenda-groups
+      '((:name "今日"
+               :time-grid t
+               :scheduled today)
+        (:name "逾期"
+               :deadline past)
+        (:name "高优先级"
+               :priority "A")
+        (:name "等待"
+               :todo "WAITING")
+        (:name "其他"
+               :anything)))
 
 (use-package org-download
-  :after org
-  :bind (:map org-mode-map
-              ("C-c C-M-y" . org-download-clipboard)   ; 推荐快捷键：粘贴剪贴板图片
-              ("C-c M-y"   . org-download-yank))       ; 另一种常用快捷键
-  :config
-  ;; 核心配置写在这里
-  (setq org-download-method 'directory
-        org-download-image-dir "./static/img")
-  (setq org-download-link-format "[[file:%s]]\n"
-        org-download-link-format-function
-        (lambda (link)
-          (format "[[file:%s]]\n" (file-relative-name link))))
+:after org
+:bind (:map org-mode-map
+            ("C-c C-M-y" . org-download-clipboard)   ; 推荐快捷键：粘贴剪贴板图片
+            ("C-c M-y"   . org-download-yank))       ; 另一种常用快捷键
+:config
+;; 核心配置写在这里
+(setq org-download-method 'directory
+      org-download-image-dir "./static/img")
+(setq org-download-link-format "[[file:%s]]\n"
+      org-download-link-format-function
+      (lambda (link)
+        (format "[[file:%s]]\n" (file-relative-name link))))
 
-  ;; 是否自动给文件名加时间戳前缀（避免重名）
-  (setq org-download-timestamp "_%Y%m%d_%H%M%S")
+;; 是否自动给文件名加时间戳前缀（避免重名）
+(setq org-download-timestamp "_%Y%m%d_%H%M%S")
 
-  ;; Mac/Linux 剪贴板截图特别推荐再加这一行
-  ;; (when (eq system-type 'darwin)   ; macOS
-  ;;   (setq org-download-screenshot-method "screencapture -i %s"))
-  (setq org-image-actual-width '(600))
-  )
+;; Mac/Linux 剪贴板截图特别推荐再加这一行
+;; (when (eq system-type 'darwin)   ; macOS
+;;   (setq org-download-screenshot-method "screencapture -i %s"))
+(setq org-image-actual-width '(600))
+)
 
 (use-package org-roam
   :custom
@@ -245,7 +431,7 @@
           :unnarrowed t)
          ("T" "Thoughts note" plain "%?"
           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags:thoughts:
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :thoughts:
     ")
           :unnarrowed t)
          )
@@ -254,12 +440,13 @@
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n p" . org-roam-buffer-display-dedicated)
          ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
+         ;;("C-c n G" . org-roam-graph)
          ("C-c n i" . org-roam-node-insert)
          ("C-c n c" . org-roam-capture)
          ("C-c n t" . org-roam-tag-add)
          ("C-c n a" . org-roam-alias-add)
          ("C-c n A" . org-roam-alias-remove)
+         ("C-c n g" . org-id-get-create)
          ;; Dailies
          ("C-c n j" . org-roam-dailies-capture-today)
          ("C-c n I" . org-roam-node-insert-immediate)
@@ -270,6 +457,7 @@
   :bind-keymap
   ("C-c n d" . org-roam-dailies-map)
   :config
+  
   (defun org-roam-node-insert-immediate (arg &rest args)
     (interactive "P")
     (let ((args (cons arg args))
@@ -335,6 +523,8 @@
   :hook (markdown-mode . valign-mode)
   :custom
   (valign-fancy-bar t))
+
+
 
 (provide 'my-org-mode)
 
