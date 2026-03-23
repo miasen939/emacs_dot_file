@@ -58,6 +58,8 @@
 
 (require ' my-emacs-ricing)
 
+
+
 (require ' my-org-mode)
 
 (require ' my-autocomplete)
@@ -179,8 +181,6 @@
   :config
   (save-place-mode 1))
 
-
-
 (use-package multiple-cursors
   :ensure t
   :bind
@@ -225,6 +225,21 @@
   (setq undo-strong-limit (* 16 1024 1024))
   (setq undo-fu-session-compression 'gz)
   (undo-fu-session-global-mode))
+
+(use-package origami
+  :ensure t
+  :hook (prog-mode . origami-mode)
+  :bind
+  (:map origami-mode-map
+        ("C-c f t" . origami-toggle-node)        ;; 折叠/展开当前节点
+        ("C-c f a" . origami-toggle-all-nodes)   ;; 折叠/展开全部
+        ("C-c f o" . origami-open-node)          ;; 展开当前
+        ("C-c f c" . origami-close-node)         ;; 折叠当前
+        ("C-c f n" . origami-next-fold)          ;; 跳到下一个折叠点
+        ("C-c f p" . origami-previous-fold)      ;; 跳到上一个折叠点
+        ("C-c f r" . origami-reset)))            ;; 重置所有折叠状态
+
+;; origami + tree-sitter 集成
 
 (use-package avy
     :bind (
@@ -354,7 +369,6 @@
   :custom
   (flycheck-display-errors-delay 0.3))
 
-
 (use-package rainbow-delimiters
   :hook
   ;; 最常用写法：在所有编程模式下自动启用（强烈推荐）
@@ -365,6 +379,24 @@
   ;; (clojure-mode  . rainbow-delimiters-mode)
   ;; (inferior-ess-mode . rainbow-delimiters-mode)   ;; R 的 REPL
   )
+
+;; Lisp 家族用 paredit
+(use-package paredit
+  :ensure t
+  :hook
+  (emacs-lisp-mode . paredit-mode)
+  (lisp-mode       . paredit-mode)
+  (scheme-mode     . paredit-mode))
+
+;; 其他语言用 smartparens
+(use-package smartparens
+  :ensure t
+  :hook
+  (rust-ts-mode   . smartparens-mode)
+  (python-ts-mode . smartparens-mode)
+  (c-ts-mode      . smartparens-mode)
+  :config
+  (require 'smartparens-config))
 
 (use-package symbol-overlay
   :bind (("M-i" . symbol-overlay-put)

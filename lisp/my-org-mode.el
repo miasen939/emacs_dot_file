@@ -85,7 +85,7 @@
           ("CANCELED" . (:foreground "DimGrey" :weight bold))
           ))
   ;;org-agenda
-  (setq org-agenda-files 
+  (setq org-agenda-files
         '("~/Documents/org-agenda/TODOs.org"
           "~/Documents/org-agenda/habits.org")
         ) ;;一定要注意，改这个路径的同时要改org capture的路径
@@ -112,7 +112,7 @@
 
 
 (defun my/org-capture-link-to-current-heading ()
-  "在 capture 模板里调用，返回触发 capture 时所在 heading 的链接。"
+  "在 capture 模板里调用，返回触发 capture 时所在 heading 的链接。."
   (if (and my/org-capture-source-file
            my/org-capture-source-heading)
       (org-link-make-string
@@ -125,7 +125,7 @@
 (defvar my/org-capture-source-id nil)
 
 (defun my/org-capture-save-context ()
-  "在 capture 打开前记录当前 buffer 的 heading 信息。"
+  "在 capture 打开前记录当前 buffer 的 heading 信息。."
   (when (derived-mode-p 'org-mode)
     (setq my/org-capture-source-file    (buffer-file-name)
           my/org-capture-source-heading (org-get-heading t t t t)

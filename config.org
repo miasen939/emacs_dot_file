@@ -7,6 +7,9 @@
 
 byte-compile-file??
 
+* 警告！
+引入 evil 的收益接近零，迁移成本和维护复杂度是实实在在的。把那些精力用来深挖 avy、consult、embark 这些 Emacs 原生工具，回报会高得多。
+
 
 * pre-early-init.el
 
@@ -127,6 +130,8 @@ benchmark 用来分析启动时间
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   (require ' my-emacs-ricing)
+
+  
 
   (require ' my-org-mode)
 
@@ -272,11 +277,11 @@ CLOSED: [2026-03-04 水 23:21]
     (save-place-mode 1))
 #+END_SRC
 
-* multiple-cursors and undo-fu 
-#+begin_src emacs-lisp :tangle ./post-init.el
-  
-#+end_src
-* become evil
+* multiple-cursors and undo-fu
+批量编辑：multiple-cursors 或 iedit
+
+
+
 #+begin_src emacs-lisp :tangle ./post-init.el
 
   (use-package multiple-cursors
@@ -324,6 +329,30 @@ CLOSED: [2026-03-04 水 23:21]
     (setq undo-fu-session-compression 'gz)
     (undo-fu-session-global-mode))
 #+end_src
+
+
+* origami 折り紙
+
+#+begin_src emacs-lisp :tangle ./post-init.el
+
+  (use-package origami
+    :ensure t
+    :hook (prog-mode . origami-mode)
+    :bind
+    (:map origami-mode-map
+          ("C-c f t" . origami-toggle-node)        ;; 折叠/展开当前节点
+          ("C-c f a" . origami-toggle-all-nodes)   ;; 折叠/展开全部
+          ("C-c f o" . origami-open-node)          ;; 展开当前
+          ("C-c f c" . origami-close-node)         ;; 折叠当前
+          ("C-c f n" . origami-next-fold)          ;; 跳到下一个折叠点
+          ("C-c f p" . origami-previous-fold)      ;; 跳到上一个折叠点
+          ("C-c f r" . origami-reset)))            ;; 重置所有折叠状态
+
+  ;; origami + tree-sitter 集成
+  
+  
+#+end_src
+
 
 * avy   expand-region
 虽然已经在用了,但是没有完全用明白.
@@ -468,7 +497,7 @@ expand-region的缩小选择功能我还挺喜欢的
 #+end_src
 * gptel/ai
 
-* flycheck rainbow-delimiters hight symbol? / symbol-overlay / hight thing
+* flycheck rainbow-delimiters 
 flycheck需要微调
 #+begin_src emacs-lisp :tangle ./post-init.el
 
@@ -478,7 +507,9 @@ flycheck需要微调
     :hook (prog-mode . flycheck-mode)
     :custom
     (flycheck-display-errors-delay 0.3))
-
+#+end_src
+* the Parens
+#+begin_src emacs-lisp :tangle ./post-init.el
 
   (use-package rainbow-delimiters
     :hook
@@ -490,6 +521,27 @@ flycheck需要微调
     ;; (clojure-mode  . rainbow-delimiters-mode)
     ;; (inferior-ess-mode . rainbow-delimiters-mode)   ;; R 的 REPL
     )
+
+  ;; Lisp 家族用 paredit
+  (use-package paredit
+    :ensure t
+    :hook
+    (emacs-lisp-mode . paredit-mode)
+    (lisp-mode       . paredit-mode)
+    (scheme-mode     . paredit-mode))
+
+  ;; 其他语言用 smartparens
+  (use-package smartparens
+    :ensure t
+    :hook
+    (rust-ts-mode   . smartparens-mode)
+    (python-ts-mode . smartparens-mode)
+    (c-ts-mode      . smartparens-mode)
+    :config
+    (require 'smartparens-config))  
+#+end_src
+* symbol-voerlay colorful-mode
+#+begin_src emacs-lisp :tangle ./post-init.el
 
   (use-package symbol-overlay
     :bind (("M-i" . symbol-overlay-put)
@@ -511,7 +563,6 @@ flycheck需要微调
     (global-colorful-mode t)
     (add-to-list 'global-colorful-modes 'helpful-mode)
     )
-  
 #+end_src
 
 
