@@ -1,11 +1,11 @@
 ;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-
 
-       ;;; Commentary:
+;;; Commentary:
 
 ;; 
 ;; 
 
-          ;;; Code:
+;;; Code:
 (use-package org
   :mode ("\\.org\\'" . org-mode)
   :bind (("C-c l" . org-store-link)

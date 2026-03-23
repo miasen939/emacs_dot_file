@@ -179,6 +179,8 @@
   :config
   (save-place-mode 1))
 
+
+
 (use-package multiple-cursors
   :ensure t
   :bind
@@ -274,6 +276,78 @@
   :bind
   ("C-a" . mwim-beginning-of-code-or-line)
   ("C-e" . mwim-end-of-code-or-line))
+
+;; ============================================================
+;; 前置：确保已安装系统级 LSP server
+;;   C/C++:  sudo apt install clangd   (或 brew install llvm)
+;;   Rust:   rustup component add rust-analyzer
+;;   Python: pip install python-lsp-server  (pylsp)
+;;           或 pip install pyright + npm i -g pyright
+;; Elisp 不需要额外安装
+;; ============================================================
+
+;; ── eglot 基础设置 ──────────────────────────────────────────
+(use-package eglot
+  :ensure t
+
+  :custom
+  ;; 自动关闭没有 buffer 关联的 LSP server
+  (eglot-autoshutdown t)
+  ;; 不在 echo area 显示文档（改用 eldoc-box 或 hover）
+  (eglot-echo-area-use-multiline-p nil)
+  ;; 提升补全响应速度
+  (eglot-events-buffer-size 0)
+
+  :config
+  ;; ── C/C++ ──────────────────────────────────────────────────
+  ;; clangd 额外参数：开启后台索引、补全时带参数占位符
+  (add-to-list 'eglot-server-programs
+               '((c-mode c-ts-mode c++-mode c++-ts-mode)
+                 . ("clangd"
+                    "--background-index"
+                    "--clang-tidy"
+                    "--completion-style=detailed"
+                    "--header-insertion=never")))
+
+  ;; ── Rust ───────────────────────────────────────────────────
+  ;; rust-analyzer 通常 eglot 自动识别，这里显式写出以便加参数
+  (add-to-list 'eglot-server-programs
+               '((rust-mode rust-ts-mode)
+                 . ("rust-analyzer"
+                    :initializationOptions
+                    (:checkOnSave (:command "clippy")
+                                  :cargo (:allFeatures t)))))
+
+  ;; ── Python ─────────────────────────────────────────────────
+  ;; 优先用 pylsp；如果你用 pyright 把下面注释互换即可
+  (add-to-list 'eglot-server-programs
+               '((python-mode python-ts-mode)
+                 . ("pylsp")))
+  ;; 用 pyright 则改成：
+  ;; '((python-mode python-ts-mode) . ("pyright-langserver" "--stdio"))
+
+  ;; ── Elisp ──────────────────────────────────────────────────
+  ;; Elisp 不走 eglot，用内置方案即可（见下方单独配置）
+
+  :hook
+  ;; tree-sitter 版本的 mode（推荐）
+  (c-ts-mode     . eglot-ensure)
+  (c++-ts-mode   . eglot-ensure)
+  (rust-ts-mode  . eglot-ensure)
+  (python-ts-mode . eglot-ensure)
+  ;; 非 tree-sitter 版本兜底（没开 treesit-auto 时生效）
+  (c-mode        . eglot-ensure)
+  (c++-mode      . eglot-ensure)
+  (rust-mode     . eglot-ensure)
+  (python-mode   . eglot-ensure))
+
+
+;; ── Elisp：不用 eglot，用内置工具 ──────────────────────────
+(use-package elisp-mode
+  :ensure nil  ;; 内置，不需要安装
+  :hook
+  (emacs-lisp-mode . eldoc-mode)     ;; 函数签名提示
+  (emacs-lisp-mode . flymake-mode))  ;; 实时语法检查
 
 (use-package flycheck
   :hook (prog-mode . flycheck-mode)
