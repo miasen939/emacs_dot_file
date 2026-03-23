@@ -124,8 +124,8 @@
   :config
   (setq dashboard-items nil)
   
-  (setq initial-buffer-choice 'dashboard-open)
-  (add-hook 'server-after-make-frame-hook 'dashboard-open)
+  ;;(setq initial-buffer-choice 'dashboard-open)
+  ;;(add-hook 'server-after-make-frame-hook 'dashboard-open)
 
   ;; show agenda
   (setq dashboard-week-agenda t)

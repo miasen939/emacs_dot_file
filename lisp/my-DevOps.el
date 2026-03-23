@@ -27,6 +27,7 @@
 (use-package vterm
   :bind
   ("C-c t" . vterm)
+  ;; "C-u C-c t" vterm-new-window
   :config
   ;; (add-hook 'vterm-mode-hook
   ;;           (lambda ()
