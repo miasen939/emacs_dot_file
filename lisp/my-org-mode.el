@@ -172,12 +172,12 @@
 (use-package org-auto-tangle
   :hook (org-mode . org-auto-tangle-mode))
 
-(use-package org-transclusion
-  :after org
-  :bind (("S-<f12>" . org-transclusion-add)
-         ("C-.  m" . org-transclusion-transient-menu)
-         ("C-.  t" . org-transclusion-mode)
-         ))
+;; (use-package org-transclusion
+;;   :after org
+;;   :bind (("S-<f12>" . org-transclusion-add)
+;;          ("C-.  m" . org-transclusion-transient-menu)
+;;          ("C-.  t" . org-transclusion-mode)
+;;          ))
 
 ;; (use-package org-bullets
 ;;   :ensure t
@@ -525,6 +525,45 @@
   (valign-fancy-bar t))
 
 
+
+(use-package org-pomodoro
+  :after org
+  :custom
+  (org-pomodoro-length 1) ;;工作时长
+  (org-pomodoro-short-break-length 1) ;;休息
+  (org-pomodoro-long-break-length 2)
+  (org-pomodoro-long-break-frequency 4)
+  ;; 声音（macOS 自带，Linux 换成你系统有的 .wav）
+  (org-pomodoro-ticking-sound nil)          ; 不要滴答声
+  (org-pomodoro-finished-sound-p t)
+  (org-pomodoro-short-break-sound-p t)
+  (org-pomodoro-long-break-sound-p t)
+  :bind
+  (:map org-agenda-mode-map
+        ("P" . org-pomodoro))               ; 覆盖原来的 clock-in
+  :config
+  ;; kde + wayland 桌面通知
+  
+  (add-hook 'org-pomodoro-finished-hook
+            (lambda ()
+              (shell-command "notify-send '🍅 番茄结束' '该休息了'")))
+  (add-hook 'org-pomodoro-break-finished-hook
+            (lambda ()
+              (shell-command "notify-send '☕ 休息结束' '开始下一个番茄'")))
+  (add-hook 'org-pomodoro-long-break-finished-hook
+            (lambda ()
+              (shell-command "notify-send '☕ 长休息结束' '开始下一个番茄'")))
+  ;; 自动确认
+  ;; (add-hook 'org-pomodoro-break-finished-hook
+  ;;           (lambda ()
+  ;;             (org-pomodoro)))
+  
+  ;; 弹出式确认
+  (add-hook 'org-pomodoro-break-finished-hook
+            (lambda ()
+              (when (y-or-n-p "Break finished! Start another pomodoro?")
+                (org-pomodoro))))
+  )
 
 (provide 'my-org-mode)
 

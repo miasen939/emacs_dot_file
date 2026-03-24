@@ -28,8 +28,8 @@
 (electric-pair-mode 1)                    ;; 自动配对括号
 (delete-selection-mode 1)                 ;; 选中文本后输入会替换
 (global-auto-revert-mode 1)               ;; 自动刷新文件
-;;  (setq display-line-numbers-type 'relative)  ;显示相对行号
-;;  (global-display-line-numbers-mode 1)
+(setq display-line-numbers-type 'relative)  ;显示相对行号
+(global-display-line-numbers-mode 1)
 
 ;; 对选中文本使用括号引号自动放入
 ;; 备份和自动保存
@@ -240,6 +240,35 @@
         ("C-c f r" . origami-reset)))            ;; 重置所有折叠状态
 
 ;; origami + tree-sitter 集成
+
+;; 1. 安装 god-mode（如果用 use-package）
+  (use-package god-mode
+    :defer 0.2
+   
+    :config
+    (god-mode-all)
+    ;; 2. 用左下角的 Ctrl（即 <ctrl> 单独按下）触发 god-mode
+    ;;    绑定到 C-z（默认没什么用），再把 C-z 设为 god-mode 开关
+    ;;(global-set-key (kbd "<escape>") #'god-local-mode)
+    (global-set-key (kbd "<escape>") #'god-mode-all)
+;;    (setq god-exempt-major-modes nil)
+;;    (setq god-exempt-predicates nil)
+
+    
+    (setq god-mode-alist
+          '((nil . "C-")
+            ("g" . "M-")
+            ("z" . "C-M-")
+            ))
+
+    (define-key god-local-mode-map (kbd "i") #'god-local-mode)
+    (define-key god-local-mode-map (kbd ".") #'repeat)
+
+
+    (define-key god-local-mode-map (kbd "S-<backspace>") #'kill-whole-line)
+
+    (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
+    (define-key god-local-mode-map (kbd "]") #'forward-paragraph))
 
 (use-package avy
     :bind (
