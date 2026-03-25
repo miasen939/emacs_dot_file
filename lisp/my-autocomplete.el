@@ -173,6 +173,7 @@
          ;; C-x 前缀
          ("C-x M-:" . consult-complex-command)
          ("C-x b" . consult-buffer)
+         ("C-x C-b" . consult-buffer)
          ("C-x 4 b" . consult-buffer-other-window)
          ("C-x 5 b" . consult-buffer-other-frame)
          ("C-x r b" . consult-bookmark)

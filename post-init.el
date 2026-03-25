@@ -241,34 +241,79 @@
 
 ;; origami + tree-sitter 集成
 
-;; 1. 安装 god-mode（如果用 use-package）
-  (use-package god-mode
-    :defer 0.2
-   
-    :config
-    (god-mode-all)
-    ;; 2. 用左下角的 Ctrl（即 <ctrl> 单独按下）触发 god-mode
-    ;;    绑定到 C-z（默认没什么用），再把 C-z 设为 god-mode 开关
-    ;;(global-set-key (kbd "<escape>") #'god-local-mode)
-    (global-set-key (kbd "<escape>") #'god-mode-all)
-;;    (setq god-exempt-major-modes nil)
-;;    (setq god-exempt-predicates nil)
+(use-package god-mode
+  :defer 0.2
+  :init
+  (setq god-mode-enable-function-key-translation nil)
 
-    
-    (setq god-mode-alist
-          '((nil . "C-")
-            ("g" . "M-")
-            ("z" . "C-M-")
-            ))
+  :config
+  (god-mode-all)
+  (global-set-key (kbd "<escape>") #'god-local-mode)
+  (global-set-key (kbd "C-.") #'god-mode-all)
+  (define-key god-local-mode-map (kbd "i") #'god-local-mode)
+  (setq god-exempt-major-modes nil)
+  (setq god-exempt-predicates nil)
 
-    (define-key god-local-mode-map (kbd "i") #'god-local-mode)
-    (define-key god-local-mode-map (kbd ".") #'repeat)
+  
+  (setq god-mode-alist
+        '((nil . "C-")
+          ("g" . "M-")
+          ("z" . "C-M-")
+          ))
+
+  (define-key god-local-mode-map (kbd ".") #'repeat)
 
 
-    (define-key god-local-mode-map (kbd "S-<backspace>") #'kill-whole-line)
+  (define-key god-local-mode-map (kbd "S-<backspace>") #'kill-whole-line)
 
-    (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
-    (define-key god-local-mode-map (kbd "]") #'forward-paragraph))
+  (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
+  (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
+
+
+
+  
+  ;; (defun my/disable-ime-for-god-mode ()
+  ;;   "Disable IME when god-mode is enabled."
+  ;;   (when god-local-mode
+  ;;     (when (fboundp 'deactivate-input-method)
+  ;;       (deactivate-input-method))))
+  ;; 
+  ;; (add-hook 'god-mode-enabled-hook 'my/disable-ime-for-god-mode)
+
+  
+  ;; === 针对 emacs-rime 的智能输入法保存与恢复 ===
+  (defvar my--last-input-method nil
+    "记录进入 god-mode 之前最后使用的 input-method。")
+
+  (defun my-god-save-and-disable-ime ()
+    "进入 god-mode 时：保存当前输入法状态，然后强制关闭 Rime。"
+    (setq my--last-input-method current-input-method)  ; 保存当前状态
+    (when (and current-input-method
+               (fboundp 'deactivate-input-method))
+      (deactivate-input-method)))
+
+  (defun my-god-restore-ime ()
+    "退出 god-mode 时：恢复之前保存的输入法（主要是 Rime）。"
+    (when (and my--last-input-method
+               (not current-input-method))  ; 只有当前没开启输入法时才恢复
+      (set-input-method my--last-input-method)))    ;;
+  (add-hook 'god-mode-enabled-hook  #'my-god-save-and-disable-ime)
+  (add-hook 'god-mode-disabled-hook #'my-god-restore-ime)
+
+
+  ;; (add-hook 'magit-mode-hook #'god-local-mode-pause)
+  ;; (add-hook 'magit-mode-hook (lambda () (god-local-mode -1)))
+
+  (custom-set-faces
+   '(god-mode-lighter ((t (:inherit error)))))
+
+  (defun my-god-mode-update-cursor-type ()
+    (setq cursor-type (if (or god-local-mode buffer-read-only) 'hollow 'box)))
+
+  (add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
+  (add-hook 'read-only-mode-hook
+            (lambda () (when buffer-read-only (god-local-mode 1))))
+  )
 
 (use-package avy
     :bind (

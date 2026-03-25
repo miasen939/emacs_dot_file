@@ -193,8 +193,11 @@ org attach 有点意思
   (use-package org-auto-tangle
     :hook (org-mode . org-auto-tangle-mode))
 #+end_src
-
-
+* agenda
+- casual
+- pomodoro
+- timer
+  
 * TODO org-transclusion
 思来想去后觉得没什么用
 #+begin_src emacs-lisp :tangle yes

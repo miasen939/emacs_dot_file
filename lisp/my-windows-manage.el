@@ -55,7 +55,8 @@
 (use-package ibuffer
   :ensure nil                  ; ibuffer 是 Emacs 内置，不需要从 MELPA 安装
   :bind
-  ("C-x C-b" . ibuffer)        ; 覆盖默认 C-x C-b 的 list-buffers，用 ibuffer 代替
+  ;; ("C-x C-b" . ibuffer)
+                                        ; 覆盖默认 C-x C-b 的 list-buffers，用 ibuffer 代替
 
   :custom
   (ibuffer-default-sorting-mode 'major-mode)        ; 按 major-mode 排序
