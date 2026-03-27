@@ -529,9 +529,9 @@
 (use-package org-pomodoro
   :after org
   :custom
-  (org-pomodoro-length 1) ;;工作时长
-  (org-pomodoro-short-break-length 1) ;;休息
-  (org-pomodoro-long-break-length 2)
+  (org-pomodoro-length 30) ;;工作时长
+  (org-pomodoro-short-break-length 6) ;;休息
+  (org-pomodoro-long-break-length 24)
   (org-pomodoro-long-break-frequency 4)
   ;; 声音（macOS 自带，Linux 换成你系统有的 .wav）
   (org-pomodoro-ticking-sound nil)          ; 不要滴答声

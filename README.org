@@ -4,21 +4,24 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 
 试用过purcell/prelude/doomemacs,打算慢慢从上面偷配置
 
-版本: emacs30 使用该博客的方法编译: [[https://www.masteringemacs.org/article/speed-up-emacs-libjansson-native-elisp-compilation][Speed up Emacs with native elisp compilation]]
 
-OS: Ubuntu 24.04.3 LTS x86_64
-
-* img
-:PROPERTIES:
-:ID:       68e8c4d1-ecc7-4ab1-8c26-05f56f110f4e
-:END:
-[[file:static/img/MPV-00_02_35.197-N0002.png]]
-
-[[file:static/img/screenshot1.png]]
-#+DOWNLOADED: screenshot @ 2026-02-28 20:32:14
-[[file:static/img/img/_20260228_203214screenshot.png]]
-
-
+* 配置目录
+** minimal-emacs
+- early
+- init.el
+- [[file:pre-early-init.el][pre-early-init.el]]
+- [[file:post-init.el][post-init.el]]
+** my-lisp
+- rust
+- my prog-mode
+- [[file:lisp/my-org-mode.el][my-org-mode]]
+* 未来的目标
+- dapmode 和更多debug用的包
+- tramp远程ssh
+- LSP elgot
+- projectile的优化
+- latex和 文献管理
+- ai？
 * 原则
 
 - 简洁美观（？）
