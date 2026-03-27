@@ -11,7 +11,7 @@
   ;; 常用设置（可以根据需要增删）
   :custom
   (projectile-project-search-path '("~/projects/" "~/work/" "~/playground" "~/Documents/"))
-  (projectile-files-command "ripgrep --files --hidden --follow --glob '!.git'") 
+  (projectile-files-command "ripgrep --files --hidden --follow --glob '!.git'")
   :config
   (define-key projectile-mode-map (kbd "C-c C-p") 'projectile-command-map)
   (global-set-key (kbd "C-c C-p") 'projectile-command-map)
@@ -23,7 +23,7 @@
 ;; (use-package eat
 ;;   )
 
-;; vterm
+;; vterm or eat
 (use-package vterm
   :bind
   ("C-c t" . vterm)
@@ -55,6 +55,9 @@
     :bind ("C-x g" . magit-status)
     :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-  (provide 'my-DevOps)
 
+;; todo: tramp/postman
+
+
+(provide 'my-DevOps)
 ;;; my-DevOps.el ends here

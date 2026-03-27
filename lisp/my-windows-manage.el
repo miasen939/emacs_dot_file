@@ -1,11 +1,11 @@
 ;;; my-windows-manage.el --- widows management -*- no-byte-compile: t; lexical-binding: t; -*-
 
-  ;;; Commentary:
+;;; Commentary:
 
 ;; 
 ;;
 
-    ;;; Code:
+;;; Code:
 (use-package emacs
   :bind (("M-o" . other-window)
          ("s-o" . other-frame))
@@ -121,6 +121,9 @@
   
   (popper-mode +1)
   (popper-echo-mode +1))
+
+;; todo: 书签相关
+
 (provide 'my-windows-manage)
 
-      ;;; my-windows-manage.el ends here
+;;; my-windows-manage.el ends here

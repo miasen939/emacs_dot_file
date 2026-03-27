@@ -7,6 +7,10 @@
 
 ;;; Code:
 ;; 推荐组合：auth-source + pass 的桥接 + 好用的界面
+
+;;; 依赖：sudo pacman -S pass gnupg git
+;;; 一定不要忘了 安全备份私钥
+;;; 一定不要忘了 pass phrase
 (use-package auth-source
   :ensure t
   :config
@@ -22,6 +26,9 @@
 ;;   :ensure t
 ;;   :bind ("C-c p p" . pass))
 
+
+;;; 词典，依赖sdcv
+;;; 词典：quick-sdcv 或 dictionary + sdcv（更现代推荐 define-word 或 powerthesaurus）
 (use-package password-store-menu
   :ensure t
   :bind ("C-c P" . password-store-menu))
@@ -39,7 +46,7 @@
 
 
 
-;; (use-package listen)  
+;; (use-package listen)
 ;; (use-package emms
 ;;   :defer t
 ;;   :config
@@ -50,6 +57,8 @@
 ;;         emms-info-functions '(emms-info-native))
 ;; 
 ;;   )
+
+;;; todo: mu4e/notmuch calc calendar emms/listen
 
 (provide 'my-living-in-emacs)
 

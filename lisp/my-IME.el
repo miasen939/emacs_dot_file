@@ -6,6 +6,10 @@
 ;;
 
 ;;; Code:
+
+;; 需要配置雾凇拼音
+;; 依赖 rime-Fcitx5
+
 (use-package rime
   :custom
   (default-input-method "rime")
@@ -34,6 +38,8 @@
 
 (global-set-key (kbd "C-x C-\\") 'skk-mode)
 
+
+;; skk输入法，使用方法可查询wiki
 (use-package ddskk
   :ensure t
   :init

@@ -50,6 +50,17 @@
    :map image-mode-map
    ("M-m" . casual-image-tmenu)))
 
+ ;; casual-image
+ ;; casual-isearch-tmenu
+ ;; casual-bibtex-tmenu
+ ;; casual-info
+ ;; casual-symbol-overlay
+ ;; re-builder
+ ;; casual-calendar
+ ;; casual bookmarks
+ ;; casual compile
+ ;; M-x man and casual man
+
 (use-package embark
   :bind (("C-,"   . embark-act)
          ("C-M-," . embark-dwim)        ; 智能猜测最可能的操作
@@ -58,7 +69,7 @@
          ("C-."   . embark-act)         ; minibuffer 里用 C-.
          ("C-c C-e" . embark-export)
          :map org-mode-map
-         ("C-," . embark-act))   ; 导出候选列表
+         ("C-," . embark-act))          ; 导出候选列表
   :custom
   (embark-quit-after-action nil)        ; 执行 action 后不退出，方便连续操作
   (prefix-help-command #'embark-prefix-help-command)
@@ -75,7 +86,7 @@
                    (embark--truncate-target (plist-get (car targets) :target))
                    (if (cdr targets) "…" "")))
          keymap nil nil 'no-paging))
-      #'which-key--hide-popup-ignore-command))  ; ← 修复：移到外层括号之后
+      #'which-key--hide-popup-ignore-command)) ; ← 修复：移到外层括号之后
   (setq embark-indicators
         '(embark-which-key-indicator
           embark-highlight-indicator
@@ -120,6 +131,9 @@
   ([remap describe-variable] . helpful-variable)
   :custom
   (helpful-max-buffers 7))
+
+
+;; todo: c-h/hydra/transient/embark
 (provide 'my-helper)
 
 ;;; my-helper.el ends here

@@ -87,13 +87,12 @@
     
   (setq god-mode-alist
         '((nil . "C-")
-          ("," . "M-")
+          ("g" . "M-")
           ("z" . "C-M-")
           ))
   ;;    (define-key god-local-mode-map (kbd "V") #'scroll-down-command)
 
   (define-key god-local-mode-map (kbd ".") #'repeat)
-  (define-key god-local-mode-map (kbd "g") #'keyboard-quit)
     
   (define-key god-local-mode-map (kbd "'") #'avy-goto-char-timer)
   (define-key god-local-mode-map (kbd ";") #'my/goto-line-or-end)
@@ -107,18 +106,6 @@
   (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
   (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
 
-
-
-    
-  ;; (defun my/disable-ime-for-god-mode ()
-  ;;   "Disable IME when god-mode is enabled."
-  ;;   (when god-local-mode
-  ;;     (when (fboundp 'deactivate-input-method)
-  ;;       (deactivate-input-method))))
-  ;; 
-  ;; (add-hook 'god-mode-enabled-hook 'my/disable-ime-for-god-mode)
-
-    
   ;; === 针对 emacs-rime 的智能输入法保存与恢复 ===
   (defvar my--last-input-method nil
     "记录进入 god-mode 之前最后使用的 input-method。")
@@ -250,22 +237,22 @@
 
 
 ;; TODO 结构化编辑
-(use-package paredit
-    :ensure t
-    :hook
-    (emacs-lisp-mode . paredit-mode)
-    (lisp-mode       . paredit-mode)
-    (scheme-mode     . paredit-mode))
-
-  ;; 其他语言用 smartparens
-  (use-package smartparens
-    :ensure t
-    :hook
-    (rust-ts-mode   . smartparens-mode)
-    (python-ts-mode . smartparens-mode)
-    (c-ts-mode      . smartparens-mode)
-    :config
-    (require 'smartparens-config))
+;; (use-package paredit
+;;     :ensure t
+;;     :hook
+;;     (emacs-lisp-mode . paredit-mode)
+;;     (lisp-mode       . paredit-mode)
+;;     (scheme-mode     . paredit-mode))
+;; 
+;;   ;; 其他语言用 smartparens
+;;   (use-package smartparens
+;;     :ensure t
+;;     :hook
+;;     (rust-ts-mode   . smartparens-mode)
+;;     (python-ts-mode . smartparens-mode)
+;;     (c-ts-mode      . smartparens-mode)
+;;     :config
+;;     (require 'smartparens-config))
 
 ;;; TODO The ai support gptel
 

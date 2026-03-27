@@ -15,6 +15,10 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 - rust
 - my prog-mode
 - [[file:lisp/my-org-mode.el][my-org-mode]]
+* 配置详解
+** my-org-mode
+** my-prog-mode
+** 其他
 * 未来的目标
 - dapmode 和更多debug用的包
 - tramp远程ssh

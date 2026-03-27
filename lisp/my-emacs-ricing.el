@@ -1,11 +1,11 @@
 ;;; my-emacs-ricing.el --- rice the toyota -*- no-byte-compile: t; lexical-binding: t; -*-
 
-  ;;; Commentary:
+;;; Commentary:
 
 ;; 
 ;;
 
-  ;;; Code:
+;;; Code:
 (use-package doom-themes
   :demand t
   :custom
@@ -57,6 +57,10 @@
 ;; (use-package mood-line
 ;; :hook (after-init . mood-line-mode))
 
+
+
+;; 字体安装： sudo pacman -S ttf-sarasa-gothic
+
 (custom-set-faces
  '(gnus-group-news-low ((t (:foreground "cyan"))))
  '(gnus-group-news-low-empty ((t (:foreground "cyan" :weight normal)))))
@@ -73,10 +77,11 @@
 
 (defun my/setup-fonts ()
   "设置字体配置."
+
   (when (display-graphic-p)
     ;; 英文字体
     (set-face-attribute 'default nil
-                        :height 130          
+                        :height 130
                         :weight 'normal
                         :family "DejaVu Sans mono")
     
@@ -99,8 +104,8 @@
   :config
   (beacon-mode 1)
   ;; 可选配置
-  (setq beacon-color "#4a5060")      
-  (setq beacon-size 20)              
+  (setq beacon-color "#4a5060")
+  (setq beacon-size 20)
   (setq beacon-blink-duration 0.3))
 
 ;; (use-package dashboard
