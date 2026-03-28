@@ -12,4 +12,5 @@
 !init.el
 !post-init.el
 !pre-early-init.el
+!kanata.kbd
 !.gitignore

@@ -19,14 +19,11 @@ org attach 有点意思
 显示图片 可以用 =C-c C-x C-v=  手动打开
 
 #+begin_src emacs-lisp :tangle yes
-            ;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-
-
-         ;;; Commentary:
-
+;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-
+;;; Commentary:
   ;; 
   ;; 
-
-            ;;; Code:
+;;; Code:
   (use-package org
     :mode ("\\.org\\'" . org-mode)
     :bind (("C-c l" . org-store-link)
@@ -595,7 +592,7 @@ CachyOS需要 wl-clipboard
     :hook (markdown-mode . valign-mode)
     :custom
     (valign-fancy-bar t))
-#+end_src
+    #+end_src
 
 
 * vulpea
@@ -614,9 +611,9 @@ notify-send 这个命令可以自定义图标和显示时长
   (use-package org-pomodoro
     :after org
     :custom
-    (org-pomodoro-length 1) ;;工作时长
-    (org-pomodoro-short-break-length 1) ;;休息
-    (org-pomodoro-long-break-length 2)
+    (org-pomodoro-length 32) ;;工作时长
+    (org-pomodoro-short-break-length 7) ;;休息
+    (org-pomodoro-long-break-length 26)
     (org-pomodoro-long-break-frequency 4)
     ;; 声音（macOS 自带，Linux 换成你系统有的 .wav）
     (org-pomodoro-ticking-sound nil)          ; 不要滴答声
@@ -638,16 +635,16 @@ notify-send 这个命令可以自定义图标和显示时长
     (add-hook 'org-pomodoro-long-break-finished-hook
               (lambda ()
                 (shell-command "notify-send '☕ 长休息结束' '开始下一个番茄'")))
-    ;; 自动确认
-    ;; (add-hook 'org-pomodoro-break-finished-hook
-    ;;           (lambda ()
-    ;;             (org-pomodoro)))
-    
-    ;; 弹出式确认
+    ;;自动确认
     (add-hook 'org-pomodoro-break-finished-hook
               (lambda ()
-                (when (y-or-n-p "Break finished! Start another pomodoro?")
-                  (org-pomodoro))))
+                (org-pomodoro)))
+    
+    ;; 弹出式确认
+    ;; (add-hook 'org-pomodoro-break-finished-hook
+    ;;           (lambda ()
+    ;;             (when (y-or-n-p "Break finished! Start another pomodoro?")
+    ;;               (org-pomodoro))))
     )
 #+end_src
 
@@ -662,7 +659,7 @@ notify-send 这个命令可以自定义图标和显示时长
 - org-attach
 * org-mode 画图
 #+begin_src emacs-lisp :tangle yes
-  
+
   (provide 'my-org-mode)
 
 ;;; my-org-mode.el ends here
