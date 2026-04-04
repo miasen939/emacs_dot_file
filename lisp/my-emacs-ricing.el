@@ -108,38 +108,39 @@
   (setq beacon-size 20)
   (setq beacon-blink-duration 0.3))
 
-;; (use-package dashboard
-;;   :demand t
-;;   :custom
-;;   (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.")
-;; 
-;;   
-;; 
-;;   (dashboard-startup-banner
-;;    (let* ((image-dir (expand-file-name "~/Pictures/icon/"))
-;;           (images (directory-files image-dir t "\\.\\(png\\|jpg\\|jpeg\\|gif\\|webp\\)$" t)))
-;;      (if images
-;;          (seq-random-elt images)
-;;        (message "No images found in %s" image-dir)
-;;        nil)))
-;; 
-;;   (dashboard-center-content t)
-;;   (dashboard-vertically-center-content t)
-;; 
-;;   :config
-;;   (setq dashboard-items nil)
-;;   
-;;   ;;(setq initial-buffer-choice 'dashboard-open)
-;;   ;;(add-hook 'server-after-make-frame-hook 'dashboard-open)
-;; 
-;;   ;; show agenda
-;;   (setq dashboard-week-agenda t)
-;;   (setq dashboard-items '(
-;;                           (agenda    . 20)
-;;                           ))
-;;   (dashboard-setup-startup-hook)
-;;   )
+(use-package dashboard
+  :demand t
+  :custom
+  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.\n\t\t别忘了，你要考大阪大学")
+
+  
+
+  (dashboard-startup-banner
+   (let* ((image-dir (expand-file-name "~/Pictures/icon/"))
+          (images (directory-files image-dir t "\\.\\(png\\|jpg\\|jpeg\\|gif\\|webp\\)$" t)))
+     (if images
+         (seq-random-elt images)
+       (message "No images found in %s" image-dir)
+       nil)))
+
+  (dashboard-center-content t)
+  (dashboard-vertically-center-content t)
+
+  :config
+  (setq dashboard-items nil)
+  
+  ;;(setq initial-buffer-choice 'dashboard-open)
+  ;;(add-hook 'server-after-make-frame-hook 'dashboard-open)
+
+  ;; show agenda
+  (setq dashboard-week-agenda t)
+  (setq dashboard-items '(
+                          (agenda    . 20)
+                          ))
+  (dashboard-setup-startup-hook)
+  )
 
 (provide 'my-emacs-ricing)
 
 ;;; my-emacs-ricing.el ends here
+

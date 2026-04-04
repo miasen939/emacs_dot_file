@@ -77,9 +77,8 @@
   (setq god-mode-enable-function-key-translation nil)
 
   :config
-  (god-mode-all)
+;;  (god-mode-all)
   (global-set-key (kbd "<escape>") #'god-local-mode)
-  (global-set-key (kbd "C-.") #'god-mode-all)
   (define-key god-local-mode-map (kbd "i") #'god-local-mode)
   ;;    (setq god-exempt-major-modes nil)
   ;;  (setq god-exempt-predicates nil)
@@ -158,8 +157,8 @@
 (use-package avy
   :bind (
          ("C-'" . avy-goto-char-timer)
-           
-         ;; ("C-;" . avy-goto-line)
+         ("C-." . avy-goto-char-in-line)
+         ("C-;" . my/goto-line-or-end)
                                         ;           ("C-u C-;" . avy-goto-word-0)
          ("M-g w" . avy-goto-word-0)
          ("M-g W" . avy-goto-char)
@@ -192,6 +191,7 @@
   (global-set-key (kbd "C-;") #'my/goto-line-or-end)
 
   )
+;;; avy 还有很大的调整空间，如果能支持中文（我的微软双拼）和日文就好了
 
 (use-package expreg
   :bind( ("C-=" . expreg-expand)

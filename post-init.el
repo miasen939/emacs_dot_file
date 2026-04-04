@@ -296,5 +296,35 @@
   :custom
   (flycheck-display-errors-delay 0.1))
 
+;; 实验功能
+(defvar my-prefix-overlays nil)
+
+(defun my-prefix-preview-cleanup ()
+  (mapc #'delete-overlay my-prefix-overlays)
+  (setq my-prefix-overlays nil))
+
+(defun my-prefix-overlay-at (pos char-str face-bg)
+  (when (and (>= pos (point-min)) (< pos (point-max)))
+    (let ((ov (make-overlay pos (1+ pos))))
+      (overlay-put ov 'display
+                   (propertize char-str 'face
+                               `(:background ,face-bg :foreground "white" :weight bold)))
+      (push ov my-prefix-overlays))))
+
+(defun my-prefix-preview-maybe ()
+  (let ((arg (prefix-numeric-value prefix-arg)))
+    (if (and prefix-arg (numberp arg) (not (= arg 1)))
+        (progn
+          (my-prefix-preview-cleanup)
+          (my-prefix-overlay-at
+           (save-excursion (ignore-errors (forward-char arg)) (point))
+           "▶" "#e67e00")
+          (my-prefix-overlay-at
+           (save-excursion (ignore-errors (backward-char arg)) (point))
+           "◀" "#0072e6"))
+      (my-prefix-preview-cleanup))))
+
+(add-hook 'post-command-hook #'my-prefix-preview-maybe)
+
 (provide 'post-init)
 ;;; post-init.el ends here

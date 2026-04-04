@@ -526,7 +526,7 @@
 (use-package org-pomodoro
   :after org
   :custom
-  (org-pomodoro-length 32) ;;工作时长
+  (org-pomodoro-length 45) ;;工作时长
   (org-pomodoro-short-break-length 7) ;;休息
   (org-pomodoro-long-break-length 26)
   (org-pomodoro-long-break-frequency 4)
@@ -551,9 +551,9 @@
             (lambda ()
               (shell-command "notify-send '☕ 长休息结束' '开始下一个番茄'")))
   ;;自动确认
-  (add-hook 'org-pomodoro-break-finished-hook
-            (lambda ()
-              (org-pomodoro)))
+  ;; (add-hook 'org-pomodoro-break-finished-hook
+  ;;           (lambda ()
+  ;;             (org-pomodoro)))
   
   ;; 弹出式确认
   ;; (add-hook 'org-pomodoro-break-finished-hook
