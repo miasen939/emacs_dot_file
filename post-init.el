@@ -297,34 +297,85 @@
   (flycheck-display-errors-delay 0.1))
 
 ;; 实验功能
-(defvar my-prefix-overlays nil)
-
-(defun my-prefix-preview-cleanup ()
-  (mapc #'delete-overlay my-prefix-overlays)
-  (setq my-prefix-overlays nil))
-
-(defun my-prefix-overlay-at (pos char-str face-bg)
-  (when (and (>= pos (point-min)) (< pos (point-max)))
-    (let ((ov (make-overlay pos (1+ pos))))
-      (overlay-put ov 'display
-                   (propertize char-str 'face
-                               `(:background ,face-bg :foreground "white" :weight bold)))
-      (push ov my-prefix-overlays))))
-
-(defun my-prefix-preview-maybe ()
-  (let ((arg (prefix-numeric-value prefix-arg)))
-    (if (and prefix-arg (numberp arg) (not (= arg 1)))
-        (progn
-          (my-prefix-preview-cleanup)
-          (my-prefix-overlay-at
-           (save-excursion (ignore-errors (forward-char arg)) (point))
-           "▶" "#e67e00")
-          (my-prefix-overlay-at
-           (save-excursion (ignore-errors (backward-char arg)) (point))
-           "◀" "#0072e6"))
-      (my-prefix-preview-cleanup))))
-
-(add-hook 'post-command-hook #'my-prefix-preview-maybe)
+;;   (defvar my-prefix-overlays nil)
+;; 
+;;   (defun my-prefix-preview-cleanup ()
+;;     (mapc #'delete-overlay my-prefix-overlays)
+;;     (setq my-prefix-overlays nil))
+;; 
+;;   (defun my-prefix-overlay-at (pos char-str face-bg)
+;;     (when (and (>= pos (point-min)) (< pos (point-max)))
+;;       (let ((ov (make-overlay pos (1+ pos))))
+;;         (overlay-put ov 'display
+;;                      (propertize char-str 'face
+;;                                  `(:background ,face-bg :foreground "white" :weight bold)))
+;;         (push ov my-prefix-overlays))))
+;; 
+;;   (defun my-prefix-preview-maybe ()
+;;     (let ((arg (prefix-numeric-value prefix-arg)))
+;;       (if (and prefix-arg (numberp arg) (not (= arg 1)))
+;;           (progn
+;;             (my-prefix-preview-cleanup)
+;;             (my-prefix-overlay-at
+;;              (save-excursion (ignore-errors (forward-char arg)) (point))
+;;              "▶" "#e67e00")
+;;             (my-prefix-overlay-at
+;;              (save-excursion (ignore-errors (backward-char arg)) (point))
+;;              "◀" "#0072e6"))
+;;         (my-prefix-preview-cleanup))))
+;; 
+;;   (add-hook 'post-command-hook #'my-prefix-preview-maybe)
+;; 
+;; ;; avy char 0
+;;   (defvar my-alpha-jump-overlays nil)
+;; 
+;;   (defun my-alpha-jump-cleanup ()
+;;     (mapc #'delete-overlay my-alpha-jump-overlays)
+;;     (setq my-alpha-jump-overlays nil))
+;; 
+;;   (defun my-alpha-jump ()
+;;     (interactive)
+;;     (my-alpha-jump-cleanup)
+;;     (let* ((cur (point))
+;;            (bol (save-excursion (beginning-of-line) (point)))
+;;            (eol (save-excursion (end-of-line) (point)))
+;;            (char-map '()))
+;;       (save-excursion
+;;         (goto-char bol)
+;;         (while (<= (point) eol)
+;;           (let* ((pos (point))
+;;                  (dist (- pos cur)))
+;;             (when (and (not (= dist 0))
+;;                        (>= dist -26)
+;;                        (<= dist 26))
+;;               (let* ((letter (if (> dist 0)
+;;                                  (string (+ ?a (1- dist)))
+;;                                (string (+ ?A (1- (abs dist))))))
+;;                      (ov (make-overlay pos (1+ pos))))
+;;                 ;; avy 的样式：用 avy-lead-face，完全覆盖原字符
+;;                 (overlay-put ov 'display
+;;                              (propertize letter 'face
+;;                                          (if (> dist 0)
+;;                                              'avy-lead-face
+;;                                            'avy-lead-face-0)))
+;;                 (push ov my-alpha-jump-overlays)
+;;                 (push (cons (string-to-char letter) pos) char-map))))
+;;           (forward-char 1)))
+;;       ;; avy 风格：dimming 背景其余部分
+;;       (let ((avy-background t))
+;;         (when (bound-and-true-p avy-background)
+;;           (let ((ov (make-overlay bol eol)))
+;;             (overlay-put ov 'face 'avy-background-face)
+;;             (push ov my-alpha-jump-overlays))))
+;;       (let ((key (read-key)))
+;;         (my-alpha-jump-cleanup)
+;;         (let ((target (cdr (assoc key char-map))))
+;;           (if target
+;;               (goto-char target)
+;;             (message "No match.")
+;;             (push key unread-command-events))))))
+;; 
+;;   (global-set-key (kbd "C-;") #'my-alpha-jump)
 
 (provide 'post-init)
 ;;; post-init.el ends here

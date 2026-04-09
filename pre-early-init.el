@@ -17,9 +17,9 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/") t)
 
-(setq url-proxy-services '(("no_proxy" . "^\\(192\\.168\\..*\\)")
-                           ("http" . "127.0.0.1:7897")
-                           ("https" . "127.0.0.1:7897")))
+;; (setq url-proxy-services '(("no_proxy" . "^\\(192\\.168\\..*\\)")
+;;                            ("http" . "127.0.0.1:7897")
+;;                            ("https" . "127.0.0.1:7897")))
 
 
     ;;; Reducing clutter in ~/.emacs.d by redirecting files to ~/.emacs.d/var/

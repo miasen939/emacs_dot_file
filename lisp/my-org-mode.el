@@ -4,6 +4,7 @@
   ;; 
 ;;; Code:
   (use-package org
+    :ensure nil
     :mode ("\\.org\\'" . org-mode)
     :bind (("C-c l" . org-store-link)
            ("C-c a" . org-agenda)
@@ -13,7 +14,7 @@
            ("C-c C-g C-r" . org-shiftmetaright))
     :hook ((org-mode . org-indent-mode)
            (org-mode . visual-line-mode)
-           (org-mode . org-link-preview-refresh)
+           ;;(org-mode . org-link-preview-refresh)
            )
     :custom
 
@@ -22,6 +23,9 @@
 
 
     :config
+    (setq org-archive-location "./archive.org::") ;archive
+
+    
     ;; (setq org-startup-with-inline-images t)
 
     ;; phone refile
@@ -539,6 +543,8 @@
   (:map org-agenda-mode-map
         ("P" . org-pomodoro))               ; 覆盖原来的 clock-in
   :config
+
+  
   ;; kde + wayland 桌面通知
   
   (add-hook 'org-pomodoro-finished-hook
