@@ -1,177 +1,193 @@
 ;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-
-;;; Commentary:
-  ;; 
-  ;; 
-;;; Code:
-  (use-package org
-    :ensure nil
-    :mode ("\\.org\\'" . org-mode)
-    :bind (("C-c l" . org-store-link)
-           ("C-c a" . org-agenda)
-           :map org-mode-map
-           ("C-c <up>" . org-priority-up)
-           ("C-c <down>" . org-priority-down)
-           ("C-c C-g C-r" . org-shiftmetaright))
-    :hook ((org-mode . org-indent-mode)
-           (org-mode . visual-line-mode)
-           ;;(org-mode . org-link-preview-refresh)
-           )
-    :custom
+    ;;; Commentary:
+;; 
+;; 
+    ;;; Code:
+(use-package org
+  :ensure nil
+  :mode ("\\.org\\'" . org-mode)
+  :bind (("C-c l" . org-store-link)
+         ("C-c a" . org-agenda)
+         :map org-mode-map
+         ("C-c <up>" . org-priority-up)
+         ("C-c <down>" . org-priority-down)
+         ("C-c C-g C-r" . org-shiftmetaright))
+  :hook ((org-mode . org-indent-mode)
+         (org-mode . visual-line-mode)
+         ;;(org-mode . org-link-preview-refresh)
+         )
+  :custom
 
-    (org-return-follows-link t)
-    (org-hide-emphasis-markers t)
-
-
-    :config
-    (setq org-archive-location "./archive.org::") ;archive
-
-    
-    ;; (setq org-startup-with-inline-images t)
-
-    ;; phone refile
-
-    (setq org-refile-targets
-          '((nil :maxlevel . 1)
-            (org-agenda-files :maxlevel . 1)))
-
-    (setq org-refile-use-outline-path 'file)        ; 显示文件名前缀
-    (setq org-outline-path-complete-in-steps nil)   ; 关键！一次性显示所有候选
+  (org-return-follows-link t)
+  (org-hide-emphasis-markers t)
 
 
-    (setq image-use-external-converter t)
-    (setq org-image-actual-width nil   ;; 使用图片原始宽度，不强制缩放
-          image-transform-smoothing nil
-          max-image-size nil)
-    ;;(add-to-list 'org-modules 'org-habit)
-    (setq org-modules '(org-habit
-                        org-id      ;; 如果用 org-roam 或跨文件链接
-                        org-attach  ;; 如果用附件
-                        ))
-    (org-load-modules-maybe t)  ;; org-habit 此时才真正加载完毕
+  :config
 
-    (setq org-habit-graph-column 50
-          org-habit-preceding-days 30
-          org-habit-following-days 3
-          org-habit-show-habits-only-for-today t
-          org-habit-show-all-today t)
+        ;;; latex
 
+  (add-hook 'LaTeX-mode-hook 'preview-auto-mode)
 
-                                          ;org-export
-    (with-eval-after-load 'ox
-      (require 'ox-md))
+  ;; 常用快捷键
+  ;; C-c C-p C-p  预览当前环境
+  ;; C-c C-p C-r  预览选中区域
+  ;; C-c C-p C-b  预览整个 buffer
+  ;; C-c C-p C-c  清除预览
+  (setq font-latex-fontify-script t)        ;; 上下标高亮
+  (setq font-latex-fontify-sectioning 'color) ;; 章节标题彩色显示
+  (setq org-format-latex-options
+        (plist-put org-format-latex-options :scale 2.0))
+  (setq org-preview-latex-default-process 'dvisvgm)
+        ;;; latex ends
+  (setq org-archive-location "./archive.org::") ;archive
 
+  
+  ;; (setq org-startup-with-inline-images t)
 
+  ;; phone refile
 
-    ;; img
+  (setq org-refile-targets
+        '((nil :maxlevel . 1)
+          (org-agenda-files :maxlevel . 1)))
 
-    ;;org-todo
-    (setq org-todo-keywords
-          '((sequence "TODO(t!)" "NEXT(n!)" "SOMEDAY(s!)" "PLANNING(p!)" "IN-PROGRESS(i@/!)"
-                      "BLOCKED(b@/!)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELED(c@/!)")))
-    ;;(setq org-log-done 'note)
-    ;;(setq org-log-done 'time)
-    
-    (setq org-log-into-drawer t)
-    ;; TODO colors
-    (setq org-todo-keyword-faces
-          '(
-            ("TODO" . (:foreground "GoldenRod" :weight bold))
-            ("NEXT" . (:foreground "DeepSkyBlue1" :weight bold)) ;蓝色
-            ("SOMEDAY" . (:foreground "RosyBrown" :weight bold))
-            ("PLANNING" . (:foreground "DeepPink" :weight bold))
-            ("IN-PROGRESS" . (:foreground "Cyan" :weight bold))
-            ("BLOCKED" . (:foreground "Red" :weight bold))
-            ("WAITING" . (:foreground "khaki4" :weight bold)) ;
-            ("DONE" . (:foreground "LimeGreen" :weight bold))
-            ("CANCELED" . (:foreground "DimGrey" :weight bold))
-            ))
-    ;;org-agenda
-    (setq org-agenda-files 
-          '("~/Documents/org-agenda/TODOs.org"
-            "~/Documents/org-agenda/habits.org")
-          ) ;;一定要注意，改这个路径的同时要改org capture的路径
+  (setq org-refile-use-outline-path 'file)        ; 显示文件名前缀
+  (setq org-outline-path-complete-in-steps nil)   ; 关键！一次性显示所有候选
 
 
-    ;; org mode 画图
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((dot . t)))
-    
-    (with-eval-after-load 'org
-      (set-face-attribute 'org-document-title nil :height 1.8 :weight 'bold :family "Noto Serif CJK SC")
-      (set-face-attribute 'org-level-1 nil :height 1.4 :weight 'bold :family "Noto Sans CJK SC")
-      (set-face-attribute 'org-level-2 nil :height 1.25 :weight 'bold :family "Noto Sans CJK SC")
-      (set-face-attribute 'org-level-3 nil :height 1.15 :weight 'semi-bold :family "Noto Sans CJK SC")
-      (set-face-attribute 'org-level-4 nil :height 1.05 :family "Noto Sans CJK SC")
-      (set-face-attribute 'org-level-5 nil :height 1.0)
-      (set-face-attribute 'org-level-6 nil :height 1.0))
+  (setq image-use-external-converter t)
+  (setq org-image-actual-width nil   ;; 使用图片原始宽度，不强制缩放
+        image-transform-smoothing nil
+        max-image-size nil)
+  ;;(add-to-list 'org-modules 'org-habit)
+  (setq org-modules '(org-habit
+                      org-id      ;; 如果用 org-roam 或跨文件链接
+                      org-attach  ;; 如果用附件
+                      ))
+  (org-load-modules-maybe t)  ;; org-habit 此时才真正加载完毕
 
-    (org-download-enable)
-
-    ;; org-mode conifg ends here
-    )
+  (setq org-habit-graph-column 50
+        org-habit-preceding-days 30
+        org-habit-following-days 3
+        org-habit-show-habits-only-for-today t
+        org-habit-show-all-today t)
 
 
-  (defun my/org-capture-link-to-current-heading ()
-    "在 capture 模板里调用，返回触发 capture 时所在 heading 的链接。"
-    (if (and my/org-capture-source-file
-             my/org-capture-source-heading)
-        (org-link-make-string
-         (concat "id:" my/org-capture-source-id)
-         my/org-capture-source-heading)
-      ""))
-
-  (defvar my/org-capture-source-file nil)
-  (defvar my/org-capture-source-heading nil)
-  (defvar my/org-capture-source-id nil)
-
-  (defun my/org-capture-save-context ()
-    "在 capture 打开前记录当前 buffer 的 heading 信息。"
-    (when (derived-mode-p 'org-mode)
-      (setq my/org-capture-source-file    (buffer-file-name)
-            my/org-capture-source-heading (org-get-heading t t t t)
-            my/org-capture-source-id      (org-id-get-create))))
-
-  (add-hook 'org-capture-before-finalize-hook
-            (lambda () (setq my/org-capture-source-file    nil
-                             my/org-capture-source-heading nil
-                             my/org-capture-source-id      nil)))
-
-  ;; 关键：在 org-capture 被调用前先保存上下文
-  (advice-add 'org-capture :before
-              (lambda (&rest _) (my/org-capture-save-context)))
-
-  (use-package org-capture
-    :ensure nil
-    :bind ("C-c c" . org-capture)
-    :config
-    (setq org-capture-templates
-          '(   ("r" "roam-todo (链接到当前 heading)" entry
-                (file+headline "~/Documents/org-agenda/TODOs.org" "roam-todo")
-                "* TODO %?\n  来源: %(my/org-capture-link-to-current-heading)\n  %U\n"
-                :empty-lines 1)
-               
-               ("t" "Todo" entry
-                (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
-                "* TODO %?\n  %U\n")
-               ("s" "Someday" entry
-                (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
-                "* SOMEDAY %?\n  %U\n")
-               ("n" "Next" entry
-                (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
-                "* NEXT %?\n  %U\n"))))
+                                        ;org-export
+  (with-eval-after-load 'ox
+    (require 'ox-md))
 
 
 
-  (use-package org-appear
-    :hook (org-mode . org-appear-mode)
-    :config
-    (setq org-appear-autoemphasis t   ;; *bold* / /italic/
-          org-appear-autolinks t      ;; 链接
-          org-appear-autosubmarkers t))
+  ;; img
 
-  (use-package org-auto-tangle
-    :hook (org-mode . org-auto-tangle-mode))
+  ;;org-todo
+  (setq org-todo-keywords
+        '((sequence "TODO(t!)" "NEXT(n!)" "SOMEDAY(s!)" "PLANNING(p!)" "IN-PROGRESS(i@/!)"
+                    "BLOCKED(b@/!)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELED(c@/!)")))
+  ;;(setq org-log-done 'note)
+  ;;(setq org-log-done 'time)
+  
+  (setq org-log-into-drawer t)
+  ;; TODO colors
+  (setq org-todo-keyword-faces
+        '(
+          ("TODO" . (:foreground "GoldenRod" :weight bold))
+          ("NEXT" . (:foreground "DeepSkyBlue1" :weight bold)) ;蓝色
+          ("SOMEDAY" . (:foreground "RosyBrown" :weight bold))
+          ("PLANNING" . (:foreground "DeepPink" :weight bold))
+          ("IN-PROGRESS" . (:foreground "Cyan" :weight bold))
+          ("BLOCKED" . (:foreground "Red" :weight bold))
+          ("WAITING" . (:foreground "khaki4" :weight bold)) ;
+          ("DONE" . (:foreground "LimeGreen" :weight bold))
+          ("CANCELED" . (:foreground "DimGrey" :weight bold))
+          ))
+  ;;org-agenda
+  (setq org-agenda-files 
+        '("~/Documents/org-agenda/TODOs.org"
+          "~/Documents/org-agenda/habits.org")
+        ) ;;一定要注意，改这个路径的同时要改org capture的路径
+
+
+  ;; org mode 画图
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((dot . t)))
+  
+  (with-eval-after-load 'org
+    (set-face-attribute 'org-document-title nil :height 1.8 :weight 'bold :family "Noto Serif CJK SC")
+    (set-face-attribute 'org-level-1 nil :height 1.4 :weight 'bold :family "Noto Sans CJK SC")
+    (set-face-attribute 'org-level-2 nil :height 1.25 :weight 'bold :family "Noto Sans CJK SC")
+    (set-face-attribute 'org-level-3 nil :height 1.15 :weight 'semi-bold :family "Noto Sans CJK SC")
+    (set-face-attribute 'org-level-4 nil :height 1.05 :family "Noto Sans CJK SC")
+    (set-face-attribute 'org-level-5 nil :height 1.0)
+    (set-face-attribute 'org-level-6 nil :height 1.0))
+
+  (org-download-enable)
+
+  ;; org-mode conifg ends here
+  )
+
+
+(defun my/org-capture-link-to-current-heading ()
+  "在 capture 模板里调用，返回触发 capture 时所在 heading 的链接。"
+  (if (and my/org-capture-source-file
+           my/org-capture-source-heading)
+      (org-link-make-string
+       (concat "id:" my/org-capture-source-id)
+       my/org-capture-source-heading)
+    ""))
+
+(defvar my/org-capture-source-file nil)
+(defvar my/org-capture-source-heading nil)
+(defvar my/org-capture-source-id nil)
+
+(defun my/org-capture-save-context ()
+  "在 capture 打开前记录当前 buffer 的 heading 信息。"
+  (when (derived-mode-p 'org-mode)
+    (setq my/org-capture-source-file    (buffer-file-name)
+          my/org-capture-source-heading (org-get-heading t t t t)
+          my/org-capture-source-id      (org-id-get-create))))
+
+(add-hook 'org-capture-before-finalize-hook
+          (lambda () (setq my/org-capture-source-file    nil
+                           my/org-capture-source-heading nil
+                           my/org-capture-source-id      nil)))
+
+;; 关键：在 org-capture 被调用前先保存上下文
+(advice-add 'org-capture :before
+            (lambda (&rest _) (my/org-capture-save-context)))
+
+(use-package org-capture
+  :ensure nil
+  :bind ("C-c c" . org-capture)
+  :config
+  (setq org-capture-templates
+        '(   ("r" "roam-todo (链接到当前 heading)" entry
+              (file+headline "~/Documents/org-agenda/TODOs.org" "roam-todo")
+              "* TODO %?\n  来源: %(my/org-capture-link-to-current-heading)\n  %U\n"
+              :empty-lines 1)
+             
+             ("t" "Todo" entry
+              (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
+              "* TODO %?\n  %U\n")
+             ("s" "Someday" entry
+              (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
+              "* SOMEDAY %?\n  %U\n")
+             ("n" "Next" entry
+              (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
+              "* NEXT %?\n  %U\n"))))
+
+
+
+(use-package org-appear
+  :hook (org-mode . org-appear-mode)
+  :config
+  (setq org-appear-autoemphasis t   ;; *bold* / /italic/
+        org-appear-autolinks t      ;; 链接
+        org-appear-autosubmarkers t))
+
+(use-package org-auto-tangle
+  :hook (org-mode . org-auto-tangle-mode))
 
 ;; (use-package org-transclusion
 ;;   :after org
@@ -568,6 +584,46 @@
   ;;               (org-pomodoro))))
   )
 
+(use-package auctex
+  :defer t
+  :ensure t
+  )
+
+(use-package tex
+  :ensure auctex
+  :config
+  ;; 自动解析文件
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+
+  ;; 多文件文档支持
+  (setq-default TeX-master nil)
+
+  ;; 使用 PDF 模式
+  (setq TeX-PDF-mode t)
+
+  ;; 启用折叠模式
+  (add-hook 'LaTeX-mode-hook 'TeX-fold-mode)
+
+  ;; 启用数学模式预览
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+
+  ;; 启用行号
+  (add-hook 'LaTeX-mode-hook 'display-line-numbers-mode))
+
+
+
+
+
+
+(use-package org-fragtog
+  :hook (org-mode . org-fragtog-mode))  
+(use-package cdlatex 
+  :hook (org-mode . org-cdlatex-mode))
+
+
+
+
 (provide 'my-org-mode)
 
-;;; my-org-mode.el ends here
+            ;;; my-org-mode.el ends here

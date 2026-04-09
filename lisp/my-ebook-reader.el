@@ -10,7 +10,13 @@
   :mode ("\\.pdf\\'" . pdf-view-mode)
 
   :config
-  (pdf-tools-install :no-query))
+  (pdf-tools-install :no-query)
+  (setq TeX-view-program-selection '((output-pdf "PDF Tools")))
+  (setq TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view)))
+  ;; 编译后自动更新 PDF
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer)
+  )
 
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode))
