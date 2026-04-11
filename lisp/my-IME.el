@@ -9,7 +9,6 @@
 
 ;; 需要配置雾凇拼音
 ;; 依赖 rime-Fcitx5
-
 (use-package rime
   :custom
   (default-input-method "rime")
@@ -18,11 +17,12 @@
   (setq rime-cursor "█")
   (setq rime-cursor-face '((t (:foreground "#00ff00"))))
   (setq rime-show-preedit t)
-  (setq rime-user-data-dir "~/.config/fcitx/Rime/")
-  ;; 默认值
-  (setq rime-translate-keybindings
-        '("C-f" "C-b" "C-n" "C-p" "C-g" "<left>" "<right>" "<up>" "<down>" "<prior>" "<next>" "<delete>"))
+;;   (setq rime-user-data-dir "~/.config/fcitx/Rime/")
+  ;;(setq rime-user-data-dir "~/.config/emacs-rime-config/")
   
+  (setq rime-user-data-dir "~/.emacs.d/rime-ice/")
+  (setq rime-share-data-dir "~/.local/share/fcitx5/rime/")
+
   (defun my/update-cursor-by-ime ()
     "根据当前输入法状态实时更新光标颜色."
     (set-cursor-color (if current-input-method "#a7c080" "#51afef")))

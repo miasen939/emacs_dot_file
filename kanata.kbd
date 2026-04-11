@@ -48,7 +48,7 @@
   
   ;;spc (tap-hold-release 200 150 spc lsft)
 
-  ' (tap-hold-release 200 150 ' rsft)
+  ' (tap-hold-release 200 150 ' rmet)
 )
 ;; i e z x ，。 都是可以使用的键，spc也很好用，但是spc不适合绑定在shfit这种使用频率特别高的按键上
 ;; sudo kanata --cfg ~/.emacs.d/kanata.kbd
