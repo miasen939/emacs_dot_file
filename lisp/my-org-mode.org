@@ -1,4 +1,4 @@
-#+auto_tangle: t
+#+auto_tangle: nil
 
 *org-mode* 强大、综合、可拓展性极强的笔记系统
 * org 基础配置 
@@ -21,7 +21,7 @@ org attach 有点意思
 #+begin_src emacs-lisp :tangle yes
       ;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-
       ;;; Commentary:
-  ;; 
+  ;; test?
   ;; 
       ;;; Code:
   (use-package org
@@ -503,10 +503,19 @@ CachyOS需要 wl-clipboard
                                "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :terminology:
       ")
             :unnarrowed t)
-           ("r" "Reference" plain "%?"
+           ("R" "Reference (Academic)" plain "%?"
             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                               "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :reference:\n\n* source
+                               "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :reference:academic\n\n* source\n\n* notes\n
       ")
+
+            :unnarrowed t)
+           
+           
+           ("r" "Reference (Informal) etc" plain "%?"
+            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                               "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :informal reference:\n\n* source\n\n* notes\n
+      ")
+
             :unnarrowed t)
            ("o" "anime/manga/game/visual novel note" plain "%?"
             :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
@@ -572,7 +581,6 @@ CachyOS需要 wl-clipboard
     ;; (org-roam-ui-mode +1)  ; 手动启用或加 hook
     )
 #+end_src
-
 
 * markdown
 
@@ -680,7 +688,64 @@ notify-send 这个命令可以自定义图标和显示时长
   冷门：
 - org-attach
 * org-mode 画图
-* org latex
+* the academic org-mode
+** org-cite org-citar  zotero与org-roam协作
+#+begin_src emacs-lisp :tangle yes
+    ;;;cite
+    ;; (setq org-cite-global-bibliography '("~/references.bib"))
+    ;; (setq org-cite-insert-processor 'citar)   ;; 可选，用 citar 来补全
+    ;; (setq org-cite-follow-processor 'citar)
+  (use-package oc
+    :ensure nil  
+    :config
+    (setq org-cite-global-bibliography '("~/Documents/references.bib"))
+    ;; 导出后端：csl 支持 APA/Chicago 等样式
+    (setq org-cite-export-processors
+          '((latex . (biblatex))         ;; 导出 PDF 用 biblatex
+            (t     . (csl "apa.csl")))))  ;; 其他格式用 CSL/APA
+
+  
+
+(use-package citar-embark
+  :ensure t
+  :after (citar embark)
+  :config
+  (citar-embark-mode))
+
+
+(use-package citar-org-roam
+  :ensure t
+  :after (citar org-roam)
+  :custom
+  ;; 对应你的 "R" Academic 模板
+  (citar-org-roam-capture-template-key "R")
+
+  ;; 笔记文件名格式，与你现有模板保持一致
+  (citar-org-roam-note-title-template "${title}")
+
+  :config
+  (citar-org-roam-mode)
+
+  ;; 自定义创建笔记时的额外属性（写入 front matter）
+  (setq citar-org-roam-template-fields
+        '((:citar-title    "title")
+          (:citar-author   "author")
+          (:citar-date     "date")
+          (:citar-type     "type")
+          (:citar-citekey  "citekey"))))
+    
+#+end_src
+*** 使用方法
+- C-c b b
+- C-c b n
+- o
+- e
+- r
+*** 依赖
+zotero
+embark（可选）
+在org-roam的配置里修改模板
+** org latex
 #+begin_src emacs-lisp :tangle yes
 
   (use-package auctex
@@ -736,14 +801,14 @@ notify-send 这个命令可以自定义图标和显示时长
   lualatex --version
   tlmgr --version
 #+end_src
-** org mode 里快速输入latex
+*** org mode 里快速输入latex
 todo
 =C-c {=
 
-** latex在org mode里的使用
+*** latex在org mode里的使用
 在 Org-mode 里用 LaTeX 非常自然，分两部分：
 
-*** 数学公式
+**** 数学公式
 
 *行内公式*
 

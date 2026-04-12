@@ -436,10 +436,51 @@
                              "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :terminology:
     ")
           :unnarrowed t)
-         ("r" "Reference" plain "%?"
+         ;; ("R" "Reference (Academic)" plain "%?"
+    ;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+    ;;                          "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :reference:academic\n\n* source\n\n* notes\n
+    ;; ")
+    ;; 
+    ;;       :unnarrowed t)
+         
+         
+ ;;         ("R" "Reference (Academic)" plain
+;;           "%?"
+;;           :target (file+head
+;;                    "${citar-citekey}.org"   ; citar-org-roam 会自动加上 subdir
+;;                    "#+title: ${citar-title}\n\
+;; #+date: %U\n\
+;; #+filetags: :reference:academic:\n\n\
+;; :PROPERTIES:\n\
+;; :ROAM_REFS: [cite:@${citar-citekey}]\n\
+;; :AUTHOR: ${citar-author}\n\
+;; :YEAR: ${citar-date}\n\
+;; :DOI: ${citar-doi}\n\
+;; :JOURNAL: ${citar-journal}\n\
+;; :TYPE: ${citar-type}\n\
+;; :END:\n\n\
+;; * Source\n\
+;; - [cite:@${citar-citekey}]\n\
+;; - DOI: [[https://doi.org/${citar-doi}][${citar-doi}]]\n\
+;; - Journal: ${citar-journal}\n\n\
+;; * Notes\n\n\
+;; * Summary\n")
+;;           :unnarrowed t
+         ;;           :immediate-finish t)
+
+         ("n" "literature note" plain
+          "%?"
+          :target
+          (file+head
+           "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
+           "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n")
+          :unnarrowed t)
+         
+         ("r" "Reference (Informal) etc" plain "%?"
           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :reference:\n\n* source
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :informal reference:\n\n* source\n\n* notes\n
     ")
+
           :unnarrowed t)
          ("o" "anime/manga/game/visual novel note" plain "%?"
           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
@@ -582,6 +623,88 @@
   ;;           (lambda ()
   ;;             (when (y-or-n-p "Break finished! Start another pomodoro?")
   ;;               (org-pomodoro))))
+  )
+
+;;;cite
+;; (setq org-cite-global-bibliography '("~/references.bib"))
+;; (setq org-cite-insert-processor 'citar)   ;; 可选，用 citar 来补全
+;; (setq org-cite-follow-processor 'citar)
+(use-package oc
+  :ensure nil  
+  :config
+  (setq org-cite-global-bibliography '("~/Documents/references.bib/Exported Items.bib"))
+  ;; 导出后端：csl 支持 APA/Chicago 等样式
+  (setq org-cite-export-processors
+        '((latex . (biblatex))         ;; 导出 PDF 用 biblatex
+          (t     . (csl "apa.csl")))))  ;; 其他格式用 CSL/APA
+
+
+
+(use-package citar
+  :ensure t
+  :after oc
+  :custom
+  ;; 指向同一个 .bib 文件
+  (citar-bibliography '("~/Documents/references.bib/Exported Items.bib"))
+  ;; PDF、笔记、链接的存放位置
+  (citar-library-paths '("~/Zotero/storage/"))
+  (citar-notes-paths   '("~/Documents/roam-note/"))
+
+  ;; 让 org-cite 的插入/跟随/激活都走 citar
+  (org-cite-insert-processor   'citar)
+  (org-cite-follow-processor   'citar)
+  (org-cite-activate-processor 'citar)
+
+  :bind
+  (("C-c b b" . citar-insert-citation)   ;; 插入引用
+   ("C-c b o" . citar-open)              ;; 打开 PDF 或链接
+   ("C-c b n" . citar-open-notes)        ;; 打开/创建笔记
+   ("C-c b e" . citar-open-entry)        ;; 查看 BibTeX 条目
+   ("C-c b r" . citar-refresh))          ;; 手动刷新 .bib
+
+  :config
+  ;; 在 org buffer 里用 C-c b i 也可以插入
+  (with-eval-after-load 'org
+    (define-key org-mode-map (kbd "C-c b i") #'org-cite-insert))
+  )
+
+
+(use-package citar-embark
+  :ensure t
+  :after (citar embark)
+  :config
+  (citar-embark-mode)
+  )
+
+
+;; (use-package citar-org-roam
+;;   :ensure t
+;;   :after (citar org-roam)
+;;   :custom
+;;   (citar-org-roam-capture-template-key "R")
+;;   (citar-org-roam-subdir "academic_references")        ; 笔记统一放在这里
+;;   (citar-org-roam-note-title-template "${author} (${date}) - ${title}")
+;;   :config
+;;   (citar-org-roam-mode)
+;;   (setq citar-notes-source 'citar-org-roam)
+;; 
+;;   ;; 传递给模板的字段（必须用 . 分隔）
+;;   (setq citar-org-roam-template-fields
+;;         '((:citar-title  . "title")
+;;           (:citar-author . "author")
+;;           (:citar-date   . "date")
+;;           (:citar-type   . "type")
+;;           (:citar-citekey . "citekey")
+;;           (:citar-doi    . "doi")
+;;           (:citar-journal . "journal"))))
+
+(use-package citar-org-roam
+  :after (citar org-roam)
+  :config
+  (citar-org-roam-mode)
+  (setq citar-org-roam-note-title-template "${author} - ${title}")
+  (setq citar-org-roam-capture-template-key "n")
+  (setq citar-org-roam-subdir "academic_references")
   )
 
 (use-package auctex
