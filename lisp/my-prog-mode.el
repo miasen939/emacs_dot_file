@@ -34,23 +34,63 @@
 
 
 ;; 类似包：undo-tree
-  (use-package undo-fu
-    :init
-    (global-unset-key (kbd "C-z"))
-    :bind
-    ("C-/"   . undo-fu-only-undo)
-    ("C-S-/" . undo-fu-only-redo)
-    ("C-z"   . undo-fu-only-undo)
-    ("C-S-z" . undo-fu-only-redo)
-    )
+  ;; (use-package undo-fu
+  ;;   :init
+  ;;   (global-unset-key (kbd "C-z"))
+  ;;   :bind
+  ;;   ("C-/"   . undo-fu-only-undo)
+  ;;   ("C-S-/" . undo-fu-only-redo)
+  ;;   ("C-z"   . undo-fu-only-undo)
+  ;;   ("C-S-z" . undo-fu-only-redo)
+  ;;   )
+  ;; 
+  ;; (use-package undo-fu-session
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
+  ;;   (setq undo-strong-limit (* 16 1024 1024))
+  ;;   (setq undo-fu-session-compression 'gz)
+  ;;   (undo-fu-session-global-mode))
 
-  (use-package undo-fu-session
-    :ensure t
-    :config
-    (setq undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
-    (setq undo-strong-limit (* 16 1024 1024))
-    (setq undo-fu-session-compression 'gz)
-    (undo-fu-session-global-mode))
+
+(use-package vundo
+  :ensure t
+
+  ;; 只在需要时加载，不影响启动速度
+  :commands (vundo)
+
+  ;; 快捷键绑定
+  :bind
+  ("C-x u" . vundo)   ; 覆盖默认的 undo，改为打开可视化树
+  
+
+  :config
+  ;; 使用 Unicode 字符画树（更好看）
+  ;; 需要字体支持，推荐 FiraCode Nerd Font 或 Noto Sans
+  (setq vundo-glyph-alist vundo-unicode-symbols)
+
+  ;; (setq vundo-glyph-alist vundo-ascii-symbols)
+
+  (set-face-attribute 'vundo-default nil :family "FiraCode Nerd Font Mono")
+
+  ;; (set-face-attribute 'vundo-default nil :family "Noto Sans Mono")
+
+
+  (setq vundo-window-max-height 5)
+
+  (setq vundo-compact-display t)  ; t = 紧凑，nil = 完整
+
+
+  (setq vundo-roll-back-on-quit nil)
+
+  ;; 这一部分似乎没有机能
+  (add-hook 'prog-mode-hook #'vundo-popup-mode)
+  (add-hook 'text-mode-hook #'vundo-popup-mode)
+  (add-hook 'org-mode-hook  #'vundo-popup-mode)
+  )
+;; 使用方法
+;; fbnp ae w lr m d RET q/C-g
+
 
 ;;; origami 折り紙
 (use-package origami
