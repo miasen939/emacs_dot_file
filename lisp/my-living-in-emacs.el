@@ -1,6 +1,6 @@
 ;;; my-living-in-emacs.el --- misc emacs pacakages -*- no-byte-compile: t; lexical-binding: t; -*-
 
-  ;;; Commentary:
+;;; Commentary:
 
 ;; living in Emacs!
 ;;
@@ -59,6 +59,28 @@
 ;;   )
 
 ;;; todo: mu4e/notmuch calc calendar emms/listen
+
+
+(use-package pomm
+  :ensure t
+  :config
+  (pomm-mode-line-mode 1)
+  (setq alert-default-style 'libnotify)
+  ;;(setq pomm-audio-files)
+  (setq pomm-audio-enabled t)
+
+
+
+  ;;kde notification
+  ;;
+
+  ;; org-clock
+  ;;
+
+  
+  )
+
+
 
 (provide 'my-living-in-emacs)
 

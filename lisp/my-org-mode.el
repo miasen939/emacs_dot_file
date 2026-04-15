@@ -420,13 +420,27 @@
                              "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :fleeting:
     ")
           :unnarrowed t)
-         ("P" "person note" plain "%?"
+
+         ("p" "princeple note" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :princeple:
+    ")
+          :unnarrowed t)
+
+         ("m" "mechanism note" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :mecanism:
+    ")
+          :unnarrowed t)
+         
+         ("0" "person note" plain "%?"
           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                              "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :person:
     ")
           :unnarrowed t)
          
-         ("p" "project notes" plain "%?"
+         
+         ("P" "project notes" plain "%?"
           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                              "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :project:\n\n
     ")
@@ -515,7 +529,7 @@
   :bind-keymap
   ("C-c n d" . org-roam-dailies-map)
   :config
-  
+
   (defun org-roam-node-insert-immediate (arg &rest args)
     (interactive "P")
     (let ((args (cons arg args))

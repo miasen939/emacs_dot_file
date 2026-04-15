@@ -140,6 +140,11 @@
   (dashboard-setup-startup-hook)
   )
 
+;; 只让背景透明（文字和光标等保持不透明）
+(set-frame-parameter nil 'alpha-background 92)  ; 数字越小越透明，建议 70~92 之间
+(add-to-list 'default-frame-alist '(alpha-background . 85));; 只让背景透明（文字和光标等保持不透明）
+
+
 (provide 'my-emacs-ricing)
 
 ;;; my-emacs-ricing.el ends here
