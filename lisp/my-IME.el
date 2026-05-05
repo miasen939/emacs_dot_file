@@ -37,7 +37,7 @@
   :config
   (global-pangu-spacing-mode +1))
 
-(global-set-key (kbd "C-x C-\\") 'skk-mode)
+;;(global-set-key (kbd "C-|") 'skk-mode)
 
 
 ;; skk输入法，使用方法可查询wiki
@@ -53,6 +53,34 @@
   :config
   (setq skk-use-auto-fill t)
   (setq skk-save-jisyo-instantly t))
+
+
+(defun my/deactivate-all-input-methods ()
+  "关闭所有输入法，包括 skk 和标准输入法"
+  (when (and (boundp 'skk-mode) skk-mode)
+    (skk-mode -1))
+  (when current-input-method
+    (deactivate-input-method)))
+
+
+(defun switch-to-skk ()
+  (interactive)
+  (if (and (boundp 'skk-mode) skk-mode)
+      (skk-mode -1)
+    (my/deactivate-all-input-methods)
+    (skk-mode 1)))
+
+(defun switch-to-rime ()
+  (interactive)
+  (if (string= current-input-method "rime")
+      (my/deactivate-all-input-methods)
+    (my/deactivate-all-input-methods)
+    (set-input-method "rime")))
+
+
+(global-set-key (kbd "C-|") #'switch-to-skk)
+
+(global-set-key (kbd "C-\\") #'switch-to-rime)
 
 (provide 'my-IME)
 

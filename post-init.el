@@ -31,6 +31,8 @@
 (setq display-line-numbers-type 'relative)  ;显示相对行号
 (global-display-line-numbers-mode 1)
 
+(setq make-pointer-invisible t)         ;打字时隐藏鼠标
+
 ;; 对选中文本使用括号引号自动放入
 ;; 备份和自动保存
 ;; (setq auto-save-default nil)
@@ -376,6 +378,11 @@
 ;;             (push key unread-command-events))))))
 ;; 
 ;;   (global-set-key (kbd "C-;") #'my-alpha-jump)
+
+(use-package anki-editor
+  :vc (:url "https://github.com/anki-editor/anki-editor" :rev :newest)
+  
+  )
 
 (provide 'post-init)
 ;;; post-init.el ends here
