@@ -100,7 +100,11 @@
   
   )
 
-
+(use-package beancount
+  :ensure t
+  :mode ("\\.beancount\\'" . beancount-mode)
+  :mode ("\\.bean\\'" . beancount-mode))
+;; 依赖：sudo pacman -S beancount fava beancount-language-server
 
 (provide 'my-living-in-emacs)
 

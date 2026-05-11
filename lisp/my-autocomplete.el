@@ -1,11 +1,11 @@
 ;;; my-autocomplete.el --- auto compeletion -*- no-byte-compile: t; lexical-binding: t; -*-
 
-  ;;; Commentary:
+;;; Commentary:
 
 ;; 
 ;;
 
-  ;;; Code:
+;;; Code:
 
 
 ;; 关闭 小于号自动补全大于号
@@ -148,6 +148,8 @@
   :init
   (vertico-mode))
 
+
+
 ;; Orderless - 灵活的匹配样式
 (use-package orderless
   :demand t
@@ -213,4 +215,4 @@
   (amx-mode 1))
 (provide 'my-autocomplete)
 
-  ;;; my-autocomplete.el ends here
+;;; my-autocomplete.el ends here

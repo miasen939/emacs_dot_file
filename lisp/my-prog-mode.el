@@ -196,9 +196,9 @@
 
 (use-package avy
   :bind (
-         ("C-'" . avy-goto-char-timer)
+         ("C-;" . avy-goto-char-timer)
          ("C-." . avy-goto-char-in-line)
-         ("C-;" . my/goto-line-or-end)
+         ("C-'" . avy-goto-line)
                                         ;           ("C-u C-;" . avy-goto-word-0)
          ("M-g w" . avy-goto-word-0)
          ("M-g W" . avy-goto-char)
@@ -219,18 +219,8 @@
   (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   :config
   ;;(define-key isearch-mode-map (kbd "C-'") 'avy-isearch)
-
-  (defun my/goto-line-or-end (arg)
-    "Without prefix arg: use avy-goto-line.
-  With prefix arg (C-u): go to end of buffer."
-    (interactive "P")
-    (if arg
-        (avy-goto-end-of-line)
-      (avy-goto-line)))
-
-  (global-set-key (kbd "C-;") #'my/goto-line-or-end)
-
-  )
+)
+  
 ;;; avy 还有很大的调整空间，如果能支持中文（我的微软双拼）和日文就好了
 
 (use-package expreg

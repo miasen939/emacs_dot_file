@@ -506,7 +506,6 @@ flycheck需要微调
 
   (use-package anki-editor
     :vc (:url "https://github.com/anki-editor/anki-editor" :rev :newest)
-    
     )
 #+end_src
 
