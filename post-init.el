@@ -380,8 +380,31 @@
 ;;   (global-set-key (kbd "C-;") #'my-alpha-jump)
 
 (use-package anki-editor
-  :vc (:url "https://github.com/anki-editor/anki-editor" :rev :newest)
-  )
+    :vc (:url "https://github.com/anki-editor/anki-editor" :rev :newest)
+    )
+
+
+
+  (defun copy-current-image-to-clipboard ()
+  (interactive)
+  (let ((file (buffer-file-name)))
+    (if file
+        (let ((proc (make-process
+                     :name "wl-copy"
+                     :command (list "wl-copy" "--type" "image/png")
+                     :connection-type 'pipe
+                     :buffer nil
+                     :sentinel (lambda (proc event)
+                                 (message "wl-copy: %s" event)))))
+          (with-temp-buffer
+            (insert-file-contents-literally file)
+            (process-send-region proc (point-min) (point-max)))
+          (process-send-eof proc))
+      (message "当前 buffer 没有关联文件"))))
+;; 弱智ai我让他改了三次终于实现了这么一个简单的小小功能
+  
+  ;; (with-eval-after-load 'image-mode
+  ;;   (define-key image-mode-map (kbd "C-c w") #'copy-current-image-to-clipboard))
 
 (provide 'post-init)
 ;;; post-init.el ends here
