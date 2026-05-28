@@ -1,8 +1,23 @@
 ;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-
-    ;;; Commentary:
+;;; Commentary:
+;; 需要依赖
+;; md需要安装 pandoc
+
+;; 配色： =M-x list-colors-display= =M-x color-name-to-rgb=
+;; 
+;; org - babel
+;; org-bibtex
+;; 
+;; org attach 有点意思
+;; 
+;; 美化：org-modern org-super-agenda
+;; 
+;; 因为图片大时很卡，
+;; 使用 =#+STARTUP: noinlineimage=
+;; 显示图片 可以用 =C-c C-x C-v=  手动打开
 ;; 
 ;; 
-    ;;; Code:
+;;; Code:
 (use-package org
   :ensure nil
   :mode ("\\.org\\'" . org-mode)
@@ -372,6 +387,16 @@
         (:name "其他"
                :anything)))
 
+;; 需要外部依赖
+;; org-download 是在orgmode里方便插入图片的工具。
+;; ubuntu需要下载 xclip
+;; CachyOS需要 wl-clipboard
+;; 
+;; 我真的是无语了，drag and drop的行为我研究了好久没弄明白，明明一行配置没改，现在org-dwonload死活没法drag了
+;; 在不同地方copy行为也不一样
+;; 
+;; 现在的凑合用法是 在 Gwenview里复制图片，然后用 org-download-clipboard 来粘贴
+
 (use-package org-download
 :after org
 :bind (:map org-mode-map
@@ -394,6 +419,13 @@
 ;;   (setq org-download-screenshot-method "screencapture -i %s"))
 (setq org-image-actual-width '(600))
 )
+
+;; =org-id-get-create=
+;; =org-roam-alias-add=
+;; 
+;; (org-roam-completion-everywhere
+;; ("C-M-i"    . completion-at-point))
+;; (setq org-roam-dailies-directory "~/Documents/roamnote/roamdaily/")
 
 (use-package org-roam
   :custom
@@ -597,7 +629,12 @@
   (valign-fancy-bar t))
 
 
-
+;; 依赖：kde + wayland + notify-send
+;; =M-x org-pomodoro=  then =clock-out
+;; =C-u org-clock-in=
+;; 
+;; notify-send 这个命令可以自定义图标和显示时长
+;; ~notify-send -i appointment -t 8000 '🍅 番茄结束' '该休息了'~
 (use-package org-pomodoro
   :after org
   :custom
@@ -759,8 +796,12 @@
   :hook (org-mode . org-cdlatex-mode))
 
 
+;; repeat mode
+(repeat-mode 1)
+(setq repeat-timeout 5)
+(setq repeat-exit-key "<escape>")
 
+(winner-mode 1)
 
 (provide 'my-org-mode)
-
 ;;; my-org-mode.el ends here
