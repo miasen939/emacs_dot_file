@@ -402,7 +402,7 @@
           (process-send-eof proc))
       (message "当前 buffer 没有关联文件"))))
 ;; 弱智ai我让他改了三次终于实现了这么一个简单的小小功能
-  
+;; 只适合wayland
   ;; (with-eval-after-load 'image-mode
   ;;   (define-key image-mode-map (kbd "C-c w") #'copy-current-image-to-clipboard))
 

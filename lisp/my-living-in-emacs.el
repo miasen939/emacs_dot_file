@@ -62,43 +62,11 @@
 
 
 (use-package pomm
-  :defer 0.1
   :config
   (pomm-mode-line-mode 1)
   (setq alert-default-style 'libnotify)
   ;;(setq pomm-audio-files)
-  (setq pomm-audio-enabled t)
-
-  ;;(pomm-start);defer 0.1后马上启动pomm番茄钟
-
-  ;;kde notification
-  ;;
-
-  ;; org-clock
-  ;;
-;;; my-pomm-integration.el
-  ;; 策略：番茄钟为默认状态，主动启动 Third Time 时暂停番茄钟，退出后自动恢复
-
-  (defun my/pomm-third-time-status-changed ()
-    "Third Time 状态变化时，同步控制番茄钟。"
-    (let ((tt-status (alist-get 'status pomm-third-time--state)))
-      (cond
-       ;; Third Time 启动 → 停止番茄钟
-       ((eq tt-status 'running)
-        (when (eq (alist-get 'status pomm--state) 'running)
-          (pomm-stop)))
-       ;; Third Time 停止 → 启动番茄钟
-       ((eq tt-status 'stopped)
-        (unless (eq (alist-get 'status pomm--state) 'running)
-          (pomm-start))))))
-
-  (add-hook 'pomm-third-time-on-status-changed-hook
-            #'my/pomm-third-time-status-changed)
-
-  ;; Emacs 启动时自动开启番茄钟（延迟1秒等待 pomm 加载完毕）
-  
-  
-  )
+  (setq pomm-audio-enabled t))
 
 (use-package beancount
   :ensure t

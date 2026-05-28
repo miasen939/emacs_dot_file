@@ -111,79 +111,79 @@
 
 ;;; god-mode
 ;;; the RSI mode and god mode
-(use-package god-mode
-  :defer 0.1
-  :init
-  (setq god-mode-enable-function-key-translation nil)
-
-  :config
-;;  (god-mode-all)
-  (global-set-key (kbd "<escape>") #'god-local-mode)
-  (define-key god-local-mode-map (kbd "i") #'god-local-mode)
-  ;;    (setq god-exempt-major-modes nil)
-  ;;  (setq god-exempt-predicates nil)
-
-    
-  (setq god-mode-alist
-        '((nil . "C-")
-          ("g" . "M-")
-          ("z" . "C-M-")
-          ))
-  ;;    (define-key god-local-mode-map (kbd "V") #'scroll-down-command)
-
-  (define-key god-local-mode-map (kbd ".") #'repeat)
-    
-  (define-key god-local-mode-map (kbd "'") #'avy-goto-char-timer)
-  (define-key god-local-mode-map (kbd ";") #'my/goto-line-or-end)
-    
-
-
-
-
-  (define-key god-local-mode-map (kbd "S-<backspace>") #'kill-whole-line)
-
-  (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
-  (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
-
-  ;; === 针对 emacs-rime 的智能输入法保存与恢复 ===
-  (defvar my--last-input-method nil
-    "记录进入 god-mode 之前最后使用的 input-method。")
-
-  (defun my-god-save-and-disable-ime ()
-    "进入 god-mode 时：保存当前输入法状态，然后强制关闭 Rime。"
-    (setq my--last-input-method current-input-method) ; 保存当前状态
-    (when (and current-input-method
-               (fboundp 'deactivate-input-method))
-      (deactivate-input-method)))
-
-  (defun my-god-restore-ime ()
-    "退出 god-mode 时：恢复之前保存的输入法（主要是 Rime）。"
-    (when (and my--last-input-method
-               (not current-input-method)) ; 只有当前没开启输入法时才恢复
-      (set-input-method my--last-input-method))) ;;
-  (add-hook 'god-mode-enabled-hook  #'my-god-save-and-disable-ime)
-  (add-hook 'god-mode-disabled-hook #'my-god-restore-ime)
-
-
-  ;; (add-hook 'magit-mode-hook #'god-local-mode-pause)
-  ;; (add-hook 'magit-mode-hook (lambda () (god-local-mode -1)))
-
-  (custom-set-faces
-   '(god-mode-lighter ((t (:inherit error)))))
-
-  (defun my-god-mode-update-cursor-type ()
-    (setq cursor-type (if (or god-local-mode buffer-read-only) 'hollow 'box)))
-
-  (add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
-  (add-hook 'read-only-mode-hook
-            (lambda () (when buffer-read-only (god-local-mode 1))))
-
-  (defun my-god-disable-on-input-method-activate ()
-    "当输入法（Rime）被激活时，自动退出 god-mode。"
-    (when god-local-mode
-      (god-local-mode -1)))
-  (add-hook 'input-method-activate-hook   #'my-god-disable-on-input-method-activate)
-  )
+;; (use-package god-mode
+;;   :defer 0.1
+;;   :init
+;;   (setq god-mode-enable-function-key-translation nil)
+;; 
+;;   :config
+;; ;;  (god-mode-all)
+;;   (global-set-key (kbd "<escape>") #'god-local-mode)
+;;   (define-key god-local-mode-map (kbd "i") #'god-local-mode)
+;;   ;;    (setq god-exempt-major-modes nil)
+;;   ;;  (setq god-exempt-predicates nil)
+;; 
+;;     
+;;   (setq god-mode-alist
+;;         '((nil . "C-")
+;;           ("g" . "M-")
+;;           ("z" . "C-M-")
+;;           ))
+;;   ;;    (define-key god-local-mode-map (kbd "V") #'scroll-down-command)
+;; 
+;;   (define-key god-local-mode-map (kbd ".") #'repeat)
+;;     
+;;   (define-key god-local-mode-map (kbd "'") #'avy-goto-char-timer)
+;;   (define-key god-local-mode-map (kbd ";") #'my/goto-line-or-end)
+;;     
+;; 
+;; 
+;; 
+;; 
+;;   (define-key god-local-mode-map (kbd "S-<backspace>") #'kill-whole-line)
+;; 
+;;   (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
+;;   (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
+;; 
+;;   ;; === 针对 emacs-rime 的智能输入法保存与恢复 ===
+;;   (defvar my--last-input-method nil
+;;     "记录进入 god-mode 之前最后使用的 input-method。")
+;; 
+;;   (defun my-god-save-and-disable-ime ()
+;;     "进入 god-mode 时：保存当前输入法状态，然后强制关闭 Rime。"
+;;     (setq my--last-input-method current-input-method) ; 保存当前状态
+;;     (when (and current-input-method
+;;                (fboundp 'deactivate-input-method))
+;;       (deactivate-input-method)))
+;; 
+;;   (defun my-god-restore-ime ()
+;;     "退出 god-mode 时：恢复之前保存的输入法（主要是 Rime）。"
+;;     (when (and my--last-input-method
+;;                (not current-input-method)) ; 只有当前没开启输入法时才恢复
+;;       (set-input-method my--last-input-method))) ;;
+;;   (add-hook 'god-mode-enabled-hook  #'my-god-save-and-disable-ime)
+;;   (add-hook 'god-mode-disabled-hook #'my-god-restore-ime)
+;; 
+;; 
+;;   ;; (add-hook 'magit-mode-hook #'god-local-mode-pause)
+;;   ;; (add-hook 'magit-mode-hook (lambda () (god-local-mode -1)))
+;; 
+;;   (custom-set-faces
+;;    '(god-mode-lighter ((t (:inherit error)))))
+;; 
+;;   (defun my-god-mode-update-cursor-type ()
+;;     (setq cursor-type (if (or god-local-mode buffer-read-only) 'hollow 'box)))
+;; 
+;;   (add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
+;;   (add-hook 'read-only-mode-hook
+;;             (lambda () (when buffer-read-only (god-local-mode 1))))
+;; 
+;;   (defun my-god-disable-on-input-method-activate ()
+;;     "当输入法（Rime）被激活时，自动退出 god-mode。"
+;;     (when god-local-mode
+;;       (god-local-mode -1)))
+;;   (add-hook 'input-method-activate-hook   #'my-god-disable-on-input-method-activate)
+;;   )
 ;; 估计因为 C-s 和 vertico没做连协，所以这些minibuffer页面用不了god mode
 ;; 一些特殊的buffer，比如dired、help、ibuffer、magit里，godmode的行为可能会有点奇怪
 ;; rime和skk和god mode之间有奇怪的交互
@@ -256,6 +256,7 @@
   (use-package colorful-mode
     ;; :diminish
     ;; :ensure t ; Optional
+    :demand t
     :custom
     (colorful-use-prefix t)
     (colorful-only-strings 'only-prog)
@@ -285,6 +286,108 @@
 ;;     (require 'smartparens-config))
 
 ;;; TODO The ai support gptel
+
+
+;; (use-package meow
+;;   :ensure t
+;;   :demand t
+;;   :init
+;;     (defun meow-setup ()
+;;     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+;; 
+;;     (meow-motion-overwrite-define-key
+;;      '("j" . meow-next)
+;;      '("k" . meow-prev)
+;;      '("h" . meow-left)
+;;      '("l" . meow-right)
+;;      '("<escape>" . ignore))
+;; 
+;;     (meow-leader-define-key
+;;      '("1" . meow-digit-argument)
+;;      '("2" . meow-digit-argument)
+;;      '("3" . meow-digit-argument)
+;;      '("4" . meow-digit-argument)
+;;      '("5" . meow-digit-argument)
+;;      '("6" . meow-digit-argument)
+;;      '("7" . meow-digit-argument)
+;;      '("8" . meow-digit-argument)
+;;      '("9" . meow-digit-argument)
+;;      '("0" . meow-digit-argument)
+;;      '("/" . meow-keypad-describe-key)
+;;      '("?" . meow-cheatsheet))
+;; 
+;; 
+;; 
+;;    (meow-normal-define-key
+;;    '("0" . meow-expand-0)
+;;    '("9" . meow-expand-9)
+;;    '("8" . meow-expand-8)
+;;    '("7" . meow-expand-7)
+;;    '("6" . meow-expand-6)
+;;    '("5" . meow-expand-5)
+;;    '("4" . meow-expand-4)
+;;    '("3" . meow-expand-3)
+;;    '("2" . meow-expand-2)
+;;    '("1" . meow-expand-1)
+;;    '("-" . negative-argument)
+;;    '(";" . meow-reverse)
+;;    '("," . meow-inner-of-thing)
+;;    '("." . meow-bounds-of-thing)
+;;    '("[" . meow-beginning-of-thing)
+;;    '("]" . meow-end-of-thing)
+;;    '("a" . meow-append)
+;;    '("A" . meow-open-below)
+;;    '("b" . meow-back-word)
+;;    '("B" . meow-back-symbol)
+;;    '("c" . meow-change)
+;;    '("d" . meow-delete)
+;;    '("D" . meow-backward-delete)
+;;    '("e" . meow-next-word)
+;;    '("E" . meow-next-symbol)
+;;    '("f" . meow-find)
+;;    '("g" . meow-cancel-selection)
+;;    '("G" . meow-grab)
+;;    '("h" . meow-left)
+;;    '("H" . meow-left-expand)
+;;    '("i" . meow-insert)
+;;    '("I" . meow-open-above)
+;;    '("j" . meow-next)
+;;    '("J" . meow-next-expand)
+;;    '("k" . meow-prev)
+;;    '("K" . meow-prev-expand)
+;;    '("l" . meow-right)
+;;    '("L" . meow-right-expand)
+;;    '("m" . meow-join)
+;;    '("n" . meow-search)
+;;    '("o" . meow-block)
+;;    '("O" . meow-to-block)
+;;    '("p" . meow-yank)
+;;    '("q" . meow-quit)
+;;    '("Q" . meow-goto-line)
+;;    '("r" . meow-replace)
+;;    '("R" . meow-swap-grab)
+;;    '("s" . meow-kill)
+;;    '("t" . meow-till)
+;;    '("u" . meow-undo)
+;;    '("U" . meow-undo-in-selection)
+;;    '("v" . meow-visit)
+;;    '("w" . meow-mark-word)
+;;    '("W" . meow-mark-symbol)
+;;    '("x" . meow-line)
+;;    '("X" . meow-goto-line)
+;;    '("y" . meow-save)
+;;    '("Y" . meow-sync-grab)
+;;    '("z" . meow-pop-selection)
+;;    '("'" . repeat)
+;;    '("<escape>" . ignore))
+;;     )
+;; 
+;;     
+;;   :config
+;;   (meow-setup)
+;;   ;;(meow-global-mode 1)
+;;   )
+
 
 (provide 'my-prog-mode)
 
