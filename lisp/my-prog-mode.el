@@ -12,7 +12,7 @@
   :bind
   (;; 最常用操作：选中词 → 连续按这个键添加相似光标
    ("C->"     . mc/mark-next-like-this)
-   ("C-<"     . mc/mark-prev-like-this)
+;;   ("C-<"     . mc/mark-prev-like-this)
    ;; 选中一个词后按这个 → 全缓冲区相同词都加光标
    ("C-c C->" . mc/mark-all-like-this)
 
@@ -21,7 +21,7 @@
 
    ;; 其他常用（可选）
    ("M-<down-mouse-1>" . mc/add-cursor-on-click) ; 鼠标点哪哪出现光标（很爽）
-   ("C-!"          . mc/mark-all-dwim) ; 智能全选（有区域就选区域，没区域就选全部）
+   ;;("C-!" . mc/mark-all-dwim) ; 智能全选（有区域就选区域，没区域就选全部）
    )
 
   :config
@@ -110,80 +110,71 @@
 
 
 ;;; god-mode
-;;; the RSI mode and god mode
-;; (use-package god-mode
-;;   :defer 0.1
-;;   :init
-;;   (setq god-mode-enable-function-key-translation nil)
-;; 
-;;   :config
-;; ;;  (god-mode-all)
-;;   (global-set-key (kbd "<escape>") #'god-local-mode)
-;;   (define-key god-local-mode-map (kbd "i") #'god-local-mode)
-;;   ;;    (setq god-exempt-major-modes nil)
-;;   ;;  (setq god-exempt-predicates nil)
-;; 
-;;     
-;;   (setq god-mode-alist
-;;         '((nil . "C-")
-;;           ("g" . "M-")
-;;           ("z" . "C-M-")
-;;           ))
-;;   ;;    (define-key god-local-mode-map (kbd "V") #'scroll-down-command)
-;; 
-;;   (define-key god-local-mode-map (kbd ".") #'repeat)
-;;     
-;;   (define-key god-local-mode-map (kbd "'") #'avy-goto-char-timer)
-;;   (define-key god-local-mode-map (kbd ";") #'my/goto-line-or-end)
-;;     
-;; 
-;; 
-;; 
-;; 
-;;   (define-key god-local-mode-map (kbd "S-<backspace>") #'kill-whole-line)
-;; 
-;;   (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
-;;   (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
-;; 
-;;   ;; === 针对 emacs-rime 的智能输入法保存与恢复 ===
-;;   (defvar my--last-input-method nil
-;;     "记录进入 god-mode 之前最后使用的 input-method。")
-;; 
-;;   (defun my-god-save-and-disable-ime ()
-;;     "进入 god-mode 时：保存当前输入法状态，然后强制关闭 Rime。"
-;;     (setq my--last-input-method current-input-method) ; 保存当前状态
-;;     (when (and current-input-method
-;;                (fboundp 'deactivate-input-method))
-;;       (deactivate-input-method)))
-;; 
-;;   (defun my-god-restore-ime ()
-;;     "退出 god-mode 时：恢复之前保存的输入法（主要是 Rime）。"
-;;     (when (and my--last-input-method
-;;                (not current-input-method)) ; 只有当前没开启输入法时才恢复
-;;       (set-input-method my--last-input-method))) ;;
-;;   (add-hook 'god-mode-enabled-hook  #'my-god-save-and-disable-ime)
-;;   (add-hook 'god-mode-disabled-hook #'my-god-restore-ime)
-;; 
-;; 
-;;   ;; (add-hook 'magit-mode-hook #'god-local-mode-pause)
-;;   ;; (add-hook 'magit-mode-hook (lambda () (god-local-mode -1)))
-;; 
-;;   (custom-set-faces
-;;    '(god-mode-lighter ((t (:inherit error)))))
-;; 
-;;   (defun my-god-mode-update-cursor-type ()
-;;     (setq cursor-type (if (or god-local-mode buffer-read-only) 'hollow 'box)))
-;; 
-;;   (add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
-;;   (add-hook 'read-only-mode-hook
-;;             (lambda () (when buffer-read-only (god-local-mode 1))))
-;; 
-;;   (defun my-god-disable-on-input-method-activate ()
-;;     "当输入法（Rime）被激活时，自动退出 god-mode。"
-;;     (when god-local-mode
-;;       (god-local-mode -1)))
-;;   (add-hook 'input-method-activate-hook   #'my-god-disable-on-input-method-activate)
-;;   )
+;;; the RSI and god mode
+(use-package god-mode
+  :defer 0.1
+  :init
+  (setq god-mode-enable-function-key-translation nil)
+
+  :config
+  ;;  (god-mode-all)
+  (which-key-enable-god-mode-support)
+  (global-set-key (kbd "<escape>") #'(lambda () (interactive) (god-local-mode 1)))
+  (define-key god-local-mode-map (kbd "i") #'god-local-mode)
+  ;;    (setq god-exempt-major-modes nil)
+  ;;  (setq god-exempt-predicates nil)
+
+    
+  (setq god-mode-alist
+        '((nil . "C-")
+          ("g" . "M-")
+          ("q" . "C-M-")
+          ))
+  ;;    (define-key god-local-mode-map (kbd "V") #'scroll-down-command)
+
+  (define-key god-local-mode-map (kbd "z") #'repeat)
+  (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
+  (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
+
+  ;; === 针对 emacs-rime 的智能输入法保存与恢复 ===
+  (defvar my--last-input-method nil
+    "记录进入 god-mode 之前最后使用的 input-method。")
+
+  (defun my-god-save-and-disable-ime ()
+    "进入 god-mode 时：保存当前输入法状态，然后强制关闭 Rime。"
+    (setq my--last-input-method current-input-method) ; 保存当前状态
+    (when (and current-input-method
+               (fboundp 'deactivate-input-method))
+      (deactivate-input-method)))
+
+  (defun my-god-restore-ime ()
+    "退出 god-mode 时：恢复之前保存的输入法（主要是 Rime）。"
+    (when (and my--last-input-method
+               (not current-input-method)) ; 只有当前没开启输入法时才恢复
+      (set-input-method my--last-input-method))) ;;
+  (add-hook 'god-mode-enabled-hook  #'my-god-save-and-disable-ime)
+  (add-hook 'god-mode-disabled-hook #'my-god-restore-ime)
+
+
+  ;; (add-hook 'magit-mode-hook #'god-local-mode-pause)
+  ;; (add-hook 'magit-mode-hook (lambda () (god-local-mode -1)))
+
+  (custom-set-faces
+   '(god-mode-lighter ((t (:inherit error)))))
+
+  (defun my-god-mode-update-cursor-type ()
+    (setq cursor-type (if (or god-local-mode buffer-read-only) 'hollow 'box)))
+
+  (add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
+  (add-hook 'read-only-mode-hook
+            (lambda () (when buffer-read-only (god-local-mode 1))))
+
+  (defun my-god-disable-on-input-method-activate ()
+    "当输入法（Rime）被激活时，自动退出 god-mode。"
+    (when god-local-mode
+      (god-local-mode -1)))
+  (add-hook 'input-method-activate-hook   #'my-god-disable-on-input-method-activate)
+  )
 ;; 估计因为 C-s 和 vertico没做连协，所以这些minibuffer页面用不了god mode
 ;; 一些特殊的buffer，比如dired、help、ibuffer、magit里，godmode的行为可能会有点奇怪
 ;; rime和skk和god mode之间有奇怪的交互
@@ -388,6 +379,78 @@
 ;;   ;;(meow-global-mode 1)
 ;;   )
 
+;; (use-package key-chord
+;;   :demand t
+;;   :config
+;;   (key-chord-mode 1)
+;;   (key-chord-define-global ",." "<>\C-b")
+;;   (key-chord-define-global "dd" 'kill-whole-line)
+;;   (key-chord-define-global "ww" 'kmacro-start-macro-or-insert-counter)
+;;   (key-chord-define-global "ee" 'kmacro-end-or-call-macro)
+;;   (key-chord-define-global "jk" 'avy-goto-char-2)
+;;   )
+;; 最适合绑定标点符号组合
+
+;; (keymap-set global-map
+;;             "C-c a"
+;;             #'org-agenda)
+
+;; (defun my/smart-kill-region ()
+;;   "如果有选区则 `'kill-region'，否则删除前一个字符."
+;;   (interactive)
+;;   (if (use-region-p)
+;;       (kill-region (region-beginning) (region-end))
+;;     (delete-char -1)))
+;; 
+;; (global-set-key (kbd "C-w") #'my/smart-kill-region)
+
+(use-package crux
+  :demand t
+  :config
+  ;;(global-set-key [remap keyboard-quit] #'crux-keyboard-quit-dwim)
+  (global-set-key (kbd "C-c o") #'crux-open-with)
+  (global-set-key (kbd "C-k") #'crux-smart-kill-line)
+  ;; (global-set-key (kbd "C-c o") #'crux-open-with)
+  ;; (crux-reopen-as-root-mode)
+  )
+;; 实用函数
+;; reopen as root/sudo-edit
+;; delete/rename file and buffer
+;; duplicate line/region
+;; open new line/new line above
+;; recentf-find-directory
+;; kill other buffer
+;; move beginning
+;; crux-cleanup-buffer-or-region
+;; transpose windows
+;; insert date/time
+;; join line
+;; 
+
+(defun prot/keyboard-quit-dwim ()
+  "Do-What-I-Mean behaviour for a general `keyboard-quit'.
+
+The generic `keyboard-quit' does not do the expected thing when
+the minibuffer is open.  Whereas we want it to close the
+minibuffer, even without explicitly focusing it.
+
+The DWIM behaviour of this command is as follows:
+
+- When the region is active, disable it.
+- When a minibuffer is open, but not focused, close the minibuffer.
+- When the Completions buffer is selected, close it.
+- In every other case use the regular `keyboard-quit'."
+  (interactive)
+  (cond
+   ((region-active-p)
+    (keyboard-quit))
+   ((derived-mode-p 'completion-list-mode)
+    (delete-completion-window))
+   ((> (minibuffer-depth) 0)
+    (abort-recursive-edit))
+   (t
+    (keyboard-quit))))
+(global-set-key [remap keyboard-quit] #'prot/keyboard-quit-dwim)
 
 (provide 'my-prog-mode)
 

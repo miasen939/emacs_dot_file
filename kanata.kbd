@@ -5,7 +5,8 @@
 )
 
 (defsrc
-  a s d f g h j k l ; '
+  caps lctl esc
+  a s d f g h j k l ; ' 
 )
 
 (defvar
@@ -16,12 +17,15 @@
 )
 
 (deflayer base
+  lctl esc esc 
   @a @s @d @f g h @j @k @l @; @'
 )
 
 (deflayer nomods
+  lctl esc esc
   a s d f g h j k l ; '
 )
+
 
 (deffakekeys
   to-base (layer-switch base)
@@ -36,7 +40,7 @@
 
   a (tap-hold-release-keys $tap-time $hold-time (multi a @tap) (multi lctl lalt) $left-hand-keys)
   s (tap-hold-release-keys $tap-time $hold-time (multi s @tap) lsft $left-hand-keys)
-  d (tap-hold-release-keys $tap-time $hold-time (multi d @tap) lctl $left-hand-keys)
+  d (tap-hold-release-keys $tap-time $hold-time (multi d @tap) rctl $left-hand-keys)
   f (tap-hold-release-keys $tap-time $hold-time (multi f @tap) lalt $left-hand-keys)
   
   
@@ -55,3 +59,5 @@
 ;; s和l 用来做shift
 ;; a和；用来做 C+M
 ;; super 就不绑定了,目前绑了一个‘用来偶尔进行误触
+
+

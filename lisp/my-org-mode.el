@@ -161,7 +161,7 @@
   (when (derived-mode-p 'org-mode)
     (setq my/org-capture-source-file    (buffer-file-name)
           my/org-capture-source-heading (org-get-heading t t t t)
-          my/org-capture-source-id      (org-id-get-create))))
+          my/org-capture-source-id      (org-id-get (point)))))
 
 (add-hook 'org-capture-before-finalize-hook
           (lambda () (setq my/org-capture-source-file    nil
@@ -418,6 +418,13 @@
 ;; (when (eq system-type 'darwin)   ; macOS
 ;;   (setq org-download-screenshot-method "screencapture -i %s"))
 (setq org-image-actual-width '(600))
+(setq org-download-heading-lvl nil)
+ (advice-add 'org-download-clipboard :around
+              (lambda (orig-fn &rest args)
+                (cl-letf (((symbol-function 'org-id-get-create)
+                           (lambda (&rest _) (org-id-get (point)))))
+                  (apply orig-fn args))))
+
 )
 
 ;; =org-id-get-create=
@@ -573,11 +580,30 @@
   ;; If you're using a vertical completion framework, you might want a more informative completion interface
   (setq org-roam-dailies-capture-templates
         '(("d" "default" entry "* %<%I:%M %p>: %?"
-           :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
-  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
-  (org-roam-db-autosync-mode)
+           :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n
+* 九宫格日记
+- 距离修考还有 :: 天 
+- 天气 ::
+- 昨日回顾反思 ::
+- 今天计划待办 ::
+- 娱乐感恩好事 ::
+- 心情情绪 ::
+- 学习收获 ::
+- 健康运动饮食 ::
+- 人际沟通 ::
+- 灵感想法 ::
+- 改善点/明日计划 ::
+"))))
+  
+(setq org-id-link-to-org-use-id 'nil)
   ;; If using org-roam-protocol
-  (require 'org-roam-protocol))
+
+
+  
+  (require 'org-roam-protocol)
+
+  
+  )
 
 (use-package org-roam-ui
   :vc (:url "https://github.com/org-roam/org-roam-ui.git"

@@ -11,6 +11,7 @@
   
   冷门：
 - org-attach
+- vulpea
 * org-mode 画图
 * the academic org-mode
 ** org-cite org-citar  zotero与org-roam协作
