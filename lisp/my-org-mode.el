@@ -561,9 +561,9 @@
          ;; Dailies
          ("C-c n j" . org-roam-dailies-capture-today)
          ("C-c n I" . org-roam-node-insert-immediate)
-         ("C-c n N" . org-roam-dailies-goto-next-note)
-         ("C-c n B" . org-roam-dailies-goto-previous-note)
-         ("C-c n T" . org-roam-dailies-goto-today))
+         ("C-c n 3" . org-roam-dailies-goto-next-note)
+         ("C-c n 2" . org-roam-dailies-goto-previous-note)
+         ("C-c n 1" . org-roam-dailies-goto-today))
   
   :bind-keymap
   ("C-c n d" . org-roam-dailies-map)
@@ -595,14 +595,60 @@
 - 改善点/明日计划 ::
 "))))
   
-(setq org-id-link-to-org-use-id 'nil)
+;; (setq org-id-link-to-org-use-id 'nil)
   ;; If using org-roam-protocol
 
-
+(setq org-roam-node-display-template
+      (concat "${title:*} " (propertize "${tags:20}" 'face 'org-tag)))
   
   (require 'org-roam-protocol)
 
   
+  )
+(use-package org-roam-calendar
+  :vc (:url "https://github.com/connormclaud/emacs_org_roam_calendar")
+  :commands org-roam-calendar-open
+  :bind ("C-c n o" . org-roam-calendar-open))
+
+
+
+(use-package consult-org-roam
+  :after org-roam
+  :init
+  (require 'consult-org-roam)
+  (consult-org-roam-mode 1)
+  
+  :custom
+  ;; Use `ripgrep' for searching with `consult-org-roam-search'
+  (consult-org-roam-grep-func #'consult-ripgrep)
+  ;; Configure a custom narrow key for `consult-buffer'
+  (consult-org-roam-buffer-narrow-key ?r)
+  ;; Display org-roam buffers right after non-org-roam buffers
+  ;; in consult-buffer (and not down at the bottom)
+  (consult-org-roam-buffer-after-buffers t) 
+  :config
+  (consult-customize
+   consult-org-roam-forward-links
+   :preview-key "M-.")
+  
+  (define-key global-map (kbd "C-c n b") #'consult-org-roam-backlinks)
+  (define-key global-map (kbd "C-c n B") #'consult-org-roam-backlinks-recursive)
+  (define-key global-map (kbd "C-c n ,") #'consult-org-roam-forward-links)
+  :bind
+  ("C-c n r" . consult-org-roam-search)
+  ("C-c n e" . consult-org-roam-file-find)
+  )
+
+
+
+(use-package org-roam-timestamps
+  :after org-roam
+  :init
+  (require 'org-roam-timestamps)
+  (org-roam-timestamps-mode 1)
+  :config
+  (setq org-roam-timestamps-remember-timestamps t)
+  (setq org-roam-timestamps-minimum-gap 36000)
   )
 
 (use-package org-roam-ui

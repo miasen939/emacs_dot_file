@@ -6,7 +6,7 @@
 
 (defsrc
   caps lctl esc
-  a s d f g h j k l ; ' 
+  a s d f g h j k l ;  
 )
 
 (defvar
@@ -17,15 +17,18 @@
 )
 
 (deflayer base
-  lctl esc esc 
-  @a @s @d @f g h @j @k @l @; @'
+  @caps lctl esc 
+  @a @s @d @f g h @j @k @l @; 
 )
 
 (deflayer nomods
   lctl esc esc
-  a s d f g h j k l ; '
+  a s d f g h j k l ; 
 )
 
+(defalias
+  caps (tap-hold-press $tap-time $hold-time esc lctl)
+)
 
 (deffakekeys
   to-base (layer-switch base)
@@ -48,9 +51,7 @@
   k (tap-hold-release-keys $tap-time $hold-time (multi k @tap) rctl $right-hand-keys)
   l (tap-hold-release-keys $tap-time $hold-time (multi l @tap) rsft $right-hand-keys)
   ; (tap-hold-release-keys $tap-time $hold-time (multi ; @tap) (multi rctl ralt) $right-hand-keys)
-  
-  ;; spc (tap-hold-release 200 150 spc lsft)
-  ' (tap-hold-release 200 150 ' rmet)
+
 )
 ;; i e z x ，。 都是可以使用的键，spc也很好用，但是spc不适合绑定在shfit这种使用频率特别高的按键上
 ;; sudo kanata --cfg ~/.emacs.d/kanata.kbd

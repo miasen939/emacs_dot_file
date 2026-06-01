@@ -15,6 +15,17 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 - rust
 - my prog-mode
 - [[file:lisp/my-org-mode.el][my-org-mode]]
+- 
+** kanata
+[[file:kanata.kbd]]
+
+实现home row mods
+目前的配置
+- a ; :: C-M
+- s l :: shift
+- d k :: ctrl
+- f j :: meta(alt)
+- caps :: tap esc, hold ctrl 
 * 配置详解
 ** my-org-mode
 ** my-prog-mode
@@ -103,3 +114,6 @@ emacs功能之多拓展性之强，不可能掌握所有的概念和快捷键
 * 待办
 包管理 elpua
 bind-key
+
+* 图片
+[[file:图片/_20260601_161104screenshot.png]]

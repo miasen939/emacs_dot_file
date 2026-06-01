@@ -124,7 +124,7 @@
   ;;    (setq god-exempt-major-modes nil)
   ;;  (setq god-exempt-predicates nil)
 
-    
+  
   (setq god-mode-alist
         '((nil . "C-")
           ("g" . "M-")
@@ -155,10 +155,6 @@
   (add-hook 'god-mode-enabled-hook  #'my-god-save-and-disable-ime)
   (add-hook 'god-mode-disabled-hook #'my-god-restore-ime)
 
-
-  ;; (add-hook 'magit-mode-hook #'god-local-mode-pause)
-  ;; (add-hook 'magit-mode-hook (lambda () (god-local-mode -1)))
-
   (custom-set-faces
    '(god-mode-lighter ((t (:inherit error)))))
 
@@ -175,13 +171,14 @@
       (god-local-mode -1)))
   (add-hook 'input-method-activate-hook   #'my-god-disable-on-input-method-activate)
   )
-;; 估计因为 C-s 和 vertico没做连协，所以这些minibuffer页面用不了god mode
+
+
 ;; 一些特殊的buffer，比如dired、help、ibuffer、magit里，godmode的行为可能会有点奇怪
-;; rime和skk和god mode之间有奇怪的交互
 ;; 我认为要不magit和大部分类似的特殊buffer就暂时先不用god mode了
 ;; G q Q 等按键还没用上
-;; c-h k 有点小问题
 ;; multiple-cursors 有点小问题
+;; C-m 和C-j 都是newline？
+;; M-r 等等很多键我觉得都有点功能多余了 可以用来自定义
 
 ;;; avy
 
