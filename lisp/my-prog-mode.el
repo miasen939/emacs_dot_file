@@ -153,7 +153,7 @@
                (not current-input-method)) ; 只有当前没开启输入法时才恢复
       (set-input-method my--last-input-method))) ;;
   (add-hook 'god-mode-enabled-hook  #'my-god-save-and-disable-ime)
-  (add-hook 'god-mode-disabled-hook #'my-god-restore-ime)
+ ;; (add-hook 'god-mode-disabled-hook #'my-god-restore-ime)
 
   (custom-set-faces
    '(god-mode-lighter ((t (:inherit error)))))
@@ -170,6 +170,13 @@
     (when god-local-mode
       (god-local-mode -1)))
   (add-hook 'input-method-activate-hook   #'my-god-disable-on-input-method-activate)
+
+  (add-hook 'skk-mode-hook
+            (lambda ()
+              (if skk-mode
+                  (god-local-mode -1)
+                (god-local-mode 1))))
+  
   )
 
 

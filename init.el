@@ -4,7 +4,7 @@
 ;; URL: https://github.com/jamescherti/minimal-emacs.d
 ;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: maint
-;; Version: 1.3.1
+;; Version: 1.5.0
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;;; Commentary:
@@ -22,11 +22,26 @@
 ;;; Code:
 
 ;;; Load pre-init.el
+
 (if (fboundp 'minimal-emacs-load-user-init)
-    (minimal-emacs-load-user-init "pre-init.el")
-  (error "The early-init.el file failed to loaded"))
+    (when minimal-emacs-load-pre-init
+      (minimal-emacs-load-user-init "pre-init.el"))
+  (error "The early-init.el file failed to load"))
 
 ;;; Before package
+
+;; The initial buffer is created during startup even in non-interactive
+;; sessions, and its major mode is fully initialized. Modes like `text-mode',
+;; `org-mode', or even the default `lisp-interaction-mode' load extra packages
+;; and run hooks, which can slow down startup.
+;;
+;; Using `fundamental-mode' for the initial buffer to avoid unnecessary
+;; startup overhead.
+(setq initial-major-mode 'fundamental-mode
+      initial-scratch-message nil)
+
+;; Set-language-environment sets default-input-method, which is unwanted.
+(setq default-input-method nil)
 
 ;; Ask the user whether to terminate asynchronous compilations on exit.
 ;; This prevents native compilation from leaving temporary files in /tmp.
@@ -38,22 +53,47 @@
     (setq use-short-answers t)
   (advice-add 'yes-or-no-p :override #'y-or-n-p))
 
-;;; Undo/redo
+;;; package.el
+
+(when (and (bound-and-true-p minimal-emacs-package-initialize-and-refresh)
+           (not (bound-and-true-p byte-compile-current-file)))
+  ;; Initialize and refresh package contents again if needed
+  (package-initialize)
+  (unless package-archive-contents
+    (package-refresh-contents))
+  (when (and (version< emacs-version "29.1")
+             (not (package-installed-p 'use-package)))
+    (package-install 'use-package))
+  (require 'use-package))
+
+;;; Misc
 
 (setq undo-limit (* 13 160000)
       undo-strong-limit (* 13 240000)
       undo-outer-limit (* 13 24000000))
 
-;;; package.el
+(setq whitespace-line-column nil)  ; Use the value of `fill-column'.
 
-(when (bound-and-true-p minimal-emacs-package-initialize-and-refresh)
-  ;; Initialize and refresh package contents again if needed
-  (package-initialize)
-  (unless (package-installed-p 'use-package)
-    (unless (seq-empty-p package-archive-contents)
-      (package-refresh-contents))
-    (package-install 'use-package))
-  (require 'use-package))
+;; Disable ellipsis when printing s-expressions in the message buffer
+(setq eval-expression-print-length nil
+      eval-expression-print-level nil)
+
+;; This directs gpg-agent to use the minibuffer for passphrase entry
+(setq epg-pinentry-mode 'loopback)
+
+;; By default, Emacs stores sensitive authinfo credentials as unencrypted text
+;; in your home directory. Use GPG to encrypt the authinfo file for enhanced
+;; security.
+(setq auth-sources (list "~/.authinfo.gpg"))
+
+;; Speed up 'find-library' and reduce completion clutter by excluding internal
+;; helper files. This provides a library-focused list.
+(setq find-library-include-other-files nil)
+
+;; Protect the system from code injection vulnerabilities when browsing files.
+;; Disabling local 'eval' expressions ensures that opening a malicious project
+;; or third-party script cannot execute arbitrary Lisp code on your machine.
+(setq enable-local-eval nil)
 
 ;;; Minibuffer
 
@@ -68,7 +108,9 @@
 
 ;; By default, Emacs "updates" its ui more often than it needs to
 (setq which-func-update-delay 1.0)
-(setq idle-update-delay which-func-update-delay)  ;; Obsolete in >= 30.1
+(with-no-warnings
+  ;; Obsolete in >= 30.1
+  (setq idle-update-delay which-func-update-delay))
 
 (defalias #'view-hello-file #'ignore)  ; Never show the hello file
 
@@ -82,6 +124,9 @@
 (setq truncate-string-ellipsis "…")
 
 (setq display-time-default-load-average nil) ; Omit load average
+
+;; Force the mouse to paste text at the active cursor position.
+(setq mouse-yank-at-point t)
 
 ;;; Show-paren
 
@@ -103,27 +148,9 @@
 
 (setq uniquify-buffer-name-style 'forward)
 
-(setq remote-file-name-inhibit-cache 50)
-
 ;; Disable fontification during user input to reduce lag in large buffers.
 ;; Also helps marginally with scrolling performance.
 (setq redisplay-skip-fontification-on-input t)
-
-;;; Misc
-
-(setq whitespace-line-column nil)  ; Use the value of `fill-column'.
-
-;; Disable truncation of printed s-expressions in the message buffer
-(setq eval-expression-print-length nil
-      eval-expression-print-level nil)
-
-;; This directs gpg-agent to use the minibuffer for passphrase entry
-(setq epg-pinentry-mode 'loopback)
-
-;; By default, Emacs stores sensitive authinfo credentials as unencrypted text
-;; in your home directory. Use GPG to encrypt the authinfo file for enhanced
-;; security.
-(setq auth-sources (list "~/.authinfo.gpg"))
 
 ;;; `display-line-numbers-mode'
 
@@ -141,8 +168,11 @@
 
 ;;; Tramp
 
-(setq tramp-verbose 1)
-(setq tramp-completion-reread-directory-timeout 50)
+(setq tramp-verbose 1
+      remote-file-name-inhibit-cache 50
+      ;; Disable lockfiles and auto-saves for remote files to eliminate lag
+      remote-file-name-inhibit-locks t
+      remote-file-name-inhibit-auto-save-visited t)
 
 ;;; Files
 
@@ -153,13 +183,21 @@
 ;; Ignoring this is acceptable since it will redirect to the buffer regardless.
 (setq find-file-suppress-same-file-warnings t)
 
-;; Resolve symlinks so that operations are conducted from the file's directory
+;; Automatically resolve symlinks to their true paths. This sets the correct
+;; working directory so C-x C-f opens in the right folder and version control
+;; tools recognize the Git repository.
 (setq find-file-visit-truename t
+      ;; Automatically follow a symlink to its source if that source is managed
+      ;; by a version control system, rather than asking for permission.
       vc-follow-symlinks t)
 
 ;; Prefer vertical splits over horizontal ones
 (setq split-width-threshold 170
       split-height-threshold nil)
+
+;; Increase threshold for large-file warning to reduce prompts when opening
+;; moderately large files while still preserving safeguards for large files.
+(setq large-file-warning-threshold (* 100 1024 1024)) ; 100 Mb
 
 ;;; comint (general command interpreter in a window)
 
@@ -171,6 +209,9 @@
 
 (setq compilation-ask-about-save nil
       compilation-always-kill t
+      ;; Parse up to 2048 characters per line in compilation buffers. This
+      ;; safely catches deep errors and long paths without risking hangs.
+      compilation-max-output-line-length 2048
       compilation-scroll-output 'first-error)
 
 ;; Skip confirmation prompts when creating a new file or buffer
@@ -178,8 +219,16 @@
 
 ;;; Backup files
 
-;; Avoid backups or lockfiles to prevent creating world-readable copies of files
+;; Disable the creation of lockfiles (e.g., .#filename).
+;; Modern workflows rely on `global-auto-revert-mode' to handle external file
+;; changes gracefully, making the restrictive nature of lockfiles unnecessary.
 (setq create-lockfiles nil)
+
+;; Disable backup files (e.g., filename~). Note that `auto-save-default'
+;; remains enabled by default. Even with `make-backup-files' backups disabled,
+;; Emacs will still generate temporary recovery files (e.g., #filename#) for
+;; unsaved buffers. This protects your active work from sudden crashes while
+;; ensuring the file system is cleaned up immediately upon a successful save.
 (setq make-backup-files nil)
 
 (setq backup-directory-alist
@@ -195,7 +244,6 @@
 ;;; VC
 
 (setq vc-git-print-log-follow t)
-(setq vc-make-backup-files nil)  ; Do not backup version controlled files
 (setq vc-git-diff-switches '("--histogram"))  ; Faster algorithm for diffing.
 
 ;;; Auto save
@@ -203,8 +251,12 @@
 ;; Enable auto-save to safeguard against crashes or data loss. The
 ;; `recover-file' or `recover-session' functions can be used to restore
 ;; auto-saved data.
-(setq auto-save-default nil)
 (setq auto-save-no-message t)
+
+(when noninteractive
+  ;; The command line interface
+  (setq enable-dir-local-variables nil)
+  (setq case-fold-search nil))
 
 ;; Do not auto-disable auto-save after deleting large chunks of
 ;; text.
@@ -215,6 +267,20 @@
 (setq tramp-auto-save-directory
       (expand-file-name "tramp-autosave/" user-emacs-directory))
 
+(setq auto-save-file-name-transforms
+      `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
+         ,(file-name-concat auto-save-list-file-prefix "tramp-\\2-") sha1)
+        ("\\`/\\([^/]+/\\)*\\([^/]+\\)\\'"
+         ,(file-name-concat auto-save-list-file-prefix "\\2-") sha1)))
+
+;; Ensure the directory for auto-save session logs exists with restricted
+;; permissions.
+(when auto-save-default
+  (let ((auto-save-dir (file-name-directory auto-save-list-file-prefix)))
+    (unless (file-exists-p auto-save-dir)
+      (with-file-modes #o700
+        (make-directory auto-save-dir t)))))
+
 ;; Auto save options
 (setq kill-buffer-delete-auto-save-files t)
 
@@ -224,9 +290,6 @@
 ;;; Auto revert
 ;; Auto-revert in Emacs is a feature that automatically updates the contents of
 ;; a buffer to reflect changes made to the underlying file.
-(setq revert-without-query (list ".")  ; Do not prompt
-      auto-revert-stop-on-user-input nil
-      auto-revert-verbose t)
 
 ;; Revert other buffers (e.g, Dired)
 (setq global-auto-revert-non-file-buffers t)
@@ -237,8 +300,6 @@
 ;; `recentf' is an that maintains a list of recently accessed files.
 (setq recentf-max-saved-items 300) ; default is 20
 (setq recentf-max-menu-items 15)
-(setq recentf-auto-cleanup 'mode)
-(setq recentf-exclude nil)
 
 ;;; saveplace
 
@@ -251,7 +312,6 @@
 ;; `savehist-mode' is an Emacs feature that preserves the minibuffer history
 ;; between sessions.
 (setq history-length 300)
-(setq savehist-save-minibuffer-history t)  ;; Default
 (setq savehist-additional-variables
       '(register-alist                   ; macros
         mark-ring global-mark-ring       ; marks
@@ -259,11 +319,8 @@
 
 ;;; Frames and windows
 
-;; However, do not resize windows pixelwise, as this can cause crashes in some
-;; cases when resizing too many windows at once or rapidly.
-(setq window-resize-pixelwise nil)
-
 (setq resize-mini-windows 'grow-only)
+(setq max-mini-window-height 0.33)
 
 ;; The native border "uses" a pixel of the fringe on the rightmost
 ;; splits, whereas `window-divider-mode' does not.
@@ -292,19 +349,9 @@
 ;; 2. Resolving the issue of random half-screen jumps during scrolling.
 (setq auto-window-vscroll nil)
 
-;; Number of lines of margin at the top and bottom of a window.
-(setq scroll-margin 0)
-
-;; Number of lines of continuity when scrolling by screenfuls.
-(setq next-screen-context-lines 0)
-
 ;; Horizontal scrolling
 (setq hscroll-margin 2
       hscroll-step 1)
-
-;;; Mouse
-
-(setq mouse-yank-at-point nil)
 
 ;; Emacs 29
 (when (memq 'context-menu minimal-emacs-ui-features)
@@ -321,9 +368,6 @@
 ;; Don't blink the paren matching the one at point, it's too distracting.
 (setq blink-matching-paren nil)
 
-;; Do not extend the cursor to fit wide characters
-(setq x-stretch-cursor nil)
-
 ;; Reduce rendering/line scan work by not rendering cursors or regions in
 ;; non-focused windows.
 (setq highlight-nonselected-windows nil)
@@ -336,10 +380,6 @@
 ;; A longer delay can be annoying as it causes a noticeable pause after each
 ;; deletion, disrupting the flow of editing.
 (setq delete-pair-blink-delay 0.03)
-
-;; Disable visual indicators in the fringe for buffer boundaries and empty lines
-(setq-default indicate-buffer-boundaries nil)
-(setq-default indicate-empty-lines nil)
 
 ;; Continue wrapped lines at whitespace rather than breaking in the
 ;; middle of a word.
@@ -390,6 +430,18 @@
 ;; Eliminate delay before highlighting search matches
 (setq lazy-highlight-initial-delay 0)
 
+;; Only affect leading indentation. This prevents destroying mid-line visual
+;; alignments, such as aligning variable assignments or trailing comments, by
+;; ensuring spaces in the middle of a line are never converted to tabs.
+(setq tabify-regexp (rx line-start (zero-or-more ?\t) ?\s (one-or-more blank)))
+
+;; Prevent Emacs filling commands (such as `fill-paragraph', `fill-region',
+;; `auto-fill-mode', and Evil's `gq' operator) from inserting line breaks inside
+;; text that is currently hidden via text properties. This prevents accidental
+;; corruption of folded outlines (e.g., in Org or Outline mode) and concealed
+;; markup (e.g., hidden Markdown URLs).
+(setq fill-nobreak-invisible t)
+
 ;;; Filetype
 
 ;; Do not notify the user each time Python tries to guess the indentation offset
@@ -415,7 +467,21 @@
 ;; files, wdired, unreadable dirs, and delegates to dired-directory-changed-p
 ;; for modification checks.
 (setq auto-revert-remote-files nil)
-(setq dired-auto-revert-buffer 'dired-buffer-stale-p)
+
+;; Auto refresh Dired buffers, but only if the directory's modification time has
+;; changed on disk. Using `dired-directory-changed-p' is efficient: it avoids
+;; the unconditional re-renders of `t', and skips the heavy overhead of
+;; `dired-buffer-stale-p' (which makes blocking I/O calls for every inserted
+;; subdirectory, causing UI freezes on remote/network drives).
+(setq dired-auto-revert-buffer 'dired-directory-changed-p)
+
+;; Automatically revert destination Dired buffers after file operations
+;; (e.g., copying or renaming), but skip remote directories to prevent
+;; TRAMP network latency and UI freezes.
+(defun minimal-emacs--local-dir-p (dir)
+  "Return non-nil if DIR is a local directory."
+  (not (file-remote-p dir)))
+(setq dired-do-revert-buffer #'minimal-emacs--local-dir-p)
 
 ;; dired-omit-mode
 (setq dired-omit-verbose nil
@@ -429,6 +495,11 @@
 ;; Configure Ediff to use a single frame and split windows horizontally
 (setq ediff-window-setup-function 'ediff-setup-windows-plain
       ediff-split-window-function 'split-window-horizontally)
+
+;;; Diff
+
+;; Move +/- indicators to the fringe for cleaner diffs
+(setq diff-font-lock-prettify t)
 
 ;;; Help
 
@@ -545,8 +616,11 @@
   (put cmd 'disabled nil))
 
 ;;; Load post init
-(when (fboundp 'minimal-emacs-load-user-init)
+
+(when (and minimal-emacs-load-post-init
+           (fboundp 'minimal-emacs-load-user-init))
   (minimal-emacs-load-user-init "post-init.el"))
+
 (setq minimal-emacs--success t)
 
 ;; Local variables:
