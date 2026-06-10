@@ -27,7 +27,7 @@
          ("C-c <up>" . org-priority-up)
          ("C-c <down>" . org-priority-down)
          ("C-c C-g C-r" . org-shiftmetaright))
-  :hook ((org-mode . org-indent-mode)
+  :hook (;;(org-mode . org-indent-mode)
          (org-mode . visual-line-mode)
          ;;(org-mode . org-link-preview-refresh)
          )
@@ -144,7 +144,7 @@
 
 
 (defun my/org-capture-link-to-current-heading ()
-  "在 capture 模板里调用，返回触发 capture 时所在 heading 的链接。"
+  "在 capture 模板里调用，返回触发 capture 时所在 heading 的链接."
   (if (and my/org-capture-source-file
            my/org-capture-source-heading)
       (org-link-make-string
@@ -157,7 +157,7 @@
 (defvar my/org-capture-source-id nil)
 
 (defun my/org-capture-save-context ()
-  "在 capture 打开前记录当前 buffer 的 heading 信息。"
+  "在 capture 打开前记录当前 buffer 的 heading 信息."
   (when (derived-mode-p 'org-mode)
     (setq my/org-capture-source-file    (buffer-file-name)
           my/org-capture-source-heading (org-get-heading t t t t)
@@ -198,8 +198,11 @@
   :hook (org-mode . org-appear-mode)
   :config
   (setq org-appear-autoemphasis t   ;; *bold* / /italic/
-        org-appear-autolinks t      ;; 链接
-        org-appear-autosubmarkers t))
+        org-appear-autolinks nil      ;; 链接
+        org-appear-autosubmarkers t
+        org-appear-autokeywords t
+        )
+  )
 
 (use-package org-auto-tangle
   :hook (org-mode . org-auto-tangle-mode))
@@ -217,30 +220,30 @@
 ;;   :custom
 ;;   (org-bullets-bullet-list '("◉" "○" "✿" "✸" "◆" "▶")))
 
-(use-package org-superstar
-  :ensure t
-  :hook (org-mode . org-superstar-mode)
-  :custom
-  ;; 标题符号（对应 1–8 级）
-  (org-superstar-headline-bullets-list '("◉" "✿" "○" "✸" "◆" "◇" "▶" "▷"))
-
-  ;; 列表符号
-  (org-superstar-item-bullet-alist '((?- . ?•)
-                                     (?+ . ?➤)
-                                     (?* . ?◦)
-                                     ))
-
-  ;; checkbox 没美化
-  
-
-  ;; 隐藏前导星号，只显示最后一级的符号
-  (org-hide-leading-stars t)
-
-  ;; 让普通列表的 * 不被当作标题处理
-  (org-superstar-prettify-item-bullets t)
-
-  
-  )
+;; (use-package org-superstar
+;;   :ensure t
+;;   :hook (org-mode . org-superstar-mode)
+;;   :custom
+;;   ;; 标题符号（对应 1–8 级）
+;;   (org-superstar-headline-bullets-list '("◉" "✿" "○" "✸" "◆" "◇" "▶" "▷"))
+;; 
+;;   ;; 列表符号
+;;   (org-superstar-item-bullet-alist '((?- . ?•)
+;;                                      (?+ . ?➤)
+;;                                      (?* . ?◦)
+;;                                      ))
+;; 
+;;   ;; checkbox 没美化
+;;   
+;; 
+;;   ;; 隐藏前导星号，只显示最后一级的符号
+;;   (org-hide-leading-stars t)
+;; 
+;;   ;; 让普通列表的 * 不被当作标题处理
+;;   (org-superstar-prettify-item-bullets t)
+;; 
+;;   
+;;   )
 
 (setq org-list-demote-modify-bullet
       '(("-" . "+")     ; 第一级是 - ，降级/嵌套后变成 +
@@ -580,19 +583,21 @@
   ;; If you're using a vertical completion framework, you might want a more informative completion interface
   (setq org-roam-dailies-capture-templates
         '(("d" "default" entry "* %<%I:%M %p>: %?"
-           :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n
-* 九宫格日记
-- 距离修考还有 :: 天 
-- 天气 ::
-- 昨日回顾反思 ::
-- 今天计划待办 ::
-- 娱乐感恩好事 ::
-- 心情情绪 ::
-- 学习收获 ::
-- 健康运动饮食 ::
-- 人际沟通 ::
-- 灵感想法 ::
-- 改善点/明日计划 ::
+           :if-new (file+head "%<%Y-%m-%d>.org" "
+:PROPERTIES:
+:MOOD: 
+:ENERGY: 
+:FOCUS:
+:END:\n
+#+title: %<%Y-%m-%d>\n
+* Reflectly
+- 距离修考还有 ::  天
+- 天气/地域/住处/节日/纪念日 :: 
+- 昨天/今天/明天 总结/反思/计划 :: 
+- 娱乐感恩好事/人际沟通 :: 
+- 健康/饮食/运动 :: 
+- 心情情绪/活力/专注力/生产力 :: 
+- 学习收获/灵感想法 :: 
 "))))
   
 ;; (setq org-id-link-to-org-use-id 'nil)
@@ -600,11 +605,13 @@
 
 (setq org-roam-node-display-template
       (concat "${title:*} " (propertize "${tags:20}" 'face 'org-tag)))
-  
-  (require 'org-roam-protocol)
 
-  
-  )
+(org-roam-db-autosync-mode)
+
+(require 'org-roam-protocol)
+
+
+)
 (use-package org-roam-calendar
   :vc (:url "https://github.com/connormclaud/emacs_org_roam_calendar")
   :commands org-roam-calendar-open
@@ -648,7 +655,7 @@
   (org-roam-timestamps-mode 1)
   :config
   (setq org-roam-timestamps-remember-timestamps t)
-  (setq org-roam-timestamps-minimum-gap 36000)
+  (setq org-roam-timestamps-minimum-gap 3600)
   )
 
 (use-package org-roam-ui
@@ -829,6 +836,7 @@
   (setq citar-org-roam-capture-template-key "n")
   (setq citar-org-roam-subdir "academic_references")
   )
+;; org ref
 
 (use-package auctex
   :defer t
@@ -867,6 +875,40 @@
 (use-package cdlatex 
   :hook (org-mode . org-cdlatex-mode))
 
+(use-package deft
+  ;; :bind ("<f8>" . deft)
+  :commands (deft)
+  :config (setq deft-directory "~/Documents/roam-note/"
+                deft-extensions '("md" "org")))
+
+
+(use-package org-noter
+  :ensure t
+  :custom
+  ;; 不要每次都新建 frame，在当前 frame 分割窗口
+  (org-noter-always-create-frame t)
+  ;; 笔记搜索路径（告诉 org-noter 去哪里找已有笔记）
+  (org-noter-notes-search-path '("~/Documents/roam-note/org-noter"))
+  ;; 笔记位置：写在文档对应的 heading 下
+  (org-noter-separate-notes-from-heading t))
+
+(use-package org-remark
+  :config
+  (org-remark-global-tracking-mode +1)
+
+  ;; Optional if you would like to highlight websites via eww-mode
+  (with-eval-after-load 'eww
+    (org-remark-eww-mode +1))
+
+  ;; Optional if you would like to highlight EPUB books via nov.el
+  (with-eval-after-load 'nov
+    (org-remark-nov-mode +1))
+
+  ;; Optional if you would like to highlight Info documentation via Info-mode
+  (with-eval-after-load 'info
+    (org-remark-info-mode +1))
+  )
+(use-package olivetti)
 
 ;; repeat mode
 (repeat-mode 1)

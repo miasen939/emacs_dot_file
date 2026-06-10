@@ -13,23 +13,19 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 - [[file:post-init.el][post-init.el]]
 ** my-lisp
 - rust
-- my prog-mode
+- [[file:lisp/my-prog-mode.el][my-prog-mode]]
 - [[file:lisp/my-org-mode.el][my-org-mode]]
 - 
 ** kanata
 [[file:kanata.kbd]]
-
 实现home row mods
 目前的配置
-- a ; :: C-M
+- a ; g h :: C-M
 - s l :: shift
 - d k :: ctrl
 - f j :: meta(alt)
 - caps :: tap esc, hold ctrl 
-* 配置详解
-** my-org-mode
-** my-prog-mode
-** 其他
+
 * 未来的目标
 - dapmode 和更多debug用的包
 - tramp远程ssh
@@ -37,24 +33,8 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 - projectile的优化
 - latex和 文献管理
 - ai？
-* 原则
 
-- 简洁美观（？）
-  字体和主题因为长时间盯着，还是要弄的。但是什么彩虹猫加载条，nerdicons，以及各种花哨的modeline我觉得就没有必要了。
-- 不过分追求编辑技巧
-  多用avy/wichkey和embark降低记忆负担
-  即使像magit和vterm这种用得多的函数，如无必要也不要加快捷键，直接用 =M-x= 调用，还有历史记忆也挺方便
-- 降低自己的记忆负担，多利用casual和embark、which key 等辅助包
-- 多偷别人的配置
-- 简化配置，解耦，提高可迁移性（？）
 
-* 发现式的使用emacs
-emacs功能之多拓展性之强，不可能掌握所有的概念和快捷键
-因此使用过程中多查 =C-h= ，
-并且安装 =which-key= =embark=  =casual= 等包“发现式”使用emacs不错
-=which-key= 是输入一个前缀后提示有什么按键
-=emabrk= 则是提供了一个强大的右键菜单
-=casual（transient）或者hydra= 是把函数分配给了快捷键提供了一个可视但是又效率很高的按键映射
 
 * 住在emacs里
 
@@ -97,18 +77,7 @@ emacs功能之多拓展性之强，不可能掌握所有的概念和快捷键
 - 贪吃蛇，乒乓，甚至是doom
 - 世界を変える
 
-* 移动到cachyos
-- boot的选择（grub还是？）
-- 文件迁移
-  - 词典文件
-  - 音乐文件
-  - 电子书
-- emacs安装
-- 浏览器密码迁移
-- 输入法配置
-- 字体配置
-- 软件
-- 备份
+
 注意如果换了开发环境要记得改一下镜像
 
 * 待办

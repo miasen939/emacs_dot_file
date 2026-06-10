@@ -18,7 +18,7 @@
 
 (deflayer base
   @caps lctl esc 
-  @a @s @d @f g h @j @k @l @; 
+  @a @s @d @f @g @h @j @k @l @; 
 )
 
 (deflayer nomods
@@ -45,8 +45,9 @@
   s (tap-hold-release-keys $tap-time $hold-time (multi s @tap) lsft $left-hand-keys)
   d (tap-hold-release-keys $tap-time $hold-time (multi d @tap) rctl $left-hand-keys)
   f (tap-hold-release-keys $tap-time $hold-time (multi f @tap) lalt $left-hand-keys)
-  
-  
+  g (tap-hold-release-keys $tap-time $hold-time (multi g @tap) (multi lctl lalt) $left-hand-keys)
+
+  h (tap-hold-release-keys $tap-time $hold-time (multi h @tap) (multi rctl ralt) $left-hand-keys)
   j (tap-hold-release-keys $tap-time $hold-time (multi j @tap) ralt $right-hand-keys)
   k (tap-hold-release-keys $tap-time $hold-time (multi k @tap) rctl $right-hand-keys)
   l (tap-hold-release-keys $tap-time $hold-time (multi l @tap) rsft $right-hand-keys)
