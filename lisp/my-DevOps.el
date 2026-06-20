@@ -13,17 +13,10 @@
   (projectile-project-search-path '("~/projects/" "~/work/" "~/playground" "~/Documents/"))
   (projectile-files-command "ripgrep --files --hidden --follow --glob '!.git'")
   :config
-  (define-key projectile-mode-map (kbd "C-c C-p") 'projectile-command-map)
-  (global-set-key (kbd "C-c C-p") 'projectile-command-map)
-
   (projectile-mode +1)
   )
 
-;; eat
-;; (use-package eat
-;;   )
 
-;; vterm or eat
 (use-package vterm
   :bind
   ("C-c t" . vterm)
@@ -48,8 +41,10 @@
     ;; Suppress prompts for terminating active processes when closing vterm
     (setq-local confirm-kill-processes nil))
   (add-hook 'vterm-mode-hook #'my-vterm--setup)
-
   )
+
+(use-package eat)
+(use-package ghostel)
 
 (use-package magit
     :bind ("C-x g" . magit-status)

@@ -1,0 +1,6 @@
+# key: <g
+# name: gyuumu 业务超市
+# --
+`(format-time-string "%Y-%m-%d")` * "业务超市"
+  Expenses:Groceries                            $0 JPY
+  Assets:Cash

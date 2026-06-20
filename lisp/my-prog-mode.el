@@ -90,18 +90,18 @@
 
 
 ;;; origami 折り紙
-(use-package origami
-  :ensure t
-  :hook (prog-mode . origami-mode)
-  :bind
-  (:map origami-mode-map
-        ("C-c f t" . origami-toggle-node)        ;; 折叠/展开当前节点
-        ("C-c f a" . origami-toggle-all-nodes)   ;; 折叠/展开全部
-        ("C-c f o" . origami-open-node)          ;; 展开当前
-        ("C-c f c" . origami-close-node)         ;; 折叠当前
-        ("C-c f n" . origami-next-fold)          ;; 跳到下一个折叠点
-        ("C-c f p" . origami-previous-fold)      ;; 跳到上一个折叠点
-        ("C-c f r" . origami-reset)))            ;; 重置所有折叠状态
+;; (use-package origami
+;;   :ensure t
+;;   :hook (prog-mode . origami-mode)
+;;   :bind
+;;   (:map origami-mode-map
+;;         ("C-c f t" . origami-toggle-node)        ;; 折叠/展开当前节点
+;;         ("C-c f a" . origami-toggle-all-nodes)   ;; 折叠/展开全部
+;;         ("C-c f o" . origami-open-node)          ;; 展开当前
+;;         ("C-c f c" . origami-close-node)         ;; 折叠当前
+;;         ("C-c f n" . origami-next-fold)          ;; 跳到下一个折叠点
+;;         ("C-c f p" . origami-previous-fold)      ;; 跳到上一个折叠点
+;;         ("C-c f r" . origami-reset)))            ;; 重置所有折叠状态
 
   ;; origami + tree-sitter 集成
 
@@ -187,15 +187,15 @@
 (use-package avy
   :bind (
          ("C-;" . avy-goto-line)
-         ("C-." . avy-goto-char-2)
+         ;; 
          ;; ("C-'" . avy-goto-line)
                                         ;           ("C-u C-;" . avy-goto-word-0)
-         ("M-g w" . avy-goto-word-0)
-         ("M-g W" . avy-goto-char)
-         ("M-g 2" . avy-goto-char-2)
-         ("M-g c" . avy-goto-char-timer)
-         ("M-g k" . avy-kill-region)
-         ("M-g K" . avy-kill-ring-save-region)
+         ;; ("M-g w" . avy-goto-word-0)
+         ;; ("M-g W" . avy-goto-char)
+         ;; ("M-g 2" . avy-goto-char-2)
+         ;; ("M-g c" . avy-goto-char-timer)
+         ;; ("M-g k" . avy-kill-region)
+         ;; ("M-g K" . avy-kill-ring-save-region)
          ;;             avy-goto-char-in-line
          ;;               avy-zap
                                         ;("C-c C-j" . avy-resume)
@@ -210,7 +210,10 @@
   :config
   ;;(define-key isearch-mode-map (kbd "C-'") 'avy-isearch)
 )
-  
+
+(use-package flash
+  :bind ("C-." . flash-jump)
+  )
 ;;; avy 还有很大的调整空间，如果能支持中文（我的微软双拼）和日文就好了
 
 (use-package expreg
@@ -283,11 +286,9 @@
   :demand t
   :config
   ;;(global-set-key [remap keyboard-quit] #'crux-keyboard-quit-dwim)
-  (global-set-key (kbd "C-c o") #'crux-open-with)
+  ;;(global-set-key (kbd "C-c o") #'crux-open-with)
   (global-set-key (kbd "C-k") #'crux-smart-kill-line)
   (global-set-key (kbd "C-a") #'crux-move-beginning-of-line)
-  (global-set-key (kbd "C-a") #'crux-move-beginning-of-line)
-  
   ;; (global-set-key (kbd "C-c o") #'crux-open-with)
   ;; (crux-reopen-as-root-mode)
   )

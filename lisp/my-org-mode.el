@@ -97,8 +97,8 @@
 
   ;;org-todo
   (setq org-todo-keywords
-        '((sequence "TODO(t!)" "NEXT(n!)" "SOMEDAY(s!)" "PLANNING(p!)" "IN-PROGRESS(i@/!)"
-                    "BLOCKED(b@/!)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELED(c@/!)")))
+        '((sequence "TODO(t!)" "NEXT(n!)" "SOMEDAY(s!)" "PLANNING(p!)" "IN-PROGRESS(i@/!)" "QUESTION(q!)"
+                    "BLOCKED(b@/!)" "WAITING(w@/!)" "|" "DONE(d!)" "QUIT(Q@/!)" "CANCELED(c@/!)")))
   ;;(setq org-log-done 'note)
   ;;(setq org-log-done 'time)
   
@@ -108,6 +108,7 @@
         '(
           ("TODO" . (:foreground "GoldenRod" :weight bold))
           ("NEXT" . (:foreground "DeepSkyBlue1" :weight bold)) ;蓝色
+          ("QUESTION" . (:foreground "CYAN" :weight bold)) ;蓝色
           ("SOMEDAY" . (:foreground "RosyBrown" :weight bold))
           ("PLANNING" . (:foreground "DeepPink" :weight bold))
           ("IN-PROGRESS" . (:foreground "Cyan" :weight bold))
@@ -115,11 +116,12 @@
           ("WAITING" . (:foreground "khaki4" :weight bold)) ;
           ("DONE" . (:foreground "LimeGreen" :weight bold))
           ("CANCELED" . (:foreground "DimGrey" :weight bold))
+          ("QUIT" . (:foreground "DimGrey" :weight bold))
           ))
   ;;org-agenda
   (setq org-agenda-files 
-        '("~/Documents/org-agenda/TODOs.org"
-          "~/Documents/org-agenda/habits.org")
+        '("~/Documents/roam-note/daily/org-agenda/TODOs.org"
+          "~/Documents/roam-note/daily/org-agenda/habits.org")
         ) ;;一定要注意，改这个路径的同时要改org capture的路径
 
 
@@ -177,20 +179,30 @@
   :bind ("C-c c" . org-capture)
   :config
   (setq org-capture-templates
-        '(   ("r" "roam-todo (链接到当前 heading)" entry
-              (file+headline "~/Documents/org-agenda/TODOs.org" "roam-todo")
-              "* TODO %?\n  来源: %(my/org-capture-link-to-current-heading)\n  %U\n"
-              :empty-lines 1)
+        '(   ;; ("r" "roam-todo (链接到当前 heading)" entry
+             ;;  (file+headline "~//org-agenda/TODOs.org" "roam-todo")
+             ;;  "* TODO %?\n  来源: %(my/org-capture-link-to-current-heading)\n  %U\n"
+             ;;  :empty-lines 1)
              
-             ("t" "Todo" entry
-              (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
-              "* TODO %?\n  %U\n")
-             ("s" "Someday" entry
-              (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
+             ("s" "SOMEDAY" entry
+              (file+headline "~/Documents/roam-note/daily/org-agenda/TODOs.org" "inbox:inbox:")
               "* SOMEDAY %?\n  %U\n")
-             ("n" "Next" entry
-              (file+headline "~/Documents/org-agenda/TODOs.org" "inbox:inbox:")
-              "* NEXT %?\n  %U\n"))))
+             ("i" "灵感想法idea" entry
+              (file+headline "~/Documents/roam-note/daily/org-agenda/TODOs.org" "IDEA")
+              "* SOMEDAY %?\nSCHEDULED: %(format-time-string \"<%Y-%m-%d %a>\" (time-add (current-time) (days-to-time 30)))  %U\n") ;三十天后再审视之前的想法
+             ("t" "Todo" entry
+              (file+headline "~/Documents/roam-note/daily/org-agenda/TODOs.org" "inbox:inbox:")
+              "* TODO %?\nSCHEDULED: %(format-time-string \"<%Y-%m-%d %a>\" (time-add (current-time) (days-to-time 1)))\n%U\n")
+             ("q" "QUESTION" entry
+              (file+headline "~/Documents/roam-note/daily/org-agenda/TODOs.org" "inbox:inbox:")
+              "* QUESTION %?\nSCHEDULED: %(format-time-string \"<%Y-%m-%d %a>\" (time-add (current-time) (days-to-time 1)))\n%U\n")
+             ;; ("s" "Someday" entry
+             ;;  (file+headline "~/D/org-agenda/TODOs.org" "inbox:inbox:")
+             ;;  "* SOMEDAY %?\n  %U\n")
+             ;; ("n" "Next" entry
+             ;;  (file+headline "~/D/org-agenda/TODOs.org" "inbox:inbox:")
+             ;;  "* NEXT %?\n  %U\n")
+             )))
 
 
 
