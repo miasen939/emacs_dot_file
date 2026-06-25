@@ -1,5 +1,5 @@
 #+TITLE: emacs config
-#+auto_tangle: t
+#+auto_tangle: nil
 
 这是 =post-init.el= 和 =pre-early-init.el= 的文学编程配置.
  ~C-c C-v~ 系列快捷键来使用trangle的功能(比如 ~C-c C-v C-t~ 把本文件的代码写入.)
@@ -656,9 +656,7 @@ hl-todo
 
 
 ** 依赖
-:PROPERTIES:
-:ID:       15761ad3-2246-41d0-b079-eed47a3cde34
-:END:
+
 latex 
 pandoc mdox
 pacman -S poppler ffmpegthumbnailer mediainfo libvips 7zip imagemagick 

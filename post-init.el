@@ -406,5 +406,6 @@
   ;; (with-eval-after-load 'image-mode
   ;;   (define-key image-mode-map (kbd "C-c w") #'copy-current-image-to-clipboard))
 
+(server-start)
 (provide 'post-init)
 ;;; post-init.el ends here

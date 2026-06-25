@@ -41,7 +41,7 @@
   )
 
 
-  a (tap-hold-release-keys $tap-time $hold-time (multi a @tap) (multi lctl lalt) $left-hand-keys)
+  a (tap-hold-release-keys $tap-time $hold-time (multi a @tap) lmet $left-hand-keys)
   s (tap-hold-release-keys $tap-time $hold-time (multi s @tap) lsft $left-hand-keys)
   d (tap-hold-release-keys $tap-time $hold-time (multi d @tap) rctl $left-hand-keys)
   f (tap-hold-release-keys $tap-time $hold-time (multi f @tap) lalt $left-hand-keys)
@@ -51,9 +51,10 @@
   j (tap-hold-release-keys $tap-time $hold-time (multi j @tap) ralt $right-hand-keys)
   k (tap-hold-release-keys $tap-time $hold-time (multi k @tap) rctl $right-hand-keys)
   l (tap-hold-release-keys $tap-time $hold-time (multi l @tap) rsft $right-hand-keys)
-  ; (tap-hold-release-keys $tap-time $hold-time (multi ; @tap) (multi rctl ralt) $right-hand-keys)
+  ; (tap-hold-release-keys $tap-time $hold-time (multi ; @tap) lmet $right-hand-keys)
 
 )
+
 ;; i e z x ，。 都是可以使用的键，spc也很好用，但是spc不适合绑定在shfit这种使用频率特别高的按键上
 ;; sudo kanata --cfg ~/.emacs.d/kanata.kbd
 
@@ -61,5 +62,4 @@
 ;; s和l 用来做shift
 ;; a和；用来做 C+M
 ;; super 就不绑定了,目前绑了一个‘用来偶尔进行误触
-
 

@@ -75,13 +75,15 @@
 
 
 
+;; emacsclient -c 创建新 frame
+
 (defun my/setup-fonts ()
   "设置字体配置."
 
   (when (display-graphic-p)
     ;; 英文字体
     (set-face-attribute 'default nil
-                        :height 130
+                        :height 150
                         :weight 'normal
                         :family "DejaVu Sans mono")
     
@@ -89,6 +91,10 @@
       (set-fontset-font t charset
                         (font-spec :family "Sarasa Fixed SC"
                                    )))))
+;; 延迟加载字体设置
+(add-hook 'after-init-hook #'my/setup-fonts)
+(add-hook 'after-make-frame-functions #'my/setup-fonts)
+
 
 (use-package valign
   :hook (org-mode . valign-mode))         ;解决像素级对齐，让org sheet可以用中日文也对齐了
@@ -96,8 +102,6 @@
 ;;(add-to-list 'default-frame-alist '(undecorated . t))
 
 
-;; 延迟加载字体设置
-(add-hook 'after-init-hook #'my/setup-fonts)
 
 (use-package beacon
   :defer 0.5
@@ -141,7 +145,7 @@
   )
 
 ;; 只让背景透明（文字和光标等保持不透明）
-(set-frame-parameter nil 'alpha-background 92)  ; 数字越小越透明，建议 70~92 之间
+(set-frame-parameter nil 'alpha-background 90)  ; 数字越小越透明，建议 70~92 之间
 (add-to-list 'default-frame-alist '(alpha-background . 85));; 只让背景透明（文字和光标等保持不透明）
 
 

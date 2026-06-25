@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: default beancount templte
-# key: <d
+# key: d
 # --
 `(format-time-string "%Y-%m-%d")` * "$1"
   Expenses:$0                            $2 JPY
