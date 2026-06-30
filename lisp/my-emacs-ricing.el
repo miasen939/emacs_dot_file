@@ -83,7 +83,7 @@
   (when (display-graphic-p)
     ;; 英文字体
     (set-face-attribute 'default nil
-                        :height 150
+                        :height 100
                         :weight 'normal
                         :family "DejaVu Sans mono")
     
@@ -116,9 +116,6 @@
   :demand t
   :custom
   (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.\n\t\t别忘了，你要考大阪大学")
-
-  
-
   (dashboard-startup-banner
    (let* ((image-dir (expand-file-name "~/Pictures/icon/"))
           (images (directory-files image-dir t "\\.\\(png\\|jpg\\|jpeg\\|gif\\|webp\\)$" t)))
@@ -129,13 +126,12 @@
 
   (dashboard-center-content t)
   (dashboard-vertically-center-content t)
-
   :config
   (setq dashboard-items nil)
   
-  ;;(setq initial-buffer-choice 'dashboard-open)
-  ;;(add-hook 'server-after-make-frame-hook 'dashboard-open)
-
+  (setq initial-buffer-choice 'dashboard-open)
+  (add-hook 'server-after-make-frame-hook 'dashboard-open)
+  
   ;; show agenda
   (setq dashboard-week-agenda t)
   (setq dashboard-items '(

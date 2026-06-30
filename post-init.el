@@ -406,6 +406,15 @@
   ;; (with-eval-after-load 'image-mode
   ;;   (define-key image-mode-map (kbd "C-c w") #'copy-current-image-to-clipboard))
 
+;; 让emacs能读写剪辑版
+(setq select-enable-clipboard t
+      select-enable-primary t)
+
+
+
 (server-start)
+
+
+
 (provide 'post-init)
 ;;; post-init.el ends here

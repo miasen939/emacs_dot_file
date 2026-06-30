@@ -74,6 +74,10 @@
   :mode ("\\.bean\\'" . beancount-mode))
 ;; 依赖：sudo pacman -S beancount fava beancount-language-server
 
+
+;; (use-package notmuch)
+;; (use-package mu4e)
+
 (provide 'my-living-in-emacs)
 
 ;;; my-living-in-emacs.el ends here

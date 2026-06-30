@@ -23,7 +23,6 @@
    ("M-<down-mouse-1>" . mc/add-cursor-on-click) ; 鼠标点哪哪出现光标（很爽）
    ;;("C-!" . mc/mark-all-dwim) ; 智能全选（有区域就选区域，没区域就选全部）
    )
-
   :config
   ;; 建议：让这些常用命令在 mc 模式下也能正常工作
   (add-to-list 'mc/cmds-to-run-for-all 'forward-char)
@@ -108,71 +107,74 @@
 
 ;;; god-mode
 ;;; the RSI and god mode
-(use-package god-mode
-  :defer 0.1
-  :init
-  (setq god-mode-enable-function-key-translation nil)
+;; (use-package god-mode
+;;   :defer 0.1
+;;   :init
+;;   (setq god-mode-enable-function-key-translation nil)
+;; 
+;;   :config
+;;   ;;  (god-mode-all)
+;;   (which-key-enable-god-mode-support)
+;;   (global-set-key (kbd "<escape>") #'(lambda () (interactive) (god-local-mode 1)))
+;;   (define-key god-local-mode-map (kbd "i") #'god-local-mode)
+;;   ;;    (setq god-exempt-major-modes nil)
+;;   ;;  (setq god-exempt-predicates nil)
+;; 
+;;   
+;;   (setq god-mode-alist
+;;         '((nil . "C-")
+;;           ("g" . "M-")
+;;           ("q" . "C-M-")
+;;           ))
+;;   ;;    (define-key god-local-mode-map (kbd "V") #'scroll-down-command)
+;; 
+;;   (define-key god-local-mode-map (kbd "z") #'repeat)
+;;   (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
+;;   (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
+;; 
+;;   (defvar my--last-input-method nil
+;;     "记录进入 god-mode 之前最后使用的 input-method。")
+;; 
+;;   (defun my-god-save-and-disable-ime ()
+;;     "进入 god-mode 时：保存当前输入法状态，然后强制关闭 Rime。"
+;;     (setq my--last-input-method current-input-method) ; 保存当前状态
+;;     (when (and current-input-method
+;;                (fboundp 'deactivate-input-method))
+;;       (deactivate-input-method)))
+;; 
+;;   (defun my-god-restore-ime ()
+;;     "退出 god-mode 时：恢复之前保存的输入法（主要是 Rime）。"
+;;     (when (and my--last-input-method
+;;                (not current-input-method)) ; 只有当前没开启输入法时才恢复
+;;       (set-input-method my--last-input-method))) ;;
+;;   (add-hook 'god-mode-enabled-hook  #'my-god-save-and-disable-ime)
+;;  ;; (add-hook 'god-mode-disabled-hook #'my-god-restore-ime)
+;; 
+;;   (custom-set-faces
+;;    '(god-mode-lighter ((t (:inherit error)))))
+;; 
+;;   (defun my-god-mode-update-cursor-type ()
+;;     (setq cursor-type (if (or god-local-mode buffer-read-only) 'hollow 'box)))
+;; 
+;;   (add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
+;;   (add-hook 'read-only-mode-hook
+;;             (lambda () (when buffer-read-only (god-local-mode 1))))
+;; 
+;;   (defun my-god-disable-on-input-method-activate ()
+;;     "当输入法（Rime）被激活时，自动退出 god-mode。"
+;;     (when god-local-mode
+;;       (god-local-mode -1)))
+;;   (add-hook 'input-method-activate-hook   #'my-god-disable-on-input-method-activate)
+;; 
+;;   (add-hook 'skk-mode-hook
+;;             (lambda ()
+;;               (if skk-mode
+;;                   (god-local-mode -1)
+;;                 (god-local-mode 1))))
+;;     )
 
-  :config
-  ;;  (god-mode-all)
-  (which-key-enable-god-mode-support)
-  (global-set-key (kbd "<escape>") #'(lambda () (interactive) (god-local-mode 1)))
-  (define-key god-local-mode-map (kbd "i") #'god-local-mode)
-  ;;    (setq god-exempt-major-modes nil)
-  ;;  (setq god-exempt-predicates nil)
 
-  
-  (setq god-mode-alist
-        '((nil . "C-")
-          ("g" . "M-")
-          ("q" . "C-M-")
-          ))
-  ;;    (define-key god-local-mode-map (kbd "V") #'scroll-down-command)
 
-  (define-key god-local-mode-map (kbd "z") #'repeat)
-  (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
-  (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
-
-  (defvar my--last-input-method nil
-    "记录进入 god-mode 之前最后使用的 input-method。")
-
-  (defun my-god-save-and-disable-ime ()
-    "进入 god-mode 时：保存当前输入法状态，然后强制关闭 Rime。"
-    (setq my--last-input-method current-input-method) ; 保存当前状态
-    (when (and current-input-method
-               (fboundp 'deactivate-input-method))
-      (deactivate-input-method)))
-
-  (defun my-god-restore-ime ()
-    "退出 god-mode 时：恢复之前保存的输入法（主要是 Rime）。"
-    (when (and my--last-input-method
-               (not current-input-method)) ; 只有当前没开启输入法时才恢复
-      (set-input-method my--last-input-method))) ;;
-  (add-hook 'god-mode-enabled-hook  #'my-god-save-and-disable-ime)
- ;; (add-hook 'god-mode-disabled-hook #'my-god-restore-ime)
-
-  (custom-set-faces
-   '(god-mode-lighter ((t (:inherit error)))))
-
-  (defun my-god-mode-update-cursor-type ()
-    (setq cursor-type (if (or god-local-mode buffer-read-only) 'hollow 'box)))
-
-  (add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
-  (add-hook 'read-only-mode-hook
-            (lambda () (when buffer-read-only (god-local-mode 1))))
-
-  (defun my-god-disable-on-input-method-activate ()
-    "当输入法（Rime）被激活时，自动退出 god-mode。"
-    (when god-local-mode
-      (god-local-mode -1)))
-  (add-hook 'input-method-activate-hook   #'my-god-disable-on-input-method-activate)
-
-  (add-hook 'skk-mode-hook
-            (lambda ()
-              (if skk-mode
-                  (god-local-mode -1)
-                (god-local-mode 1))))
-    )
 ;; u 这个按键还没用上，想一个好方法给他安排上
 
 ;; 一些特殊的buffer，比如dired、help、ibuffer、magit里，godmode的行为可能会有点奇怪
@@ -332,6 +334,76 @@ The DWIM behaviour of this command is as follows:
    (t
     (keyboard-quit))))
 (global-set-key [remap keyboard-quit] #'prot/keyboard-quit-dwim)
+
+(use-package evil
+  :demand t
+  :init
+  ;; 在加载 Evil 之前设置（非常重要）
+  (setq evil-disable-insert-state-bindings t)   ; ← 让 Insert 模式基本使用 Emacs 原生键
+  (setq evil-want-keybinding nil)               ; 配合 evil-collection 使用
+
+  ;; 其他常用设置
+  (setq evil-undo-system 'undo-redo)            ; 使用 Emacs 新的 undo 系统（推荐）
+  (setq evil-want-C-u-scroll t)                 ; C-u 滚动而不是 universal-argument
+  (setq evil-want-C-i-jump nil)                 ; 如果你想让 C-i 做别的
+  (setq evil-toggle-key "C-z")                  ; 默认 C-z 切换 Emacs 状态
+
+  :config
+  (evil-mode 1)
+
+  ;; 让某些模式默认进入 Emacs 状态（可选）
+  (evil-set-initial-state 'help-mode 'emacs)
+  (evil-set-initial-state 'helpful-mode 'emacs)
+  (evil-set-initial-state 'info-mode 'emacs)
+  ;;(evil-set-initial-state 'dashboard-mode 'emacs)
+  (evil-set-initial-state 'dired-mode 'emacs)
+
+  (define-key evil-insert-state-map (kbd "C-o") #'evil-execute-in-normal-state)
+
+  ;; 全局 Leader 键（类似 Spacemacs / Doom 的 SPC）
+  (define-key evil-normal-state-map (kbd "SPC") nil)  ; 清空避免冲突
+  (define-key evil-visual-state-map (kbd "SPC") nil)
+
+  ;; 示例：常用 Leader 绑定
+  (defun my/leader-key-setup ()
+    (define-key evil-normal-state-map (kbd "SPC SPC") 'execute-extended-command)
+    (define-key evil-normal-state-map (kbd "SPC f f") 'find-file)
+    (define-key evil-normal-state-map (kbd "SPC b b") 'switch-to-buffer)
+    (define-key evil-normal-state-map (kbd "SPC w s") 'split-window-below)
+    (define-key evil-normal-state-map (kbd "SPC w v") 'split-window-right)
+    (define-key evil-normal-state-map (kbd "SPC q q") 'save-buffers-kill-terminal))
+
+(add-hook 'evil-normal-state-entry-hook
+          (lambda ()
+            (deactivate-input-method)))
+(add-hook 'evil-insert-state-entry-hook
+          (lambda ()
+            (deactivate-input-method)))
+
+
+(defun my/evil-insert-with-im (count &optional vcount skip-empty-lines)
+  "进入插入模式,开启输入法。"
+  (interactive "p")
+  (evil-insert count vcount skip-empty-lines)
+  (unless current-input-method
+    (activate-input-method default-input-method)))
+
+(evil-define-key 'normal 'global
+  "\\" #'my/evil-insert-with-im)
+
+  (my/leader-key-setup)
+  )
+
+(use-package evil-escape
+  :ensure t
+  :init
+  (evil-escape-mode 1)
+  :after evil
+  :config
+  (setq-default evil-escape-key-sequnce "df")
+  (setq-default evil-escape-delay 0.2))
+;; 还有一些evil的配套设施，我以后可以体验一下
+(use-package goto-chg)
 
 (provide 'my-prog-mode)
 
