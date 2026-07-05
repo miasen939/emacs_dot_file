@@ -1,5 +1,4 @@
 #+title: emacs 配置文件
-#+STARTUP: noinlineimages
 fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 
 试用过purcell/prelude/doomemacs,打算慢慢从上面偷配置
@@ -12,20 +11,21 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 - [[file:pre-early-init.el][pre-early-init.el]]
 - [[file:post-init.el][post-init.el]]
 ** my-lisp
-- rust
 - [[file:lisp/my-prog-mode.el][my-prog-mode]]
-- [[file:lisp/my-org-mode.el][my-org-mode]]
-- 
+- [[file:lisp/my-org-mode.el::;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-][my-org-mode]]
+- [[file:lisp/my-living-in-emacs.el::;;; my-living-in-emacs.el --- misc emacs pacakages -*- no-byte-compile: t; lexical-binding: t; -*-][my-living-in-emacs.el]]
 ** kanata
 [[file:kanata.kbd]]
 实现home row mods
 目前的配置
-- a ; g h :: C-M
-- s l :: shift
-- d k :: ctrl
-- f j :: meta(alt)
-- caps :: tap esc, hold ctrl 
-
+- a; super
+- sl meta
+- dk ctrl 
+- fj shift
+- gh c+m
+- capslock :: hold as ctrl, tap as esc
+- lctrl :: capslock
+使用fj 当做shift的话，最好是保留键盘上的大写锁，这样输入如 HTTP 时，就会方便很多  
 * 未来的目标
 - dapmode 和更多debug用的包
 - tramp远程ssh

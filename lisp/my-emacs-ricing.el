@@ -75,26 +75,6 @@
 
 
 
-;; emacsclient -c 创建新 frame
-
-(defun my/setup-fonts ()
-  "设置字体配置."
-
-  (when (display-graphic-p)
-    ;; 英文字体
-    (set-face-attribute 'default nil
-                        :height 100
-                        :weight 'normal
-                        :family "DejaVu Sans mono")
-    
-    (dolist (charset '(kana han symbol cjk-misc bopomofo))
-      (set-fontset-font t charset
-                        (font-spec :family "Sarasa Fixed SC"
-                                   )))))
-;; 延迟加载字体设置
-(add-hook 'after-init-hook #'my/setup-fonts)
-(add-hook 'after-make-frame-functions #'my/setup-fonts)
-
 
 (use-package valign
   :hook (org-mode . valign-mode))         ;解决像素级对齐，让org sheet可以用中日文也对齐了

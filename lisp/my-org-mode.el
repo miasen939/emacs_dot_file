@@ -920,14 +920,52 @@
   (with-eval-after-load 'info
     (org-remark-info-mode +1))
   )
+
 (use-package olivetti)
 
 ;; repeat mode
-(repeat-mode 1)
-(setq repeat-timeout 5)
-(setq repeat-exit-key "<escape>")
 
-(winner-mode 1)
+;; Calfw：用月历查看 Org 日程
+(use-package calfw
+  :demand 1.0
+  :custom
+  ;; 每周从星期一开始
+  (calendar-week-start-day 1)
+
+  ;; 长标题自动换行
+  (calfw-render-line-breaker 'calfw-render-line-breaker-wordwrap)
+
+  :config
+  ;; 使用 Unicode 表格线
+  (setq calfw-fchar-junction ?╬
+        calfw-fchar-vertical-line ?║
+        calfw-fchar-horizontal-line ?═
+        calfw-fchar-left-junction ?╠
+        calfw-fchar-right-junction ?╣
+        calfw-fchar-top-junction ?╦
+        calfw-fchar-top-left-corner ?╔
+        calfw-fchar-top-right-corner ?╗)
+  
+    ;; 使用 ASCII 边框，避免中英文字体宽度造成错位
+  ;; (setq calfw-fchar-junction ?+
+  ;;       calfw-fchar-vertical-line ?|
+  ;;       calfw-fchar-horizontal-line ?-
+  ;;       calfw-fchar-left-junction ?+
+  ;;       calfw-fchar-right-junction ?+
+  ;;       calfw-fchar-top-junction ?+
+  ;;       calfw-fchar-top-left-corner ?+
+  ;;       calfw-fchar-top-right-corner ?+)
+  )
+
+
+(use-package calfw-org
+  :ensure t
+  :after (calfw org)
+  :commands calfw-org-open-calendar
+  :custom
+  ;; 使用类似 Org Agenda 的按键
+  (calfw-org-overwrite-default-keybinding t)
+  )
 
 (provide 'my-org-mode)
 ;;; my-org-mode.el ends here

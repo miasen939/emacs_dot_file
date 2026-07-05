@@ -11,6 +11,34 @@
 (setq use-package-always-defer t)   ;; 默认延迟加载
 
 
+;; emacsclient -c 创建新 frame
+
+;; (defun my/setup-fonts ()
+;;   "设置字体配置."
+;; 
+;;   (when (display-graphic-p)
+;;     ;; 英文字体
+;;     (set-face-attribute 'default nil
+;;                         :height 100
+;;                         :weight 'normal
+;;                         :family "DejaVu Sans mono")
+;;     
+;;     (dolist (charset '(kana han symbol cjk-misc bopomofo))
+;;       (set-fontset-font t charset
+;;                         (font-spec :family "Sarasa Fixed SC"
+;;                                    )))))
+;; ;; 延迟加载字体设置
+;; (add-hook 'after-init-hook #'my/setup-fonts)
+;; (add-hook 'after-make-frame-functions #'my/setup-fonts)
+
+;; 默认字体：10pt
+(add-to-list 'default-frame-alist
+             '(font . "DejaVu Sans Mono-10"))
+;; 中日韩字体
+(dolist (script '(han kana cjk-misc bopomofo))
+  (set-fontset-font t script
+                    (font-spec :family "Sarasa Fixed SC")))
+
 
 ;; 文件编码
 (prefer-coding-system 'utf-8)
