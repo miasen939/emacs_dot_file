@@ -39,7 +39,16 @@
   (set-fontset-font t script
                     (font-spec :family "Sarasa Fixed SC")))
 
+(defun my/setup-cjk-fonts (&optional frame)
+  (with-selected-frame (or frame (selected-frame))
+    (when (display-graphic-p)
+      (dolist (charset '(han kana cjk-misc bopomofo))
+        (set-fontset-font
+         t charset
+         (font-spec :family "Sarasa Fixed SC"))))))
 
+(add-hook 'after-make-frame-functions #'my/setup-cjk-fonts)
+(my/setup-cjk-fonts)
 ;; 文件编码
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
@@ -51,7 +60,7 @@
 (setq-default indent-tabs-mode nil)       ;; 使用空格而非 Tab
 (setq require-final-newline t)            ;; 文件末尾自动添加换行
 (setq truncate-lines nil)                 ;; 自动换行
-;;  (global-hl-line-mode 1)                   ;; 高亮当前行
+(global-hl-line-mode 1)                   ;; 高亮当前行
 (show-paren-mode 1)                       ;; 显示匹配括号
 (electric-pair-mode 1)                    ;; 自动配对括号
 (delete-selection-mode 1)                 ;; 选中文本后输入会替换

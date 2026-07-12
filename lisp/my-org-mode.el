@@ -139,7 +139,6 @@
     (set-face-attribute 'org-level-5 nil :height 1.0)
     (set-face-attribute 'org-level-6 nil :height 1.0))
 
-  (org-download-enable)
 
   ;; org-mode conifg ends here
   )
@@ -419,8 +418,12 @@
             ("C-c M-y"   . org-download-yank))       ; 另一种常用快捷键
 :config
 ;; 核心配置写在这里
-(setq org-download-method 'directory
-      org-download-image-dir "./static/img")
+;; (setq-default org-download-image-dir "~/Documents/roam-note/static/")
+(setq-default org-download-image-dir "./static/")
+
+;; (setq org-download-method 'directory
+;;       org-download-image-dir "./static/")
+
 (setq org-download-link-format "[[file:%s]]\n"
       org-download-link-format-function
       (lambda (link)
@@ -433,7 +436,7 @@
 ;; (when (eq system-type 'darwin)   ; macOS
 ;;   (setq org-download-screenshot-method "screencapture -i %s"))
 (setq org-image-actual-width '(600))
-(setq org-download-heading-lvl nil)
+;;(setq org-download-heading-lvl nil)
  (advice-add 'org-download-clipboard :around
               (lambda (orig-fn &rest args)
                 (cl-letf (((symbol-function 'org-id-get-create)
@@ -597,13 +600,10 @@
         '(("d" "default" entry "* %<%I:%M %p>: %?"
            :if-new (file+head "%<%Y-%m-%d>.org" "
 :PROPERTIES:
-:MOOD: 
-:ENERGY: 
-:FOCUS:
+:MOOD/ENERGY/FOCUS: 
 :END:\n
 #+title: %<%Y-%m-%d>\n
-* Reflectly
-- 距离修考还有 ::  天
+* =修考加油！！！=
 - 天气/地域/住处/节日/纪念日 :: 
 - 昨天/今天/明天 总结/反思/计划 :: 
 - 娱乐感恩好事/人际沟通 :: 
@@ -628,7 +628,6 @@
   :vc (:url "https://github.com/connormclaud/emacs_org_roam_calendar")
   :commands org-roam-calendar-open
   :bind ("C-c n o" . org-roam-calendar-open))
-
 
 
 (use-package consult-org-roam
@@ -965,6 +964,10 @@
   :custom
   ;; 使用类似 Org Agenda 的按键
   (calfw-org-overwrite-default-keybinding t)
+  )
+(use-package org-timeblock
+  :config
+  (setq org-timeblock-span 3)
   )
 
 (provide 'my-org-mode)

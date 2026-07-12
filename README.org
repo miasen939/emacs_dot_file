@@ -14,6 +14,10 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 - [[file:lisp/my-prog-mode.el][my-prog-mode]]
 - [[file:lisp/my-org-mode.el::;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-][my-org-mode]]
 - [[file:lisp/my-living-in-emacs.el::;;; my-living-in-emacs.el --- misc emacs pacakages -*- no-byte-compile: t; lexical-binding: t; -*-][my-living-in-emacs.el]]
+
+
+    
+
 ** kanata
 [[file:kanata.kbd]]
 实现home row mods
