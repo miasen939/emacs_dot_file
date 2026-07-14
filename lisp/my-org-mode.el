@@ -270,10 +270,10 @@
   (org-modern-timestamp nil)
   (org-modern-tag nil)
   (org-modern-priority nil)
-  (org-modern-star nil)
+  (org-modern-star t)
   (org-modern-checkbox nil)
   (org-modern-todo nil)
-  (org-modern-list nil)
+  ;; (org-modern-list nil)
   )
 
 

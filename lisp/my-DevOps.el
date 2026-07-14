@@ -48,6 +48,7 @@
   :bind (
          ("C-c t" . ghostel)
          :map ghostel-semi-char-mode-map
+         
          ("C-s"  . consult-line)
          ("C-k"  . my/ghostel-send-C-k-and-kill)
          ;; ;; I'm used to go up/down the shell history with M-n/p from eshell

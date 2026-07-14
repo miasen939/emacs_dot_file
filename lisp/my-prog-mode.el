@@ -3,7 +3,7 @@
 ;;; Commentary:
 
 ;; 编程相关的配置，日后需要继续拆分
-;;
+;; nano test more
 
 ;;; Code:
 ;; 类似包：iedit
@@ -278,7 +278,7 @@ The DWIM behaviour of this command is as follows:
 
 
     (meow-leader-define-key
-     ;; 在旧版 Meow 中，通过 SPC j / SPC k 调用原来的按键
+     ;; 在 Motion 中，通过 SPC j / SPC k 调用原来的按键
      '("j" . "H-j")
      '("k" . "H-k")
 
@@ -359,27 +359,135 @@ The DWIM behaviour of this command is as follows:
      '("<escape>" . ignore)
 
      ;; 自定义按键
-     '("/" . avy-goto-line)             ;这个可以用来当hydra
+     ;; '("/" . isearch-forward)             ;这个可以用来当hydra
      '("\\" . my/meow-insert-and-input-method-on)
      '("<" . beginning-of-buffer)
      '(">" . end-of-buffer)
      '("Q" . next-buffer)
      '("Z" . undo-redo)
+     '(":" . execute-extended-command)
      ;; '("C" . undo-redo)
      ;; '("V" . undo-redo)
      ;; '("M" . meow-start-kmacro-or-insert-counter)
      ;; '("F" . meow-start-kmacro-or-insert-counter meow-start-kmacro-or-insert-counter)
+     '("N" . meow-end-of-thing)
+     '("P" . meow-beginning-of-thing)
+     ;; '("S" . org-emphasize)
+     '("S" . my/meow-surround)
+     '("/" . my/meow-surround)
+     
      ))
   (meow-setup)
   (meow-global-mode 1)
   (setq meow-use-clipboard t)
   )
+(use-package key-chord
+  :demand t
+  :config
+  (key-chord-mode 1)
+  (key-chord-define meow-insert-state-keymap "kj" [escape])
+  )
+(use-package evil-surround
+  :demand t
+)
+(defvar my/surround-aliases
+  '((?b . ?*)                    ; bold
+    (?i . ?/)                    ; italic
+    (?u . ?_)                    ; underline
+    (?s . ?+)                    ; strike-through
+    (?c . ?~)                    ; code
+    (?v . ?=)                    ; verbatim
+    (?m . ?$))                   ; math
+  "Aliases used by `my/meow-surround'.")
+(defun my/meow-surround (input-char)
+  "Surround the active region or symbol at point.
+
+INPUT-CHAR is translated according to `my/surround-aliases',
+then handled using evil-surround's delimiter rules."
+  (interactive
+   (list
+    (read-char
+     "Surround: [b]old [i]talic [u]nderline [s]trike [c]ode [v]erbatim [m]ath: ")))
+
+  (let* ((char (or (alist-get input-char my/surround-aliases)
+                   input-char))
+         (bounds
+          (cond
+           ((use-region-p)
+            (cons (region-beginning) (region-end)))
+           ((bounds-of-thing-at-point 'symbol))
+           (t nil))))
+
+    (if bounds
+        (evil-surround-region
+         (car bounds)
+         (cdr bounds)
+         'exclusive
+         char)
+
+      ;; 没有选区和 symbol：插入一对空标记。
+      (let* ((pair (evil-surround-pair char))
+             (left (car pair))
+             (right (cdr pair)))
+        (insert left right)
+        (backward-char (length right))))
+
+    (deactivate-mark)))
+;; (defun my/meow-surround (char)
+;;   "Surround Meow selection or symbol at point using evil-surround.
+;; 
+;; If neither exists, insert an empty delimiter pair and put point
+;; between them."
+;;   (interactive
+;;    (list (read-char "Surround with: ")))
+;; 
+;;   (let ((bounds
+;;          (cond
+;;           ;; 优先使用 Meow/Emacs 当前选区
+;;           ((use-region-p)
+;;            (cons (region-beginning) (region-end)))
+;; 
+;;           ;; 没有选区时，使用光标处 symbol
+;;           ((bounds-of-thing-at-point 'symbol))
+;; 
+;;           ;; 两者都没有
+;;           (t nil))))
+;; 
+;;     (if bounds
+;;         ;; 复用 evil-surround 的实际包裹功能
+;;         (evil-surround-region
+;;          (car bounds)
+;;          (cdr bounds)
+;;          'exclusive
+;;          char)
+;; 
+;;       ;; 没有可包裹内容时，插入空的一对
+;;       (let* ((pair (evil-surround-pair char))
+;;              (left (car pair))
+;;              (right (cdr pair)))
+;;         (insert left right)
+;;         (backward-char (length right))))
+;; 
+;;     ;; 清除 Meow 选区
+;;     (when (use-region-p)
+;;       (deactivate-mark))))
+
+(use-package wrap-region
+  :config
+  (wrap-region-add-wrappers
+   '(("$" "$")
+     ("{-" "-}" "#")
+     ("/" "/" nil ruby-mode)
+     ("/* " " */" "#" (java-mode javascript-mode css-mode))
+     ("`" "`" nil (markdown-mode ruby-mode))))
+)
 ;; 这 meow还得再改
 ;; 我可能需要数字 + hljk来移动
 ;; 另一方面是，我可能需要 yy，虽然xy也能执行但是yy按起来更顺手，同理dd d3d
 ;; motion mode 想法很好，dired和magit都有jk相关的快捷键，怎么把这两个快捷键救回来？
 ;; meow只给了一个最小可用的配置，很多地方都可以自定义这些我也会慢慢调整
 ;; keypad很好用，但是还是有点小问题
+;; 用 general el 来创建leader key
 (use-package goto-chg
   :bind
   (("C-(" . goto-last-change)
@@ -405,6 +513,7 @@ The DWIM behaviour of this command is as follows:
 (setq repeat-exit-key "<escape>")
 
 ;;(keymap-set global-map "C-z" #'repeat)
+
 
 
 (provide 'my-prog-mode)

@@ -15,9 +15,7 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 - [[file:lisp/my-org-mode.el::;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-][my-org-mode]]
 - [[file:lisp/my-living-in-emacs.el::;;; my-living-in-emacs.el --- misc emacs pacakages -*- no-byte-compile: t; lexical-binding: t; -*-][my-living-in-emacs.el]]
 
-
     
-
 ** kanata
 [[file:kanata.kbd]]
 实现home row mods
@@ -26,7 +24,7 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 - sl meta
 - dk ctrl 
 - fj shift
-- gh c+m
+- gh C-M-
 - capslock :: hold as ctrl, tap as esc
 - lctrl :: capslock
 使用fj 当做shift的话，最好是保留键盘上的大写锁，这样输入如 HTTP 时，就会方便很多  
@@ -37,9 +35,6 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 - projectile的优化
 - latex和 文献管理
 - ai？
-
-
-
 * 住在emacs里
 
 - +IDE： =evil-mode= 。+
@@ -90,3 +85,7 @@ bind-key
 
 * 图片
 [[file:图片/_20260601_161104screenshot.png]]
+
+* 想法
+- [ ] meow-surround for org mode
+- [ ] 
