@@ -38,8 +38,6 @@
   ;; 允许在任意位置嵌套展开
   (setq yas-triggers-in-field t))
 
-
-;; 2. 安装官方 snippet 集合（强烈推荐）
 (use-package yasnippet-snippets
   :ensure t
   :after yasnippet
@@ -47,9 +45,6 @@
   (yas-reload-all)
   )
 
-
-
-;; 4. 与 consult / vertico 集成（可选，用于搜索 snippet）
 (use-package consult-yasnippet
   :after (consult yasnippet)
   :bind (("C-c y" . consult-yasnippet)
@@ -136,7 +131,6 @@
          ("C-c p l" . cape-line))
   )
 
-;; Vertico - 垂直补全界面
 (use-package vertico
   :demand t
   :bind (:map vertico-map
@@ -148,9 +142,6 @@
   :init
   (vertico-mode))
 
-
-
-;; Orderless - 灵活的匹配样式
 (use-package orderless
   :demand t
   :custom
@@ -158,7 +149,6 @@
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
 
-;; Marginalia - 补全注释
 (use-package marginalia
   :demand t
   :bind (:map minibuffer-local-map
@@ -166,7 +156,6 @@
   :init
   (marginalia-mode))
 
-;; Consult - 增强的搜索和导航
 (use-package consult
   :bind (;; C-c 前缀
          ("C-c h" . consult-history)
@@ -208,10 +197,6 @@
   (setq consult-async-min-input 2)
   (setq consult-narrow-key "<"))
 
-(use-package amx
-  :defer 0.2
-  :config
-  (amx-mode 1))
 (provide 'my-autocomplete)
 
 ;;; my-autocomplete.el ends here

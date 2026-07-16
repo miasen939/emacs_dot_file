@@ -6,6 +6,8 @@
 ;; nano test more
 
 ;;; Code:
+;; (keymap-global-set "C-s" 'isearch-forward)
+
 ;; 类似包：iedit
 (use-package multiple-cursors
   :ensure t
@@ -124,7 +126,6 @@
 (use-package flash
   :bind ("C-." . flash-jump)
   )
-;;; avy 如果能支持中文（我的微软双拼）和日文就好了
 
 (use-package expreg
   :bind( ("C-=" . expreg-expand)
@@ -265,6 +266,7 @@ The DWIM behaviour of this command is as follows:
   (meow-insert)
   (unless current-input-method
     (toggle-input-method)))
+
 (use-package meow
   :demand t
   :config
@@ -375,18 +377,20 @@ The DWIM behaviour of this command is as follows:
      ;; '("S" . org-emphasize)
      '("S" . my/meow-surround)
      '("/" . my/meow-surround)
-     
      ))
+  
   (meow-setup)
   (meow-global-mode 1)
   (setq meow-use-clipboard t)
-  )
-(use-package key-chord
-  :demand t
-  :config
-  (key-chord-mode 1)
-  (key-chord-define meow-insert-state-keymap "kj" [escape])
-  )
+   )
+
+;; (use-package key-chord
+;;   :demand t
+;;   :config
+;;   (key-chord-mode 1)
+;;   (key-chord-define meow-insert-state-keymap "kj" [escape])
+;;     )
+  
 (use-package evil-surround
   :demand t
 )

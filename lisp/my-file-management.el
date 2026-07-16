@@ -1,11 +1,14 @@
 ;;; my-file-management.el --- dired and more -*- no-byte-compile: t; lexical-binding: t; -*-
 
-  ;;; Commentary:
+;;; Commentary:
 
 ;; 
 ;;
 
 ;;; Code:
+
+(keymap-global-set "C-x C-r" 'recentf)
+
 (use-package nerd-icons-dired
   :hook
   (dired-mode . nerd-icons-dired-mode))

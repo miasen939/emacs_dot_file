@@ -18,24 +18,19 @@
   (load-theme 'doom-vibrant t)
                                         ;  (load-theme 'doom-nord t)
                                         ;  (load-theme 'doom-solarized-light t)
-
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
   ;; Enable custom neotree theme (nerd-icons must be installed!)
-  (doom-themes-neotree-config)
+  ;; (doom-themes-neotree-config)
   ;; or for treemacs users
-  (doom-themes-treemacs-config)
+  ;; (doom-themes-treemacs-config)
   ;; Corrects (and improves) org-mode's native fontification.
-
   (doom-themes-org-config)
   )
-
-
-
-
 (use-package doom-modeline
   ;;:init (doom-modeline-mode 1)
-  :hook (after-init . doom-modeline-mode))
+  :hook (after-init . doom-modeline-mode)
+  )
 
 
 
@@ -83,14 +78,14 @@
 
 
 
-(use-package beacon
-  :defer 0.5
-  :config
-  (beacon-mode 1)
-  ;; 可选配置
-  (setq beacon-color "#4a5060")
-  (setq beacon-size 20)
-  (setq beacon-blink-duration 0.3))
+;; (use-package beacon
+;;   :defer 0.5
+;;   :config
+;;   (beacon-mode 1)
+;;   ;; 可选配置
+;;   (setq beacon-color "#4a5060")
+;;   (setq beacon-size 20)
+;;   (setq beacon-blink-duration 0.3))
 
 (use-package dashboard
   :demand t
@@ -125,7 +120,8 @@
 (add-to-list 'default-frame-alist '(alpha-background . 85));; 只让背景透明（文字和光标等保持不透明）
 
 
+(use-package keycast)
+
 (provide 'my-emacs-ricing)
 
 ;;; my-emacs-ricing.el ends here
-

@@ -35,6 +35,45 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 - projectile的优化
 - latex和 文献管理
 - ai？
+* 待办
+** TODO meow-surround for org mode
+:LOGBOOK:
+- State "TODO"       from "DONE"       [2026-07-15 水 16:36]
+- State "DONE"       from              [2026-07-14 火 16:54]
+:END:
+** NEXT emcs latex/pdf 论文
+:LOGBOOK:
+- State "NEXT"       from              [2026-07-16 木 14:31]
+:END:
+** TODO emacs-everywhere
+:LOGBOOK:
+- State "TODO"       from              [2026-07-16 木 14:29]
+:END:
+** TODO capture everywhere
+:LOGBOOK:
+- State "TODO"       from              [2026-07-16 木 14:30]
+:END:
+** NEXT more capture template
+:LOGBOOK:
+- State "NEXT"       from              [2026-07-16 木 14:30]
+:END:
+** TODO emacs dired/dirvish
+:LOGBOOK:
+- State "TODO"       from              [2026-07-16 木 14:34]
+:END:
+** TODO calc
+** SOMEDAY 用二分法来进行 vertical move
+:LOGBOOK:
+- State "SOMEDAY"    from              [2026-07-14 火 18:30]
+:END:
+
+** SOMEDAY elpha
+:LOGBOOK:
+- State "SOMEDAY"    from              [2026-07-16 木 14:29]
+:END:
+
+** SOMEDAY general.el
+
 * 住在emacs里
 
 - +IDE： =evil-mode= 。+
@@ -79,13 +118,12 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 
 注意如果换了开发环境要记得改一下镜像
 
-* 待办
-包管理 elpua
-bind-key
+
+
 
 * 图片
 [[file:图片/_20260601_161104screenshot.png]]
 
 * 想法
-- [ ] meow-surround for org mode
 - [ ] 
+- [ ] citre 
