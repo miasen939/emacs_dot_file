@@ -1,6 +1,6 @@
 ;;; post-init.el --- Emacs Configuration -*- no-byte-compile: t; lexical-binding: t; -*-
-
-
+;;; commentary:
+;;; code:
 
  ;; (use-package benchmark-init
  ;; :ensure t

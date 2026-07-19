@@ -1,5 +1,5 @@
 #+title: emacs 配置文件
-fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
+fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]  这个的readme有大量适合emacs新手看的教程
 
 试用过purcell/prelude/doomemacs,打算慢慢从上面偷配置
 
@@ -12,7 +12,7 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 - [[file:post-init.el][post-init.el]]
 ** my-lisp
 - [[file:lisp/my-prog-mode.el][my-prog-mode]]
-- [[file:lisp/my-org-mode.el::;;; my-org-mode.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-][my-org-mode]]
+- [[file:lisp/my-org-mode.el::;;; my-org-modej.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-][my-org-mode]]
 - [[file:lisp/my-living-in-emacs.el::;;; my-living-in-emacs.el --- misc emacs pacakages -*- no-byte-compile: t; lexical-binding: t; -*-][my-living-in-emacs.el]]
 
     
@@ -20,11 +20,11 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 [[file:kanata.kbd]]
 实现home row mods
 目前的配置
-- a; super
-- sl meta
-- dk ctrl 
-- fj shift
-- gh C-M-
+- a; :: super
+- sl :: meta
+- dk :: ctrl 
+- fj :: shift
+- gh :: C-M-
 - capslock :: hold as ctrl, tap as esc
 - lctrl :: capslock
 使用fj 当做shift的话，最好是保留键盘上的大写锁，这样输入如 HTTP 时，就会方便很多  
@@ -74,6 +74,26 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 
 ** SOMEDAY general.el
 
+** TODO embark
+:LOGBOOK:
+- State "TODO"       from "SOMEDAY"    [2026-07-19 日 07:28]
+:END:
+
+** DONE 把C-\ 和 \ 的映射兑换，实现快速切换输入法
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2026-07-18 土 21:18]
+- State "TODO"       from "SOMEDAY"    [2026-07-18 土 10:21]
+:END:
+
+* emacs killer feature
+** org-mode
+
+** magit
+
+** dired
+
+** elfeed
+
 * 住在emacs里
 
 - +IDE： =evil-mode= 。+
@@ -121,7 +141,7 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]
 
 
 
-* 图片
+1* 图片
 [[file:图片/_20260601_161104screenshot.png]]
 
 * 想法

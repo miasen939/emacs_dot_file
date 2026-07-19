@@ -30,6 +30,15 @@
   (add-hook 'post-command-hook #'my/update-cursor-by-ime)
   )
 
+;; 把切换输入法换位单次按反斜杠，降低切换输入法麻烦
+(keymap-global-set "\\" 'toggle-input-method)
+(keymap-global-set "、" 'toggle-input-method)
+
+(defun my-insert-backslash (n)
+  "插入 N 个反斜杠."
+  (interactive "p")
+  (self-insert-command n ?\\))
+(keymap-global-set "C-\\" #'my-insert-backslash)
 
 ;; 中文英文之间插入空格
 (use-package pangu-spacing
@@ -56,7 +65,7 @@
 
 
 (defun my/deactivate-all-input-methods ()
-  "关闭所有输入法，包括 skk 和标准输入法"
+  "关闭所有输入法，包括 skk 和标准输入法."
   (when (and (boundp 'skk-mode) skk-mode)
     (skk-mode -1))
   (when current-input-method

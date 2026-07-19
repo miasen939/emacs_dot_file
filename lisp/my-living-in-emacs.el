@@ -533,6 +533,9 @@
 ;; (use-package notmuch)
 ;; (use-package mu4e)
 
+(setq browse-url-browser-function #'browse-url-firefox
+        browse-url-firefox-program "firefox")
+
 (use-package elfeed
   :ensure t
   :commands elfeed
@@ -556,8 +559,7 @@
 
   :config
   
-  (setq browse-url-browser-function #'browse-url-firefox
-        browse-url-firefox-program "firefox")
+  
   (setq elfeed-feeds
         '(;; 每个网址后面可以添加标签
           ("https://sachachua.com/blog/category/emacs-news/feed/"

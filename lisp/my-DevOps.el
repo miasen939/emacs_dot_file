@@ -17,36 +17,36 @@
   )
 
 
-;; (use-package vterm
-;;   :bind
-;;   ;; ("C-c t" . vterm)
-;;   ;; "C-u C-c t" vterm-new-window
-;;   :config
-;;   ;; (add-hook 'vterm-mode-hook
-;;   ;;           (lambda ()
-;;   ;;             (setq-local global-hl-line-mode nil)))
-;;                                         ;解决vterm闪烁
-;;   
-;; 
-;;   :init
-;;   
-;;   (setq vterm-timer-delay 0.05)  ; Faster vterm
-;;   (setq vterm-kill-buffer-on-exit t)
-;;   (setq vterm-max-scrollback 5000)
-;;   (defun my-vterm--setup ()
-;; 
-;;     ;; Inhibit early horizontal scrolling
-;;     (setq-local hscroll-margin 0)
-;; 
-;;     ;; Suppress prompts for terminating active processes when closing vterm
-;;     (setq-local confirm-kill-processes nil))
-;;   (add-hook 'vterm-mode-hook #'my-vterm--setup)
-;;   )
+(use-package vterm
+  :bind
+  ("C-c t" . vterm)
+  ;; "C-u C-c t" vterm-new-window
+  :config
+  (add-hook 'vterm-mode-hook
+            (lambda ()
+              (setq-local global-hl-line-mode nil)))
+                                        ;解决vterm闪烁
+  
+
+  :init
+  
+  (setq vterm-timer-delay 0.05)  ; Faster vterm
+  (setq vterm-kill-buffer-on-exit t)
+  (setq vterm-max-scrollback 5000)
+  (defun my-vterm--setup ()
+
+    ;; Inhibit early horizontal scrolling
+    (setq-local hscroll-margin 0)
+
+    ;; Suppress prompts for terminating active processes when closing vterm
+    (setq-local confirm-kill-processes nil))
+  (add-hook 'vterm-mode-hook #'my-vterm--setup)
+  )
 
 ;; (use-package eat)
 (use-package ghostel
   :bind (
-         ("C-c t" . ghostel)
+         ;; ("C-c t" . ghostel)
          :map ghostel-semi-char-mode-map
          
          ("C-s"  . consult-line)
@@ -68,10 +68,23 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
 
   (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
   (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
-  (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer)))
+  (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer))
+
+  ;; (setq ghostel--pixel-anchor-supported-p nil)
+  ;; (with-eval-after-load 'ghostel
+  ;; (defun my/ghostel-disable-pixel-anchor (&rest _)
+  ;;   nil)
+  ;; 
+  ;; (advice-add 'ghostel--pixel-anchor
+  ;;             :override
+  ;;             #'my/ghostel-disable-pixel-anchor))
+  )
+
 
 (use-package magit
-    :bind ("C-x g" . magit-status)
+  :bind
+  ("C-x g" . magit-status)
+  ("C-c g" . magit-status)
     ;; :custom
     ;; (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
     )

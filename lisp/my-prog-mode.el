@@ -246,7 +246,7 @@ The DWIM behaviour of this command is as follows:
 
 
 
-;;; the meow
+;;; ===the meow modeling scheme===
 
 (defun my/disable-emacs-input-method ()
   "Disable Emacs built-in input method if active."
@@ -270,6 +270,31 @@ The DWIM behaviour of this command is as follows:
 (use-package meow
   :demand t
   :config
+
+  (setq meow-keypad-ctrl-meta-prefix ?G)
+  (setq meow-keypad-meta-prefix ?M)
+  (setq meow-mode-state-list
+        '((org-mode . normal)
+
+          (erc-mode . insert)
+          (vterm-mode . insert)
+
+          (dired-mode . motion)
+          (elfeed-search-mode . motion)
+          (elfeed-show-mode . motion)
+          (pdf-view-mode . motion)
+          (calibredb-search-mode . motion)
+          (dirvish-mode . motion)
+          (messages-buffer-mode . motion)
+          (help-mode . motion)
+          (info-mode . motion)
+          (occur-mode . motion)
+          (pass-mode . motion)
+          (grep-mode . motion)
+          (compilation-mode . motion)
+          (messages-buffer-mode . motion)
+          (special-mode . motion)))
+  
   (defun meow-setup ()
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
     ;; 旧版 Meow 使用这个函数名
@@ -285,6 +310,19 @@ The DWIM behaviour of this command is as follows:
      '("k" . "H-k")
 
      ;; SPC 0-9 作为数字参数
+     ;; '("1" . meow-digit-argument)
+     ;; '("2" . meow-digit-argument)
+     ;; '("3" . meow-digit-argument)
+     ;; '("4" . meow-digit-argument)
+     ;; '("5" . meow-digit-argument)
+     ;; '("6" . meow-digit-argument)
+     ;; '("7" . meow-digit-argument)
+     ;; '("8" . meow-digit-argument)
+     ;; '("9" . meow-digit-argument)
+     ;; '("0" . meow-digit-argument)
+     )
+
+    (meow-normal-define-key
      '("1" . meow-digit-argument)
      '("2" . meow-digit-argument)
      '("3" . meow-digit-argument)
@@ -295,19 +333,17 @@ The DWIM behaviour of this command is as follows:
      '("8" . meow-digit-argument)
      '("9" . meow-digit-argument)
      '("0" . meow-digit-argument)
-     )
-
-    (meow-normal-define-key
-     '("0" . meow-expand-0)
-     '("9" . meow-expand-9)
-     '("8" . meow-expand-8)
-     '("7" . meow-expand-7)
-     '("6" . meow-expand-6)
-     '("5" . meow-expand-5)
-     '("4" . meow-expand-4)
-     '("3" . meow-expand-3)
-     '("2" . meow-expand-2)
-     '("1" . meow-expand-1)
+     
+     ;; '("0" . meow-expand-0)
+     ;; '("9" . meow-expand-9)
+     ;; '("8" . meow-expand-8)
+     ;; '("7" . meow-expand-7)
+     ;; '("6" . meow-expand-6)
+     ;; '("5" . meow-expand-5)
+     ;; '("4" . meow-expand-4)
+     ;; '("3" . meow-expand-3)
+     ;; '("2" . meow-expand-2)
+     ;; '("1" . meow-expand-1)
      '("-" . negative-argument)
      '(";" . meow-reverse)
      '("," . meow-inner-of-thing)
@@ -348,7 +384,7 @@ The DWIM behaviour of this command is as follows:
      '("s" . meow-kill)
      '("t" . meow-till)
      '("u" . meow-undo)
-     '("U" . meow-undo-in-selection)
+     ;; '("U" . meow-undo-in-selection)
      '("v" . meow-visit)
      '("w" . meow-mark-word)
      '("W" . meow-mark-symbol)
@@ -361,29 +397,39 @@ The DWIM behaviour of this command is as follows:
      '("<escape>" . ignore)
 
      ;; 自定义按键
-     ;; '("/" . isearch-forward)             ;这个可以用来当hydra
      '("\\" . my/meow-insert-and-input-method-on)
      '("<" . beginning-of-buffer)
      '(">" . end-of-buffer)
      '("Q" . next-buffer)
-     '("Z" . undo-redo)
+     ;; '("Z" . undo-redo)
+     '("U" . undo-redo)
      '(":" . execute-extended-command)
      ;; '("C" . undo-redo)
      ;; '("V" . undo-redo)
      ;; '("M" . meow-start-kmacro-or-insert-counter)
      ;; '("F" . meow-start-kmacro-or-insert-counter meow-start-kmacro-or-insert-counter)
-     '("N" . meow-end-of-thing)
-     '("P" . meow-beginning-of-thing)
+     ;; '("N" . meow-end-of-thing)
+     ;; '("P" . meow-beginning-of-thing)
      ;; '("S" . org-emphasize)
      '("S" . my/meow-surround)
      '("/" . my/meow-surround)
+     '("?" . helpful-at-point)
      ))
   
   (meow-setup)
   (meow-global-mode 1)
-  (setq meow-use-clipboard t)
+  (setq -use-clipboard t)
+
+  (setq meow-expand-hint-remove-delay 0)
+
+  (with-eval-after-load 'meow
+  (setq meow-cursor-type-insert 'box
+        meow-cursor-type-normal '(hbar . 4)
+        ;; meow-cursor-type-normal 'hollow
+        ))
    )
 
+  
 ;; (use-package key-chord
 ;;   :demand t
 ;;   :config
@@ -437,6 +483,10 @@ then handled using evil-surround's delimiter rules."
         (backward-char (length right))))
 
     (deactivate-mark)))
+
+
+;;; ===meow ends here===
+
 ;; (defun my/meow-surround (char)
 ;;   "Surround Meow selection or symbol at point using evil-surround.
 ;; 
@@ -520,6 +570,32 @@ then handled using evil-surround's delimiter rules."
 
 
 
+;;; ===the helix scheme===
+
+;; Dependencies
+;; (use-package dash :ensure t)
+;; (use-package pcre2el :ensure t)
+;; (use-package ultra-scroll :ensure t)
+;; 
+;; (use-package hel
+;;   :vc (:url "https://github.com/anuvyklack/hel.git" :rev "main")
+;;   custom (inhibit-startup-screen t)
+;;   :demand t
+;;   :config (hel-mode))
+;; 
+;; 
+;; (use-package hel-leader
+;;   :vc (:url "https://github.com/anuvyklack/hel-leader.git" :rev "main")
+;;   :demand t
+;;   )
+;; (use-package hel-vterm
+;;   :vc (:url "https://github.com/anuvyklack/hel-vterm.git" :rev "main")
+;;   :after vterm)
+
+;;; ===hell ends here===
+
+
 (provide 'my-prog-mode)
 
 ;;; my-prog-mode.el ends here
+
