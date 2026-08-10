@@ -36,7 +36,8 @@
 (use-package quick-sdcv
   :ensure t
   :bind (("C-c D" . quick-sdcv-search-at-point)
-         ("C-c d" . quick-sdcv-search-input))
+         ("C-c d" . quick-sdcv-search-input)
+         )
   
   :custom
   (quick-sdcv-dictionary-data-dir "~/Ingrediant/dictionary/")
@@ -72,7 +73,7 @@
 
   :init
   ;; 快速启动 mu4e
-  (global-set-key (kbd "C-c m") #'mu4e)
+  ;; (global-set-key (kbd "C-c m") #'mu4e)
 
   :config
   ;; 基本身份
@@ -210,130 +211,130 @@
 ;; listen
 
 
-(use-package listen
-  :ensure t
-
-  :commands
-  (listen
-   listen-menu
-   listen-play
-   listen-pause
-   listen-next
-   listen-seek
-   listen-volume
-   listen-quit
-   listen-status
-   listen-library
-   listen-library-from-playlist-file
-   listen-queue
-   listen-queue-list
-   listen-queue-new
-   listen-queue-play
-   listen-queue-add-files
-   listen-queue-add-from-playlist-file
-   listen-queue-shuffle
-   listen-queue-deduplicate
-   listen-queue-goto-current)
-
-  :bind
-  (
-   ("C-c e" . listen)
-   ;; 主菜单
-   ;; ("C-c l l" . listen)
-   ;; 
-   ;; ;; 播放控制
-   ;; ("C-c l SPC" . listen-pause)
-   ;; ("C-c l n"   . listen-next)
-   ;; ("C-c l s"   . listen-seek)
-   ;; ("C-c l v"   . listen-volume)
-   ;; ("C-c l q"   . listen-quit)
-   ;; 
-   ;; ;; 文件、音乐库和队列
-   ;; ("C-c l f"   . listen-play)
-   ;; ("C-c l a"   . listen-queue-add-files)
-   ;; ("C-c l b"   . listen-library)
-   ;; ("C-c l L"   . listen-queue-list)
-   ;; ("C-c l Q"   . listen-queue)
-   ;; ("C-c l i"   . listen-status)
-   )
-
-  :init
-  ;; ============================================================
-  ;; 音乐目录
-  ;; ============================================================
-
-  (setq listen-directory
-        (expand-file-name "~/Music/"))
-
-  ;; ============================================================
-  ;; 播放器
-  ;; ============================================================
-
-  ;; 明确使用 MPV。
-  ;; 如果不设置，Listen 会自动检测，优先选择 MPV。
-  (setq listen-backend
-        #'make-listen-player-mpv)
-
-  ;; MPV 启动时的默认音量
-  (setq listen-mpv-volume 50)
-
-  ;; ============================================================
-  ;; 队列重复方式
-  ;; ============================================================
-
-  ;; nil      播完后停止
-  ;; 'queue   循环播放整个队列
-  ;; 'shuffle 播完后打乱队列并继续播放
-  (setq listen-queue-repeat-mode nil)
-
-  ;; ============================================================
-  ;; Mode line
-  ;; ============================================================
-
-  ;; 标题过长时截断
-  (setq listen-lighter-title-max-length 36)
-
-  ;; 可用格式：
-  ;; %s 播放状态
-  ;; %a 艺术家
-  ;; %A 专辑
-  ;; %t 标题
-  ;; %e 已播放时间
-  ;; %r 剩余时间
-  ;; %E 附加信息
-  (setq listen-lighter-format
-        " %s %a — %t  %e %r%E ")
-
-  ;; 在 Mode line 中额外显示整个队列的剩余时长
-  (setq listen-lighter-extra-functions
-        '(listen-queue-format-remaining))
-
-  ;; ============================================================
-  ;; 元数据读取
-  ;; ============================================================
-
-  ;; ffprobe 并发进程数量。
-  ;; Listen 默认使用约一半 CPU 核心，这里限制在最多 4 个，
-  ;; 防止首次扫描大量音乐时启动过多进程。
-  (setq listen-queue-max-probe-processes
-        (min 4 (max 1 (/ (num-processors) 2))))
-
-  :config
-  ;; 确保 MPV 后端和队列功能已经加载
-  (require 'listen-mpv)
-  (require 'listen-queue)
-  (require 'listen-library)
-
-  ;; ============================================================
-  ;; Dired 集成
-  ;; ============================================================
-
-  ;; 在 Dired 中标记音乐文件，然后按 C-c l a，
-  ;; 将标记的文件加入 Listen 队列。
-  (with-eval-after-load 'dired
-    (keymap-set dired-mode-map
-                "C-c l a"
-                #'listen-queue-add-files)))
+;; (use-package listen
+;;   :ensure t
+;; 
+;;   :commands
+;;   (listen
+;;    listen-menu
+;;    listen-play
+;;    listen-pause
+;;    listen-next
+;;    listen-seek
+;;    listen-volume
+;;    listen-quit
+;;    listen-status
+;;    listen-library
+;;    listen-library-from-playlist-file
+;;    listen-queue
+;;    listen-queue-list
+;;    listen-queue-new
+;;    listen-queue-play
+;;    listen-queue-add-files
+;;    listen-queue-add-from-playlist-file
+;;    listen-queue-shuffle
+;;    listen-queue-deduplicate
+;;    listen-queue-goto-current)
+;; 
+;;   :bind
+;;   (
+;;    ("C-c e" . listen)
+;;    ;; 主菜单
+;;    ;; ("C-c l l" . listen)
+;;    ;; 
+;;    ;; ;; 播放控制
+;;    ;; ("C-c l SPC" . listen-pause)
+;;    ;; ("C-c l n"   . listen-next)
+;;    ;; ("C-c l s"   . listen-seek)
+;;    ;; ("C-c l v"   . listen-volume)
+;;    ;; ("C-c l q"   . listen-quit)
+;;    ;; 
+;;    ;; ;; 文件、音乐库和队列
+;;    ;; ("C-c l f"   . listen-play)
+;;    ;; ("C-c l a"   . listen-queue-add-files)
+;;    ;; ("C-c l b"   . listen-library)
+;;    ;; ("C-c l L"   . listen-queue-list)
+;;    ;; ("C-c l Q"   . listen-queue)
+;;    ;; ("C-c l i"   . listen-status)
+;;    )
+;; 
+;;   :init
+;;   ;; ============================================================
+;;   ;; 音乐目录
+;;   ;; ============================================================
+;; 
+;;   (setq listen-directory
+;;         (expand-file-name "~/Music/"))
+;; 
+;;   ;; ============================================================
+;;   ;; 播放器
+;;   ;; ============================================================
+;; 
+;;   ;; 明确使用 MPV。
+;;   ;; 如果不设置，Listen 会自动检测，优先选择 MPV。
+;;   (setq listen-backend
+;;         #'make-listen-player-mpv)
+;; 
+;;   ;; MPV 启动时的默认音量
+;;   (setq listen-mpv-volume 50)
+;; 
+;;   ;; ============================================================
+;;   ;; 队列重复方式
+;;   ;; ============================================================
+;; 
+;;   ;; nil      播完后停止
+;;   ;; 'queue   循环播放整个队列
+;;   ;; 'shuffle 播完后打乱队列并继续播放
+;;   (setq listen-queue-repeat-mode nil)
+;; 
+;;   ;; ============================================================
+;;   ;; Mode line
+;;   ;; ============================================================
+;; 
+;;   ;; 标题过长时截断
+;;   (setq listen-lighter-title-max-length 36)
+;; 
+;;   ;; 可用格式：
+;;   ;; %s 播放状态
+;;   ;; %a 艺术家
+;;   ;; %A 专辑
+;;   ;; %t 标题
+;;   ;; %e 已播放时间
+;;   ;; %r 剩余时间
+;;   ;; %E 附加信息
+;;   (setq listen-lighter-format
+;;         " %s %a — %t  %e %r%E ")
+;; 
+;;   ;; 在 Mode line 中额外显示整个队列的剩余时长
+;;   (setq listen-lighter-extra-functions
+;;         '(listen-queue-format-remaining))
+;; 
+;;   ;; ============================================================
+;;   ;; 元数据读取
+;;   ;; ============================================================
+;; 
+;;   ;; ffprobe 并发进程数量。
+;;   ;; Listen 默认使用约一半 CPU 核心，这里限制在最多 4 个，
+;;   ;; 防止首次扫描大量音乐时启动过多进程。
+;;   (setq listen-queue-max-probe-processes
+;;         (min 4 (max 1 (/ (num-processors) 2))))
+;; 
+;;   :config
+;;   ;; 确保 MPV 后端和队列功能已经加载
+;;   (require 'listen-mpv)
+;;   (require 'listen-queue)
+;;   (require 'listen-library)
+;; 
+;;   ;; ============================================================
+;;   ;; Dired 集成
+;;   ;; ============================================================
+;; 
+;;   ;; 在 Dired 中标记音乐文件，然后按 C-c l a，
+;;   ;; 将标记的文件加入 Listen 队列。
+;;   (with-eval-after-load 'dired
+;;     (keymap-set dired-mode-map
+;;                 "C-c l a"
+;;                 #'listen-queue-add-files)))
 
 
 ;; emms

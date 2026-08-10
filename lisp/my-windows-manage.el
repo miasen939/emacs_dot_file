@@ -9,7 +9,7 @@
 (use-package emacs
   :bind (("M-o" . other-window)
          ;; ("s-o" . other-frame)
-         ("C-x C-b" . previous-buffer)
+         ;; ("C-x C-b" . previous-buffer)
          )
   ;; :hook (after-make-frame-functions . (lambda (frame)
   ;;                                       (select-frame frame)
@@ -58,7 +58,7 @@
 (use-package ibuffer
   :ensure nil                  ; ibuffer 是 Emacs 内置，不需要从 MELPA 安装
   :bind
-   ;; ("C-x C-b" . ibuffer)
+   ("C-x C-b" . ibuffer)
                                         ; 覆盖默认 C-x C-b 的 list-buffers，用 ibuffer 代替
 
   :custom
@@ -69,64 +69,72 @@
   (ibuffer-mode . ibuffer-auto-mode)                ; 打开 ibuffer 时自动开启分组并实时更新
   )
 
-;; (use-package popper
-;;   :bind (("C-`"   . popper-toggle)
-;;          ("M-`"   . popper-cycle)
-;;          ("C-M-`" . popper-toggle-type))
-;;   :init
-;;     (setq popper-reference-buffers
-;;       '(;; 基础
-;;         ;; "\\*Messages\\*"                ;
-;;         "Output\\*$"
-;;         "\\*Async Shell Command\\*"
-;;         ;; "\\*Warnings\\*"
-;;         ;; "\\*Backtrace\\*"
-;;         calendar-mode
-;;         flymake-diagnostics-buffer-mode
-;;         flycheck-error-list-mode
-;;         pdf-outline-buffer-mode
-;;         ;; help-mode
-;;         ;; compilation-mode
-;; 
-;;         ;; 终端
-;;         "^\\*eshell.*\\*$" eshell-mode
-;;         "^\\*shell.*\\*$"  shell-mode
-;;         "^\\*term.*\\*$"   term-mode
-;;         ;; "^\\*vterm.*\\*$"  vterm-mode
-;; 
-;;         ;; LSP
-;;         "\\*eldoc.*\\*"    eldoc-mode
-;;         "\\*xref\\*"
-;;         "\\*Flymake diagnostics.*\\*"
-;; 
-;;         ;; Org
-;;         ;;"\\*Org Agenda\\*"
-;;         ;; "\\*Capture\\*"
-;;         ;;"\\*org-roam\\*"
-;; 
-;;         ;; 搜索
-;;         "\\*Occur\\*"      occur-mode
-;;         "\\*grep\\*"       grep-mode
-;;         "\\*ripgrep-search\\*"
-;; 
-;;         ;; Magit
-;;         ;; "\\*magit-diff.*\\*"
-;;         ;; "\\*magit-process.*\\*"
-;; 
-;;         ;; Helpful
-;;         ;; helpful-mode
-;; 
-;;         ;; 其他
-;;         "\\*Dictionary\\*"
-;;         ;; "^\\*sdcv:.*\\*$"  sdcv-mode
-;;         "\\.gpg$"
-;;         "\\*Python\\*"     inferior-python-mode))
-;;   
-;;   (popper-mode +1)
-;;   (popper-echo-mode +1))
+(use-package nerd-icons-ibuffer
+  :hook
+  (ibuffer-mode . nerd-icons-ibuffer-mode)
+  )
+
+(use-package popper
+  :bind (("C-`"   . popper-toggle)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :init
+    (setq popper-reference-buffers
+      '(;; 基础
+        ;; "\\*Messages\\*"                ;
+        "Output\\*$"
+        "\\*Async Shell Command\\*"
+        ;; "\\*Warnings\\*"
+        ;; "\\*Backtrace\\*"
+        calendar-mode
+        flymake-diagnostics-buffer-mode
+        flycheck-error-list-mode
+        pdf-outline-buffer-mode
+        ;; help-mode
+        ;; compilation-mode
+
+        ;; 终端
+        "^\\*eshell.*\\*$" eshell-mode
+        "^\\*shell.*\\*$"  shell-mode
+        "^\\*term.*\\*$"   term-mode
+        "^\\*vterm.*\\*$"  vterm-mode
+        "^\\*ghostel.*\\*$"  ghostel-mode
+
+        ;; LSP
+        "\\*eldoc.*\\*"    eldoc-mode
+        "\\*xref\\*"
+        "\\*Flymake diagnostics.*\\*"
+
+        ;; Org
+        ;;"\\*Org Agenda\\*"
+        ;; "\\*Capture\\*"
+        ;;"\\*org-roam\\*"
+
+        ;; 搜索
+        "\\*Occur\\*"      occur-mode
+        "\\*grep\\*"       grep-mode
+        "\\*ripgrep-search\\*"
+
+        ;; Magit
+        ;; "\\*magit-diff.*\\*"
+        ;; "\\*magit-process.*\\*"
+
+        ;; Helpful
+        ;; helpful-mode
+
+        ;; 其他
+        "\\*Dictionary\\*"
+        ;; "^\\*sdcv:.*\\*$"  sdcv-mode
+        "\\.gpg$"
+        "\\*Python\\*"     inferior-python-mode))
+  
+  (popper-mode +1)
+  (popper-echo-mode +1))
 
 ;; todo: 书签相关
 
+
+;; todo: minimap
 (provide 'my-windows-manage)
 
 ;;; my-windows-manage.el ends here

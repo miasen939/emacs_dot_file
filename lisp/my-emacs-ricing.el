@@ -90,7 +90,7 @@
 (use-package dashboard
   :demand t
   :custom
-  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.\n\t\t别忘了，你要考大阪大学")
+  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.\n\t")
   (dashboard-startup-banner
    (let* ((image-dir (expand-file-name "~/Pictures/icon/"))
           (images (directory-files image-dir t "\\.\\(png\\|jpg\\|jpeg\\|gif\\|webp\\)$" t)))
@@ -116,13 +116,53 @@
   )
 
 ;; 只让背景透明（文字和光标等保持不透明）
-(set-frame-parameter nil 'alpha-background 92)  ; 数字越小越透明，建议 70~92 之间
-(add-to-list 'default-frame-alist '(alpha-background . 92));; 只让背景透明（文字和光标等保持不透明）
 
 
 
+(set-fontset-font t 'unicode
+                   (font-spec :family "Symbols Nerd Font Mono")
+                   nil 'append)
 
+;; (set-fontset-font t 'unicode
+;;                    (font-spec :family "MesloLGS Nerd Font Mono" :size 28)
+;;                    nil 'append)
 (use-package keycast)
+
+
+(use-package volatile-highlights
+  :demand 1.0
+  :custom
+  ;; Animation: choose one of 'static, 'fade-in, or 'pulse
+  (vhl/animation-style 'fade-in)
+  ;; Also mark deletion points (zero-width ranges)
+  (vhl/highlight-zero-width-ranges t)
+  :config
+  (volatile-highlights-mode 1)
+  ;; Prefer customize-set-variable (or setopt on Emacs 29.1+) so :set hooks run
+  (customize-set-variable 'vhl/animation-mid-frames 4)
+  (customize-set-variable 'vhl/animation-frame-interval 0.03)
+  ;; On Emacs 29.1+ you can instead use:
+  ;; (setopt vhl/animation-mid-frames 4
+  ;;         vhl/animation-frame-interval 0.03)
+  )
+
+(use-package minimap)
+
+(set-frame-parameter nil 'alpha-background 92)              ; make current frame transparent
+(add-to-list 'default-frame-alist '(alpha-background . 92)) ; make new frames transparent
+(defun my/toggle-window-transparency ()
+  "Toggle current frame's background transparency."
+  (interactive)
+  (let* ((desired-alpha 92)
+         (current-alpha (frame-parameter nil 'alpha-background)))
+    (if (equal current-alpha desired-alpha)
+        (progn
+          (set-frame-parameter nil 'alpha-background nil)
+          (setq default-frame-alist (assq-delete-all 'alpha-background default-frame-alist)))
+      (progn
+        (set-frame-parameter nil 'alpha-background desired-alpha)
+        (add-to-list 'default-frame-alist '(alpha-background . 92))))))
+
 
 (provide 'my-emacs-ricing)
 

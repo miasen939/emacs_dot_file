@@ -14,8 +14,6 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]  这�
 - [[file:lisp/my-prog-mode.el][my-prog-mode]]
 - [[file:lisp/my-org-mode.el::;;; my-org-modej.el --- org-mode config -*- no-byte-compile: t; lexical-binding: t; -*-][my-org-mode]]
 - [[file:lisp/my-living-in-emacs.el::;;; my-living-in-emacs.el --- misc emacs pacakages -*- no-byte-compile: t; lexical-binding: t; -*-][my-living-in-emacs.el]]
-
-    
 ** kanata
 [[file:kanata.kbd]]
 实现home row mods
@@ -41,6 +39,7 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]  这�
 - State "TODO"       from "DONE"       [2026-07-15 水 16:36]
 - State "DONE"       from              [2026-07-14 火 16:54]
 :END:
+
 ** NEXT emcs latex/pdf 论文
 :LOGBOOK:
 - State "NEXT"       from              [2026-07-16 木 14:31]
@@ -84,6 +83,8 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]  这�
 - State "DONE"       from "TODO"       [2026-07-18 土 21:18]
 - State "TODO"       from "SOMEDAY"    [2026-07-18 土 10:21]
 :END:
+
+** TODO mark ring？
 
 * emacs killer feature
 ** org-mode

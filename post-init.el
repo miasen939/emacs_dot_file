@@ -32,8 +32,13 @@
 ;; (add-hook 'after-make-frame-functions #'my/setup-fonts)
 
 ;; 默认字体：10pt
+
+(set-face-attribute 'default nil
+                     :height 100      ; 改成你想要的大小,140=14pt
+                     :weight 'normal
+                     :family "DejaVu Sans mono")
 (add-to-list 'default-frame-alist
-             '(font . "DejaVu Sans Mono-10"))
+             '(font . "DejaVu Sans Mono"))
 ;; 中日韩字体
 (dolist (script '(han kana cjk-misc bopomofo))
   (set-fontset-font t script
@@ -60,13 +65,13 @@
 (setq-default indent-tabs-mode nil)       ;; 使用空格而非 Tab
 (setq require-final-newline t)            ;; 文件末尾自动添加换行
 (setq truncate-lines nil)                 ;; 自动换行
-(global-hl-line-mode 1)                   ;; 高亮当前行
+(global-hl-line-mode nil)                   ;; 高亮当前行
 (show-paren-mode 1)                       ;; 显示匹配括号
 (electric-pair-mode 1)                    ;; 自动配对括号
 (delete-selection-mode 1)                 ;; 选中文本后输入会替换
 (global-auto-revert-mode 1)               ;; 自动刷新文件
-(setq display-line-numbers-type 'relative)  ;显示相对行号
-(global-display-line-numbers-mode 1)
+;; (setq display-line-numbers-type 'relative)  ;显示相对行号
+;; (global-display-line-numbers-mode 1)
 
 (setq make-pointer-invisible t)         ;打字时隐藏鼠标
 
@@ -89,44 +94,40 @@
 (setq recentf-max-saved-items 100)
 (setq history-length 500)
 ;; 启动全屏
-(add-hook 'emacs-startup-hook #'toggle-frame-maximized)
+;; (add-hook 'emacs-startup-hook #'toggle-frame-maximized)
 
 (setq recent-keys-length 1000)          ;C-h l 保存的历史快捷键数量
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
 (require ' my-emacs-ricing)
-
-
-
 (require ' my-prog-mode)
 (require ' my-org-mode)
-
 (require ' my-autocomplete)
-
 (require ' my-ebook-reader)
-
-(require ' my-IME)
-
 (require ' my-helper)
+(require ' my-windows-manage)
+(require ' my-file-management)
+(require ' my-living-in-emacs)
+
+
 
 (require ' my-DevOps)
+(require ' my-IME)
 
-;; (require ' my-coding-config)
-;; 
-(require ' my-windows-manage)
-;; 
-(require ' my-file-management)
-
-;;(require ' my-dwim)
-
-(require ' my-living-in-emacs)
 
 ;; steal from system crafter
 (setq large-file-warning-threshold nil)
+
+
 (column-number-mode 1)
 
 (global-subword-mode 1)
+
+
+;;(require ' my-dwim)
+;; (require ' my-coding-config)
+
 
 ;; (use-package hungry-delete
 ;; :config
@@ -416,13 +417,8 @@
 ;; 
 ;;   (global-set-key (kbd "C-;") #'my-alpha-jump)
 
-(use-package anki-editor
-    :vc (:url "https://github.com/anki-editor/anki-editor" :rev :newest)
-    )
 
-
-
-  (defun copy-current-image-to-clipboard ()
+(defun copy-current-image-to-clipboard ()
   (interactive)
   (let ((file (buffer-file-name)))
     (if file
@@ -444,6 +440,7 @@
   ;;   (define-key image-mode-map (kbd "C-c w") #'copy-current-image-to-clipboard))
 
 ;; 让emacs能读写剪辑版
+
 (setq select-enable-clipboard t
       select-enable-primary t)
 

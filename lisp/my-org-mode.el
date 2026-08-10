@@ -24,9 +24,10 @@
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          :map org-mode-map
-         ("C-c <up>" . org-priority-up)
-         ("C-c <down>" . org-priority-down)
-         ("C-c C-g C-r" . org-shiftmetaright))
+         ;; ("C-c <up>" . org-priority-up)
+         ;; ("C-c <down>" . org-priority-down)
+         ;; ("C-c C-g C-r" . org-shiftmetaright)
+         )
   :hook (;;(org-mode . org-indent-mode)
          (org-mode . visual-line-mode)
          ;;(org-mode . org-link-preview-refresh)
@@ -40,7 +41,7 @@
   :config
 
         ;;; latex
-
+  
   (add-hook 'LaTeX-mode-hook 'preview-auto-mode)
 
   ;; 常用快捷键
@@ -54,6 +55,7 @@
         (plist-put org-format-latex-options :scale 2.0))
   (setq org-preview-latex-default-process 'dvisvgm)
         ;;; latex ends
+  
   (setq org-archive-location "./archive.org::") ;archive
 
   
@@ -177,31 +179,49 @@
   :ensure nil
   :bind ("C-c c" . org-capture)
   :config
-  (setq org-capture-templates
-        '(   ;; ("r" "roam-todo (链接到当前 heading)" entry
-             ;;  (file+headline "~//org-agenda/TODOs.org" "roam-todo")
-             ;;  "* TODO %?\n  来源: %(my/org-capture-link-to-current-heading)\n  %U\n"
-             ;;  :empty-lines 1)
-             
-             ("s" "SOMEDAY" entry
-              (file+headline "~/Documents/roam-note/daily/org-agenda/TODOs.org" "inbox:inbox:")
-              "* SOMEDAY %?\n  %U\n")
-             ("i" "灵感想法idea" entry
-              (file+headline "~/Documents/roam-note/daily/org-agenda/TODOs.org" "IDEA")
-              "* SOMEDAY %?\nSCHEDULED: %(format-time-string \"<%Y-%m-%d %a>\" (time-add (current-time) (days-to-time 30)))  %U\n") ;三十天后再审视之前的想法
-             ("t" "Todo" entry
-              (file+headline "~/Documents/roam-note/daily/org-agenda/TODOs.org" "inbox:inbox:")
-              "* TODO %?\nSCHEDULED: %(format-time-string \"<%Y-%m-%d %a>\" (time-add (current-time) (days-to-time 1)))\n%U\n")
-             ("q" "QUESTION" entry
-              (file+headline "~/Documents/roam-note/daily/org-agenda/TODOs.org" "inbox:inbox:")
-              "* QUESTION %?\nSCHEDULED: %(format-time-string \"<%Y-%m-%d %a>\" (time-add (current-time) (days-to-time 1)))\n%U\n")
-             ;; ("s" "Someday" entry
-             ;;  (file+headline "~/D/org-agenda/TODOs.org" "inbox:inbox:")
-             ;;  "* SOMEDAY %?\n  %U\n")
-             ;; ("n" "Next" entry
-             ;;  (file+headline "~/D/org-agenda/TODOs.org" "inbox:inbox:")
-             ;;  "* NEXT %?\n  %U\n")
-             )))
+
+  (defun my/org-capture-goto-eof ()
+    "跳到当前文件末尾。"
+    (goto-char (point-max)))
+
+(defun my/org-capture-goto-current-heading ()
+  "定位到当前 heading。"
+  (org-back-to-heading t))
+
+(setq org-capture-templates
+      '(   ;; ("r" "roam-todo (链接到当前 heading)" entry
+        ;;  (file+headline "~//org-agenda/TODOs.org" "roam-todo")
+        ;;  "* TODO %?\n  来源: %(my/org-capture-link-to-current-heading)\n  %U\n"
+        ;;  :empty-lines 1)
+        
+        ;; ("s" "SOMEDAY" entry
+        ;;  (file+headline "~/Documents/roam-note/daily/org-agenda/TODOs.org" "inbox:inbox:")
+        ;;  "* SOMEDAY %?\n  %U\n")
+        ;; ("i" "灵感想法idea" entry
+        ;;  (file+headline "~/Documents/roam-note/daily/org-agenda/TODOs.org" "IDEA")
+        ;;  "* SOMEDAY %?\nSCHEDULED: %(format-time-string \"<%Y-%m-%d %a>\" (time-add (current-time) (days-to-time 30)))  %U\n") ;三十天后再审视之前的想法
+        ("t" "Todo" entry
+         (file+headline "~/Documents/roam-note/daily/org-agenda/TODOs.org" "inbox:inbox:")
+         "* TODO %?\nSCHEDULED: %T\n")
+
+        ("e" "new heading end of file" entry
+         (function my/org-capture-goto-eof)
+         "* %?\n%U")
+
+        ("s" "new subtree" entry
+         (function my/org-capture-goto-current-heading)
+         "* %?\n%U")
+        
+        ;; ("q" "QUESTION" entry
+        ;;  (file+headline "~/Documents/roam-note/daily/org-agenda/TODOs.org" "inbox:inbox:")
+        ;;  "* QUESTION %?\nSCHEDULED: %(format-time-string \"<%Y-%m-%d %a>\" (time-add (current-time) (days-to-time 1)))\n%U\n")
+        ;; ("s" "Someday" entry
+        ;;  (file+headline "~/D/org-agenda/TODOs.org" "inbox:inbox:")
+        ;;  "* SOMEDAY %?\n  %U\n")
+        ;; ("n" "Next" entry
+        ;;  (file+headline "~/D/org-agenda/TODOs.org" "inbox:inbox:")
+        ;;  "* NEXT %?\n  %U\n")
+        )))
 
 
 
@@ -380,6 +400,22 @@
 ;; 全文搜索含有某关键词的条目
 ;; (rifle "关键词")
 
+(use-package org-agenda
+  :ensure nil
+  :config
+  (setq org-agenda-custom-commands
+      '(("w" "我的周视图"
+         ((agenda "" ((org-agenda-span 'week)
+                       (org-agenda-skip-function
+                        '(org-agenda-skip-entry-if 'todo '("IN-PROGRESS" "WAITING")))))
+          (todo "IN-PROGRESS"
+                ((org-agenda-overriding-header "🔄 进行中")))
+          (todo "WAITING"
+                ((org-agenda-overriding-header "⏳ 等待中")))))
+          )
+        
+      
+      ))
 
 
 (use-package org-super-agenda
@@ -460,35 +496,35 @@
           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+date: %U\n")
           :unnarrowed t)
          
-         ("M" "MOC note" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :MOC:
-        ")
-          :unnarrowed t)
-         
-         ("D" "directory note" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :directory:
-    ")
-          :unnarrowed t)
-         
-         ("f" "fleeting note" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :fleeting:
-    ")
-          :unnarrowed t)
-
-         ("p" "princeple note" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :princeple:
-    ")
-          :unnarrowed t)
-
-         ("m" "mechanism note" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :mecanism:
-    ")
-          :unnarrowed t)
+    ;;      ("M" "MOC note" plain "%?"
+    ;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+    ;;                          "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :MOC:
+    ;;     ")
+    ;;       :unnarrowed t)
+    ;;      
+    ;;      ("D" "directory note" plain "%?"
+    ;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+    ;;                          "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :directory:
+    ;; ")
+    ;;       :unnarrowed t)
+    ;;      
+    ;;      ("f" "fleeting note" plain "%?"
+    ;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+    ;;                          "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :fleeting:
+    ;; ")
+    ;;       :unnarrowed t)
+    ;; 
+    ;;      ("p" "princeple note" plain "%?"
+    ;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+    ;;                          "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :princeple:
+    ;; ")
+    ;;       :unnarrowed t)
+    ;; 
+    ;;      ("m" "mechanism note" plain "%?"
+    ;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+    ;;                          "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :mecanism:
+    ;; ")
+    ;;       :unnarrowed t)
          
          ("0" "person note" plain "%?"
           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
@@ -497,16 +533,17 @@
           :unnarrowed t)
          
          
-         ("P" "project notes" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :project:\n\n
-    ")
-          :unnarrowed t)
-         ("t" "terminology" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :terminology:
-    ")
-          :unnarrowed t)
+    ;;      ("P" "project notes" plain "%?"
+    ;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+    ;;                          "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :project:\n\n
+    ;; ")
+    ;;       :unnarrowed t)
+    ;;      ("t" "terminology" plain "%?"
+    ;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+    ;;                          "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :terminology:
+    ;; ")
+         ;;       :unnarrowed t)
+         
          ;; ("R" "Reference (Academic)" plain "%?"
     ;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
     ;;                          "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :reference:academic\n\n* source\n\n* notes\n
@@ -539,49 +576,54 @@
 ;;           :unnarrowed t
          ;;           :immediate-finish t)
 
-         ("n" "literature note" plain
-          "%?"
-          :target
-          (file+head
-           "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
-           "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n")
-          :unnarrowed t)
-         
-         ("r" "Reference (Informal) etc" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :informal reference:\n\n* source\n\n* notes\n
-    ")
-
-          :unnarrowed t)
-         ("o" "anime/manga/game/visual novel note" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :otaku:\n\n* source
-    ")
-          :unnarrowed t)
-         ("T" "Thoughts note" plain "%?"
-          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :thoughts:
-    ")
-          :unnarrowed t)
+    ;;      ("n" "literature note" plain
+    ;;       "%?"
+    ;;       :target
+    ;;       (file+head
+    ;;        "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
+    ;;        "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n")
+    ;;       :unnarrowed t)
+    ;;      
+    ;;      ("r" "Reference (Informal) etc" plain "%?"
+    ;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+    ;;                          "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :informal reference:\n\n* source\n\n* notes\n
+    ;; ")
+    ;; 
+    ;;       :unnarrowed t)
+    ;;      ("o" "anime/manga/game/visual novel note" plain "%?"
+    ;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+    ;;                          "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :otaku:\n\n* source
+    ;; ")
+    ;;       :unnarrowed t)
+    ;;      ("T" "Thoughts note" plain "%?"
+    ;;       :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+    ;;                          "#+title: ${title}\n\n#+date: %U\n\n#+filetags: :thoughts:
+    ;; ")
+    ;;       :unnarrowed t)
          )
    )
 
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n p" . org-roam-buffer-display-dedicated)
          ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
+         ("C-c n g" . org-id-get-create)
          ("C-c n i" . org-roam-node-insert)
          ("C-c n c" . org-roam-capture)
          ("C-c n t" . org-roam-tag-add)
          ("C-c n a" . org-roam-alias-add)
          ("C-c n A" . org-roam-alias-remove)
-         ("C-c n G" . org-id-get-create)
          ;; Dailies
          ("C-c n j" . org-roam-dailies-capture-today)
          ("C-c n I" . org-roam-node-insert-immediate)
          ("C-c n 3" . org-roam-dailies-goto-next-note)
          ("C-c n 2" . org-roam-dailies-goto-previous-note)
-         ("C-c n 1" . org-roam-dailies-goto-today))
+         ("C-c n 1" . org-roam-dailies-goto-today)
+         ("C-c n <left>" . org-roam-dailies-goto-previous-note)
+         ("C-c n <right>" . org-roam-dailies-goto-next-note )
+         ("C-c n e" . org-roam-dailies-goto-next-note )
+         ("C-c n w" . org-roam-dailies-goto-today )
+         ("C-c n q" . org-roam-dailies-goto-previous-note )
+         )
   
   :bind-keymap
   ("C-c n d" . org-roam-dailies-map)
@@ -599,17 +641,7 @@
   (setq org-roam-dailies-capture-templates
         '(("d" "default" entry "* %<%I:%M %p>: %?"
            :if-new (file+head "%<%Y-%m-%d>.org" "
-:PROPERTIES:
-:MOOD/ENERGY/FOCUS: 
-:END:\n
 #+title: %<%Y-%m-%d>\n
-* =修考加油！！！=
-- 天气/地域/住处/节日/纪念日 :: 
-- 昨天/今天/明天 总结/反思/计划 :: 
-- 娱乐感恩好事/人际沟通 :: 
-- 健康/饮食/运动 :: 
-- 心情情绪/活力/专注力/生产力 :: 
-- 学习收获/灵感想法 :: 
 "))))
   
 ;; (setq org-id-link-to-org-use-id 'nil)
@@ -620,15 +652,42 @@
 
 (org-roam-db-autosync-mode)
 
+
+;; (defun my/org-roam-copy-todo-to-today ()
+;;   (interactive)
+;;   (let ((org-refile-keep t) ;; Set this to nil to delete the original!
+;;         (org-roam-dailies-capture-templates
+;;           '(("t" "tasks" entry "%?"
+;;              :if-new (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("Tasks")))))
+;;         (org-after-refile-insert-hook #'save-buffer)
+;;         today-file
+;;         pos)
+;;     (save-window-excursion
+;;       (org-roam-dailies--capture (current-time) t)
+;;       (setq today-file (buffer-file-name))
+;;       (setq pos (point)))
+;; 
+;;     ;; Only refile if the target file is different than the current file
+;;     (unless (equal (file-truename today-file)
+;;                    (file-truename (buffer-file-name)))
+;;       (org-refile nil nil (list "Tasks" today-file nil pos)))))
+;; 
+;; (add-to-list 'org-after-todo-state-change-hook
+;;              (lambda ()
+;;                (when (equal org-state "DONE")
+;;                  (my/org-roam-copy-todo-to-today))))
+
+
 (require 'org-roam-protocol)
-
-
 )
+
+
+
+
 (use-package org-roam-calendar
   :vc (:url "https://github.com/connormclaud/emacs_org_roam_calendar")
   :commands org-roam-calendar-open
   :bind ("C-c n o" . org-roam-calendar-open))
-
 
 (use-package consult-org-roam
   :after org-roam
@@ -654,7 +713,7 @@
   (define-key global-map (kbd "C-c n ,") #'consult-org-roam-forward-links)
   :bind
   ("C-c n r" . consult-org-roam-search)
-  ("C-c n e" . consult-org-roam-file-find)
+  ;; ("C-c n e" . consult-org-roam-file-find)
   )
 
 
@@ -893,32 +952,32 @@
                 deft-extensions '("md" "org")))
 
 
-(use-package org-noter
-  :ensure t
-  :custom
-  ;; 不要每次都新建 frame，在当前 frame 分割窗口
-  (org-noter-always-create-frame t)
-  ;; 笔记搜索路径（告诉 org-noter 去哪里找已有笔记）
-  (org-noter-notes-search-path '("~/Documents/roam-note/org-noter"))
-  ;; 笔记位置：写在文档对应的 heading 下
-  (org-noter-separate-notes-from-heading t))
+;; (use-package org-noter
+;;   :ensure t
+;;   :custom
+;;   ;; 不要每次都新建 frame，在当前 frame 分割窗口
+;;   (org-noter-always-create-frame t)
+;;   ;; 笔记搜索路径（告诉 org-noter 去哪里找已有笔记）
+;;   (org-noter-notes-search-path '("~/Documents/roam-note/org-noter"))
+;;   ;; 笔记位置：写在文档对应的 heading 下
+;;   (org-noter-separate-notes-from-heading t))
 
-(use-package org-remark
-  :config
-  (org-remark-global-tracking-mode +1)
-
-  ;; Optional if you would like to highlight websites via eww-mode
-  (with-eval-after-load 'eww
-    (org-remark-eww-mode +1))
-
-  ;; Optional if you would like to highlight EPUB books via nov.el
-  (with-eval-after-load 'nov
-    (org-remark-nov-mode +1))
-
-  ;; Optional if you would like to highlight Info documentation via Info-mode
-  (with-eval-after-load 'info
-    (org-remark-info-mode +1))
-  )
+;; (use-package org-remark
+;;   :config
+;;   (org-remark-global-tracking-mode +1)
+;; 
+;;   ;; Optional if you would like to highlight websites via eww-mode
+;;   (with-eval-after-load 'eww
+;;     (org-remark-eww-mode +1))
+;; 
+;;   ;; Optional if you would like to highlight EPUB books via nov.el
+;;   (with-eval-after-load 'nov
+;;     (org-remark-nov-mode +1))
+;; 
+;;   ;; Optional if you would like to highlight Info documentation via Info-mode
+;;   (with-eval-after-load 'info
+;;     (org-remark-info-mode +1))
+;;   )
 
 (use-package olivetti)
 
@@ -926,7 +985,6 @@
 
 ;; Calfw：用月历查看 Org 日程
 (use-package calfw
-  :demand 1.0
   :custom
   ;; 每周从星期一开始
   (calendar-week-start-day 1)
@@ -969,6 +1027,86 @@
   :config
   (setq org-timeblock-span 3)
   )
+
+
+;; (use-package org-gtd
+;;   :ensure t
+;;   :after org
+;;   :demand t
+;;   :init
+;;   ;; Suppress upgrade warnings (must be set before package loads)
+;;   (setq org-gtd-update-ack "4.0.0")
+;;   ;; Where org-gtd will keep its files (defaults to ~/gtd/)
+;;   (setq org-gtd-directory "~/Documents/roam-note/daily/org-agenda/gtd/")
+;; 
+;;   :custom
+;;   ;; Configure TODO keyword states (options like "TODO(t)" or "DONE(d!)" are fine)
+;;   (org-todo-keywords '((sequence "TODO" "NEXT" "WAIT" "|" "DONE" "CNCL")))
+;; 
+;;   ;; Map GTD semantic states to your keywords
+;;   (org-gtd-keyword-mapping '((todo . "TODO")
+;;                              (next . "NEXT")
+;;                              (wait . "WAIT")
+;;                              (canceled . "CNCL")))
+;; 
+;;   :config
+;;   ;; REQUIRED: Enable org-edna for project dependencies
+;;   (org-edna-mode 1)
+;; 
+;;   ;; Add org-gtd files to your agenda (must be in :config so org-gtd-directory is defined).
+;;   ;; A directory entry is valid: org-mode scans every .org file inside it.
+;;   ;; Already using org-agenda-files? Don't overwrite it - merge instead, e.g.:
+;;   ;;   (add-to-list 'org-agenda-files org-gtd-directory)
+;;   (setq org-agenda-files (list org-gtd-directory))
+;; 
+;;   :bind
+;;   ;; Global keybindings (work anywhere in Emacs)
+;;   (("C-c d c" . org-gtd-capture)
+;;    ("C-c d e" . org-gtd-engage)
+;;    ("C-c d p" . org-gtd-process-inbox)
+;;    ("C-c d n" . org-gtd-show-all-next)
+;;    ("C-c d s" . org-gtd-reflect-stuck-projects)
+;; 
+;;    ;; Keybinding for organizing items (only works in clarify buffers)
+;;    :map org-gtd-clarify-mode-map
+;;    ("C-c c" . org-gtd-organize)
+;; 
+;;    ;; Quick actions on tasks in agenda views (optional but recommended)
+;;    :map org-agenda-mode-map
+;;    ;; ("C-c ." . org-gtd-agenda-transient)
+;;    ))
+
+(use-package org-journal
+  :ensure t
+  :custom
+  (org-journal-dir "~/Documents/roam-note/org-journal/")
+
+  (org-journal-file-format "%Y.org")
+  (org-journal-file-type 'yearly)
+
+  (org-journal-date-type 'datetree)
+  (org-journal-date-format "%Y-%m-%d %A: ") ; 每日标题格式
+
+  (org-journal-carryover-items "TODO=\"TODO\"|TODO=\"NEXT\"|TODO=\"WAITING\"")
+
+  :bind
+  ;; 常用快捷键映射
+  (("C-c j j" . org-journal-new-entry)    ; 创建/打开今天的日记
+   ("C-c j s" . org-journal-search)
+   ("C-c j o" . org-journal-open-current-journal-file) ; 仅打开今日日记文件（不自动创建新节点/新时间戳）
+   ("C-c j p" . org-journal-open-previous-entry) ; 打开上一篇日记条目
+   ("C-c j n" . org-journal-open-next-entry)     ; 打开下一篇日记条目
+   ("C-c j d" . org-journal-read-entry)          ; 弹窗选择指定日期并打开对应日记
+   ("C-c j c" . calendar)
+   )
+  :config
+  ;; 将 org-journal-dir 路径追加到已有的 org-agenda-files 列表中
+  ;; add-to-list 会自动检查是否已存在，避免重复添加
+  (add-to-list 'org-agenda-files org-journal-dir)
+
+
+  )
+
 
 (provide 'my-org-mode)
 ;;; my-org-mode.el ends here

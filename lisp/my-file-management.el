@@ -7,11 +7,28 @@
 
 ;;; Code:
 
-(keymap-global-set "C-x C-r" 'recentf)
+(keymap-global-set "C-x C-r" 'crux-recentf-find-directory)
+
+(use-package dired-open
+  :ensure nil
+  :config
+  ;; Doesn't work as expected!
+  ;; (add-to-list 'dired-open-functions #'dired-open-xdg t)
+  ;; -- OR! --
+  (setq dired-open-extensions '(
+                                ;; ("png" . "feh")
+                                ("mkv" . "mpv")
+                                ("mp4" . "mpv")
+                                ("mkv" . "mpv")
+                                ("webm" . "mpv")
+                                )
+        ))
 
 (use-package nerd-icons-dired
   :hook
   (dired-mode . nerd-icons-dired-mode))
+
+
 
 (use-package dirvish
   :init
@@ -151,6 +168,21 @@
 ;;   :config (treemacs-set-scope-type 'Tabs))
 ;; 
 ;; (treemacs-start-on-boot)
+
+;; (use-package quick-fasd
+;;   :bind (
+;;          ("C-x C-d" . quick-fasd-find-path)
+;;          :map minibuffer-local-completion-map 
+;;          ("C-x C-d" . quick-fasd-find-path) 
+;;          )
+;;   :init
+;;   (quick-fasd-mode 1))
+
+
+;; (use-package dired-preview)
+;; 这个不太行
+
+;; dired++ diredx
 (provide 'my-file-management)
 
 ;;; my-file-management.el ends here

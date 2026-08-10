@@ -17,36 +17,37 @@
   )
 
 
-(use-package vterm
-  :bind
-  ("C-c t" . vterm)
-  ;; "C-u C-c t" vterm-new-window
-  :config
-  (add-hook 'vterm-mode-hook
-            (lambda ()
-              (setq-local global-hl-line-mode nil)))
-                                        ;解决vterm闪烁
-  
-
-  :init
-  
-  (setq vterm-timer-delay 0.05)  ; Faster vterm
-  (setq vterm-kill-buffer-on-exit t)
-  (setq vterm-max-scrollback 5000)
-  (defun my-vterm--setup ()
-
-    ;; Inhibit early horizontal scrolling
-    (setq-local hscroll-margin 0)
-
-    ;; Suppress prompts for terminating active processes when closing vterm
-    (setq-local confirm-kill-processes nil))
-  (add-hook 'vterm-mode-hook #'my-vterm--setup)
-  )
+;; (use-package vterm
+;;   :bind
+;;   ;; ("C-c t" . vterm)
+;;   ;; "C-u C-c t" vterm-new-window
+;;   :config
+;;   (add-hook 'vterm-mode-hook
+;;             (lambda ()
+;;               (setq-local global-hl-line-mode nil)))
+;;                                         ;解决vterm闪烁
+;;   
+;; 
+;;   :init
+;;   
+;;   (setq vterm-timer-delay 0.05)  ; Faster vterm
+;;   (setq vterm-kill-buffer-on-exit t)
+;;   (setq vterm-max-scrollback 5000)
+;;   (defun my-vterm--setup ()
+;; 
+;;     ;; Inhibit early horizontal scrolling
+;;     (setq-local hscroll-margin 0)
+;; 
+;;     ;; Suppress prompts for terminating active processes when closing vterm
+;;     (setq-local confirm-kill-processes nil))
+;;   (add-hook 'vterm-mode-hook #'my-vterm--setup)
+;;   )
 
 ;; (use-package eat)
+
 (use-package ghostel
   :bind (
-         ;; ("C-c t" . ghostel)
+         ("C-c t" . ghostel)
          :map ghostel-semi-char-mode-map
          
          ("C-s"  . consult-line)
@@ -70,16 +71,28 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
   (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer))
 
-  ;; (setq ghostel--pixel-anchor-supported-p nil)
-  ;; (with-eval-after-load 'ghostel
-  ;; (defun my/ghostel-disable-pixel-anchor (&rest _)
-  ;;   nil)
-  ;; 
-  ;; (advice-add 'ghostel--pixel-anchor
-  ;;             :override
-  ;;             #'my/ghostel-disable-pixel-anchor))
   )
 
+
+;; (use-package ghostel
+;;   :vc (:url "https://github.com/dakra/ghostel"
+;;        :lisp-dir "lisp"
+;;        :rev :newest))
+
+;; (defun my/disable-pangu-in-ghostel ()
+;;   "进入 ghostel buffer 时禁用 pangu-spacing-mode."
+;;   (when (bound-and-true-p pangu-spacing-mode)
+;;     (pangu-spacing-mode -1)))
+;; 
+;; (add-hook 'ghostel-mode-hook #'my/disable-pangu-in-ghostel)
+
+;; (defun my/disable-ime-in-ghostel ()
+;;   "进入 ghostel buffer 时强制关闭所有输入法."
+;;   (my/deactivate-all-input-methods)
+;;   (when (bound-and-true-p rime-mode)
+;;     (rime-mode -1)))
+;; 
+;; (add-hook 'ghostel-mode-hook #'my/disable-ime-in-ghostel)
 
 (use-package magit
   :bind

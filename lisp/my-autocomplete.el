@@ -14,10 +14,12 @@
         (if (char-equal c ?<) t (electric-pair-default-inhibit c))))
 
 (use-package yasnippet
-  :bind(("C-c p TAB" . yas-expand)
-        ("C-c p i" . yas-insert-snippet)
-        ("C-c p n" . yas-new-snippet)
-        ("C-c p v" . yas-visit-snippet-file))
+  :bind(
+        ;; ("C-c p TAB" . yas-expand)
+        ;; ("C-c p i" . yas-insert-snippet)
+        ;; ("C-c p n" . yas-new-snippet)
+        ;; ("C-c p v" . yas-visit-snippet-file)
+        )
   
   :hook
   ;; 在常用模式下启用
@@ -122,13 +124,15 @@
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-keyword)
-  :bind (("C-c p p" . completion-at-point)
-         ("C-c p d" . cape-dabbrev)
-         ("C-c p f" . cape-file)
-         ("C-c p k" . cape-keyword)
-         ("C-c p s" . cape-symbol)
-         ("C-c p a" . cape-abbrev)
-         ("C-c p l" . cape-line))
+  :bind (
+         ;; ("C-c p p" . completion-at-point)
+         ;; ("C-c p d" . cape-dabbrev)
+         ;; ("C-c p f" . cape-file)
+         ;; ("C-c p k" . cape-keyword)
+         ;; ("C-c p s" . cape-symbol)
+         ;; ("C-c p a" . cape-abbrev)
+         ;; ("C-c p l" . cape-line)
+         )
   )
 
 (use-package vertico

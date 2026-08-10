@@ -7,6 +7,7 @@
 
 ;;; Code:
 (use-package casual-suite
+  :demand t
   :bind
   (("M-j" . casual-avy-tmenu)
    ("C-o" . casual-editkit-main-tmenu)
@@ -49,6 +50,10 @@
 
    :map image-mode-map
    ("M-m" . casual-image-tmenu)))
+
+(keymap-set org-agenda-mode-map "M-m" #'casual-agenda-tmenu)
+(keymap-set org-mode-map "M-m" #'casual-org-tmenu)
+
 
  ;; casual-image
  ;; casual-isearch-tmenu
@@ -134,6 +139,22 @@
 
 
 ;; todo: c-h/hydra/transient/embark
+(use-package hydra)
+(use-package default-text-scale)
+
+;; (defhydra hydra-text-scale (:timeout 4)
+;;   "scale text"
+;;   ("j" text-scale-increase "in")
+;;   ("k" text-scale-decrease "out")
+;;   ("0" (text-scale-set 0) "reset")
+;;   ("f" nil "finished" :exit t))
+(defhydra hydra-text-scale (:timeout 4)
+  "scale text"
+  ("j" default-text-scale-increase "in")
+  ("k" default-text-scale-decrease "out")
+  ("0" default-text-scale-reset "reset")
+  ("f" nil "finished" :exit t))
+
 (provide 'my-helper)
 
 ;;; my-helper.el ends here

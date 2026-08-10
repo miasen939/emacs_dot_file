@@ -8,6 +8,8 @@
 (defsrc
   caps lctl esc
   a s d f g h j k l ;
+
+  alt
 )
 
 (defvar
@@ -20,14 +22,45 @@
 (deflayer base
   @caps caps esc
   @a @s @d @f @g @h @j @k @l @;
+  @mouse-layer
 )
 
 (deflayer nomods
   lctl caps esc
   a s d f g h j k l ;
+  lalt
+  
 )
 
+(deflayer mouse
+  @caps caps esc
+  @mouse-left @mouse-middle @mouse-right
+  @wheel-up @wheel-down
+  @mouse-move-left @mouse-move-down @mouse-move-up @mouse-move-right
+  XX
+  @mouse-layer
+)
+
+
 (defalias
+  mouse-layer (layer-toggle mouse)
+
+  ;; 鼠标按键
+  mouse-left   mlft
+  mouse-middle mmid
+  mouse-right  mrgt
+
+  ;; 滚轮：参数分别为触发间隔和滚动距离
+  wheel-up   (mwheel-up 50 120)
+  wheel-down (mwheel-down 50 120)
+
+  ;; 鼠标移动：间隔、加速时间、最小速度、最大速度
+  mouse-move-left  (movemouse-accel-left 1 1000 1 5)
+  mouse-move-down  (movemouse-accel-down 1 1000 1 5)
+  mouse-move-up    (movemouse-accel-up 1 1000 1 5)
+  mouse-move-right (movemouse-accel-right 1 1000 1 5)
+
+
   caps (tap-hold-press $tap-time $hold-time esc lctl)
 )
 
@@ -65,7 +98,7 @@
 
   ; (tap-hold-release-keys $tap-time $hold-time (multi ; @tap) lmet $right-hand-keys)
 )
-;; i e z x ，。 都是可以使用的键，spc也很好用，但是spc不适合绑定在shfit这种使用频率特别高的按键上
+
 ;; sudo kanata --cfg ~/.emacs.d/kanata.kbd
 
 

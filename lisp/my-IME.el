@@ -41,12 +41,12 @@
 (keymap-global-set "C-\\" #'my-insert-backslash)
 
 ;; 中文英文之间插入空格
-(use-package pangu-spacing
-  :defer 0.3
-  :config
-  (global-pangu-spacing-mode +1))
+;; (use-package pangu-spacing
+;;   :demand t
+;;   :config
+;;   (global-pangu-spacing-mode +1))
 
-;;(global-set-key (kbd "C-|") 'skk-mode)
+;; (global-set-key (kbd "C-|") 'skk-mode)
 
 
 ;; skk输入法，使用方法可查询wiki
@@ -89,7 +89,7 @@
 
 (global-set-key (kbd "C-|") #'switch-to-skk)
 
-(global-set-key (kbd "C-\\") #'switch-to-rime)
+;; (global-set-key (kbd "C-\\") #'switch-to-rime)
 
 (provide 'my-IME)
 

@@ -1,4 +1,4 @@
-;;; my-prog-mode.el --- programming config -*- no-byte-compile: t; lexical-binding: t; -*-
+;;; My-prog-mode.el --- programming config -*- no-byte-compile: t; lexical-binding: t; -*-
 
 ;;; Commentary:
 
@@ -125,17 +125,31 @@
 
 (use-package flash
   :bind ("C-." . flash-jump)
+  :custom
+  (flash-labels "asdfjkl;ghqwertyuiopzxcvbnm")
+  (flash-label-uppercase t)     ; double available labels (a-z + A-Z)
+  (flash-multi-window t)
+  (flash-autojump t)            ; auto-jump when single match
+  (flash-backdrop nil)          ; no dimming
+  (flash-rainbow t)             ; colorful labels
+  (flash-rainbow-shade 2)       ; 1-9: pastel to dark
+  (flash-highlight-matches t)
+  (flash-label-position 'overlay)
+  (flash-char-jump-labels t)    ; labels on f/t/F/T matches
+  (flash-nohlsearch t)          ; clear highlight after jump
+  (flash-search-history t)
+  (flash-evil-setup t)
   )
 
 (use-package expreg
   :bind( ("C-=" . expreg-expand)
-         ("C--" . expreg-contract)))
+         ("C--" . expreg-ract)))
 
-(use-package mwim
-    :ensure t
-    :bind
-    ;; ("C-a" . mwim-beginning-of-code-or-line)
-    ("C-e" . mwim-end-of-code-or-line))
+;; (use-package mwim
+;;     :ensure t
+;;     :bind
+;;     ;; ("C-a" . mwim-beginning-of-code-or-line)
+;;     ("C-e" . mwim-end-of-code-or-line))
 
 (use-package rainbow-delimiters
     :hook
@@ -148,14 +162,14 @@
     ;; (inferior-ess-mode . rainbow-delimiters-mode)   ;; R 的 REPL
     )
 
-(use-package symbol-overlay
-  :bind (("M-i" . symbol-overlay-put)
-         ("M-n" . symbol-overlay-jump-next)
-         ("M-p" . symbol-overlay-jump-prev)
-         ("M-N" . symbol-overlay-switch-forward)
-         ("M-P" . symbol-overlay-switch-backward)
-         ("M-C" . symbol-overlay-remove-all))
-  :hook (prog-mode . symbol-overlay-mode))
+;; (use-package symbol-overlay
+;;   :bind (("M-i" . symbol-overlay-put)
+;;          ("M-n" . symbol-overlay-jump-next)
+;;          ("M-p" . symbol-overlay-jump-prev)
+;;          ("M-N" . symbol-overlay-switch-forward)
+;;          ("M-P" . symbol-overlay-switch-backward)
+;;          ("M-C" . symbol-overlay-remove-all))
+;;   :hook (prog-mode . symbol-overlay-mode))
 
   (use-package colorful-mode
     ;; :diminish
@@ -245,6 +259,9 @@ The DWIM behaviour of this command is as follows:
 (global-set-key [remap keyboard-quit] #'prot/keyboard-quit-dwim)
 
 
+(use-package surround
+  :demand t
+  :bind-keymap ("M-'" . surround-keymap))
 
 ;;; ===the meow modeling scheme===
 
@@ -270,15 +287,16 @@ The DWIM behaviour of this command is as follows:
 (use-package meow
   :demand t
   :config
-
-  (setq meow-keypad-ctrl-meta-prefix ?G)
-  (setq meow-keypad-meta-prefix ?M)
+ 
+  ;; (setq meow-keypad-ctrl-meta-prefix ?G)
+  ;; (setq meow-keypad-meta-prefix ?M)
   (setq meow-mode-state-list
         '((org-mode . normal)
-
+ 
           (erc-mode . insert)
           (vterm-mode . insert)
-
+          (ghostel-mode . motion)
+ 
           (dired-mode . motion)
           (elfeed-search-mode . motion)
           (elfeed-show-mode . motion)
@@ -299,16 +317,17 @@ The DWIM behaviour of this command is as follows:
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
     ;; 旧版 Meow 使用这个函数名
     (meow-motion-overwrite-define-key
-     '("j" . meow-next)
-     '("k" . meow-prev)
+
+     ;; '("j" . meow-next)
+     ;; '("k" . meow-prev)
      '("<escape>" . ignore))
-
-
+ 
+ 
     (meow-leader-define-key
      ;; 在 Motion 中，通过 SPC j / SPC k 调用原来的按键
-     '("j" . "H-j")
-     '("k" . "H-k")
-
+     ;; '("J" . "H-j")
+     ;; '("K" . "H-k")
+ 
      ;; SPC 0-9 作为数字参数
      ;; '("1" . meow-digit-argument)
      ;; '("2" . meow-digit-argument)
@@ -321,29 +340,29 @@ The DWIM behaviour of this command is as follows:
      ;; '("9" . meow-digit-argument)
      ;; '("0" . meow-digit-argument)
      )
-
+ 
     (meow-normal-define-key
-     '("1" . meow-digit-argument)
-     '("2" . meow-digit-argument)
-     '("3" . meow-digit-argument)
-     '("4" . meow-digit-argument)
-     '("5" . meow-digit-argument)
-     '("6" . meow-digit-argument)
-     '("7" . meow-digit-argument)
-     '("8" . meow-digit-argument)
-     '("9" . meow-digit-argument)
-     '("0" . meow-digit-argument)
+     ;; '("1" . meow-digit-argument)
+     ;; '("2" . meow-digit-argument)
+     ;; '("3" . meow-digit-argument)
+     ;; '("4" . meow-digit-argument)
+     ;; '("5" . meow-digit-argument)
+     ;; '("6" . meow-digit-argument)
+     ;; '("7" . meow-digit-argument)
+     ;; '("8" . meow-digit-argument)
+     ;; '("9" . meow-digit-argument)
+     ;; '("0" . meow-digit-argument)
      
-     ;; '("0" . meow-expand-0)
-     ;; '("9" . meow-expand-9)
-     ;; '("8" . meow-expand-8)
-     ;; '("7" . meow-expand-7)
-     ;; '("6" . meow-expand-6)
-     ;; '("5" . meow-expand-5)
-     ;; '("4" . meow-expand-4)
-     ;; '("3" . meow-expand-3)
-     ;; '("2" . meow-expand-2)
-     ;; '("1" . meow-expand-1)
+     '("0" . meow-expand-0)
+     '("9" . meow-expand-9)
+     '("8" . meow-expand-8)
+     '("7" . meow-expand-7)
+     '("6" . meow-expand-6)
+     '("5" . meow-expand-5)
+     '("4" . meow-expand-4)
+     '("3" . meow-expand-3)
+     '("2" . meow-expand-2)
+     '("1" . meow-expand-1)
      '("-" . negative-argument)
      '(";" . meow-reverse)
      '("," . meow-inner-of-thing)
@@ -355,7 +374,7 @@ The DWIM behaviour of this command is as follows:
      '("b" . meow-back-word)
      '("B" . meow-back-symbol)
      '("c" . meow-change)
-     '("d" . meow-delete)
+     '("d" . meow-kill)
      '("D" . meow-backward-delete)
      '("e" . meow-next-word)
      '("E" . meow-next-symbol)
@@ -363,29 +382,30 @@ The DWIM behaviour of this command is as follows:
      '("g" . meow-cancel-selection)
      '("G" . meow-grab)
      '("h" . meow-left)
-     '("H" . meow-left-expand)
+     ;; '("H" . meow-left-expand)
      '("i" . meow-insert)
-     '("I" . meow-open-above)
+     ;; '("I" . meow-open-above)
      '("j" . meow-next)
-     '("J" . meow-next-expand)
+     ;; '("J" . meow-next-expand)
      '("k" . meow-prev)
-     '("K" . meow-prev-expand)
+     ;; '("K" . meow-prev-expand)
      '("l" . meow-right)
      '("L" . meow-right-expand)
      '("m" . meow-join)
      '("n" . meow-search)
-     '("o" . meow-block)
-     '("O" . meow-to-block)
+     ;; '("o" . meow-block)
+     ;; '("O" . meow-to-block)
      '("p" . meow-yank)
+     '("P" . meow-replace)              ;无效果
+     ;; '("p" . yank)
      '("q" . meow-quit)
-     ;; '("Q" . next-buffer)
-     '("r" . meow-replace)
+     ;; '("r" . meow-replace)
      '("R" . meow-swap-grab)
-     '("s" . meow-kill)
+     ;; '("s" . meow-kill)
      '("t" . meow-till)
      '("u" . meow-undo)
      ;; '("U" . meow-undo-in-selection)
-     '("v" . meow-visit)
+     ;; '("v" . meow-visit)
      '("w" . meow-mark-word)
      '("W" . meow-mark-symbol)
      '("x" . meow-line)
@@ -395,7 +415,7 @@ The DWIM behaviour of this command is as follows:
      '("z" . meow-pop-selection)
      '("'" . repeat)
      '("<escape>" . ignore)
-
+ 
      ;; 自定义按键
      '("\\" . my/meow-insert-and-input-method-on)
      '("<" . beginning-of-buffer)
@@ -403,145 +423,62 @@ The DWIM behaviour of this command is as follows:
      '("Q" . next-buffer)
      ;; '("Z" . undo-redo)
      '("U" . undo-redo)
-     '(":" . execute-extended-command)
+     ;; '(":" . execute-extended-command)
      ;; '("C" . undo-redo)
      ;; '("V" . undo-redo)
      ;; '("M" . meow-start-kmacro-or-insert-counter)
      ;; '("F" . meow-start-kmacro-or-insert-counter meow-start-kmacro-or-insert-counter)
      ;; '("N" . meow-end-of-thing)
      ;; '("P" . meow-beginning-of-thing)
-     ;; '("S" . org-emphasize)
-     '("S" . my/meow-surround)
-     '("/" . my/meow-surround)
+     ;; '("S" . my/meow-surround)
+     ;; '("/" . my/meow-surround)
      '("?" . helpful-at-point)
+     
+     '("%" . evilmi-jump-items-native)
+     '("r" . meow-grab)
+     ;; '("g" . my-meow-g-prefix)
+ 
+     '("o" . expreg-expand)
+     '("O" . expreg-contract)
+ 
+     '("V" . meow-visit)
+     '("v" . flash-jump)
+     (cons "s" surround-keymap)
+     
+     
      ))
-  
+  ;; (cons "S" surround-keymap)
   (meow-setup)
   (meow-global-mode 1)
   (setq -use-clipboard t)
-
+ 
   (setq meow-expand-hint-remove-delay 0)
-
+ 
   (with-eval-after-load 'meow
   (setq meow-cursor-type-insert 'box
         meow-cursor-type-normal '(hbar . 4)
         ;; meow-cursor-type-normal 'hollow
         ))
-   )
+  )
 
-  
-;; (use-package key-chord
-;;   :demand t
-;;   :config
-;;   (key-chord-mode 1)
-;;   (key-chord-define meow-insert-state-keymap "kj" [escape])
-;;     )
-  
-(use-package evil-surround
-  :demand t
-)
-(defvar my/surround-aliases
-  '((?b . ?*)                    ; bold
-    (?i . ?/)                    ; italic
-    (?u . ?_)                    ; underline
-    (?s . ?+)                    ; strike-through
-    (?c . ?~)                    ; code
-    (?v . ?=)                    ; verbatim
-    (?m . ?$))                   ; math
-  "Aliases used by `my/meow-surround'.")
-(defun my/meow-surround (input-char)
-  "Surround the active region or symbol at point.
-
-INPUT-CHAR is translated according to `my/surround-aliases',
-then handled using evil-surround's delimiter rules."
-  (interactive
-   (list
-    (read-char
-     "Surround: [b]old [i]talic [u]nderline [s]trike [c]ode [v]erbatim [m]ath: ")))
-
-  (let* ((char (or (alist-get input-char my/surround-aliases)
-                   input-char))
-         (bounds
-          (cond
-           ((use-region-p)
-            (cons (region-beginning) (region-end)))
-           ((bounds-of-thing-at-point 'symbol))
-           (t nil))))
-
-    (if bounds
-        (evil-surround-region
-         (car bounds)
-         (cdr bounds)
-         'exclusive
-         char)
-
-      ;; 没有选区和 symbol：插入一对空标记。
-      (let* ((pair (evil-surround-pair char))
-             (left (car pair))
-             (right (cdr pair)))
-        (insert left right)
-        (backward-char (length right))))
-
-    (deactivate-mark)))
-
+;; C-o	meow-pop-to-mark	last position in jumplist; mark-ring based, only in current buffer
+;; C-i	meow-unpop-to-mark	next position in jumplist; mark-ring based, only in current buffer
 
 ;;; ===meow ends here===
 
-;; (defun my/meow-surround (char)
-;;   "Surround Meow selection or symbol at point using evil-surround.
-;; 
-;; If neither exists, insert an empty delimiter pair and put point
-;; between them."
-;;   (interactive
-;;    (list (read-char "Surround with: ")))
-;; 
-;;   (let ((bounds
-;;          (cond
-;;           ;; 优先使用 Meow/Emacs 当前选区
-;;           ((use-region-p)
-;;            (cons (region-beginning) (region-end)))
-;; 
-;;           ;; 没有选区时，使用光标处 symbol
-;;           ((bounds-of-thing-at-point 'symbol))
-;; 
-;;           ;; 两者都没有
-;;           (t nil))))
-;; 
-;;     (if bounds
-;;         ;; 复用 evil-surround 的实际包裹功能
-;;         (evil-surround-region
-;;          (car bounds)
-;;          (cdr bounds)
-;;          'exclusive
-;;          char)
-;; 
-;;       ;; 没有可包裹内容时，插入空的一对
-;;       (let* ((pair (evil-surround-pair char))
-;;              (left (car pair))
-;;              (right (cdr pair)))
-;;         (insert left right)
-;;         (backward-char (length right))))
-;; 
-;;     ;; 清除 Meow 选区
-;;     (when (use-region-p)
-;;       (deactivate-mark))))
 
-(use-package wrap-region
-  :config
-  (wrap-region-add-wrappers
-   '(("$" "$")
-     ("{-" "-}" "#")
-     ("/" "/" nil ruby-mode)
-     ("/* " " */" "#" (java-mode javascript-mode css-mode))
-     ("`" "`" nil (markdown-mode ruby-mode))))
-)
-;; 这 meow还得再改
-;; 我可能需要数字 + hljk来移动
-;; 另一方面是，我可能需要 yy，虽然xy也能执行但是yy按起来更顺手，同理dd d3d
-;; motion mode 想法很好，dired和magit都有jk相关的快捷键，怎么把这两个快捷键救回来？
-;; meow只给了一个最小可用的配置，很多地方都可以自定义这些我也会慢慢调整
-;; keypad很好用，但是还是有点小问题
-;; 用 general el 来创建leader key
+
+
+;; (use-package wrap-region
+;;   :config
+;;   (wrap-region-add-wrappers
+;;    '(("$" "$")
+;;      ("{-" "-}" "#")
+;;      ("/" "/" nil ruby-mode)
+;;      ("/* " " */" "#" (java-mode javascript-mode css-mode))
+;;      ("`" "`" nil (markdown-mode ruby-mode))))
+;; )
+
 (use-package goto-chg
   :bind
   (("C-(" . goto-last-change)
@@ -560,39 +497,27 @@ then handled using evil-surround's delimiter rules."
         (":" . calc-grab-sum-down)
         ("_" . calc-grab-sum-across)
         (" " . delete-whitespace-rectangle)))
-
 ;; Emacs 29+ 推荐写法
 (repeat-mode 1)
 (setq repeat-timeout 5)
-(setq repeat-exit-key "<escape>")
+(setq  repeat-exit-key "<escape>")
 
-;;(keymap-set global-map "C-z" #'repeat)
+(keymap-set global-map "C-z" #'repeat)
 
 
 
-;;; ===the helix scheme===
-
-;; Dependencies
-;; (use-package dash :ensure t)
-;; (use-package pcre2el :ensure t)
-;; (use-package ultra-scroll :ensure t)
-;; 
-;; (use-package hel
-;;   :vc (:url "https://github.com/anuvyklack/hel.git" :rev "main")
-;;   custom (inhibit-startup-screen t)
+;; useful evil package
+;; (use-package evil-nerd-commenter
 ;;   :demand t
-;;   :config (hel-mode))
-;; 
-;; 
-;; (use-package hel-leader
-;;   :vc (:url "https://github.com/anuvyklack/hel-leader.git" :rev "main")
-;;   :demand t
-;;   )
-;; (use-package hel-vterm
-;;   :vc (:url "https://github.com/anuvyklack/hel-vterm.git" :rev "main")
-;;   :after vterm)
+;;   :config
+;;   (evilnc-default-hotkeys))
 
-;;; ===hell ends here===
+(use-package evil-matchit)
+
+;; (use-package iedit
+;;   :ensure t
+;;   :bind ("C-'" . iedit-mode))
+
 
 
 (provide 'my-prog-mode)
