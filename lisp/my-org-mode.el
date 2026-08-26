@@ -373,11 +373,6 @@
 (global-set-key (kbd "C-c q f") #'org-ql-find)           ;; 模糊查找 heading
 
 
-(defun my/roam-todos ()
-  (interactive)
-  (org-ql-search (org-roam-list-files) '(todo)))
-
-(global-set-key (kbd "C-c q r") #'my/roam-todos)
 
 ;; ============================================================
 ;; org-ql-search 的常用查询示例（可直接在 M-x org-ql-search 输入）
@@ -681,14 +676,6 @@
 (require 'org-roam-protocol)
 )
 
-
-
-
-(use-package org-roam-calendar
-  :vc (:url "https://github.com/connormclaud/emacs_org_roam_calendar")
-  :commands org-roam-calendar-open
-  :bind ("C-c n o" . org-roam-calendar-open))
-
 (use-package consult-org-roam
   :after org-roam
   :init
@@ -729,10 +716,6 @@
   )
 
 (use-package org-roam-ui
-  :vc (:url "https://github.com/org-roam/org-roam-ui.git"
-            :branch "main")   ; 可选：指定分支，默认是 main/master
-  :after org-roam
-  :commands (org-roam-ui-mode) 
   :config
   (setq org-roam-ui-sync-theme t
         org-roam-ui-follow t
@@ -1107,6 +1090,43 @@
 
   )
 
+
+(setq org-tag-persistent-alist
+      '((:startgrouptag)
+        ("otaku")
+        (:grouptags)
+        ("Anime") ("Lnovel") ("VN") ("Game") ("Manga") ("Omusic")
+        (:endgrouptag)
+
+        (:startgrouptag)
+        ("review")
+        (:grouptags)
+        ("article") ("video") ("book") ("movie") ("drama")
+        (:endgrouptag)
+
+        (:startgrouptag)
+        ("people")
+        (:grouptags)
+        ("channel") ("person") ("figure")
+        (:endgrouptag)
+
+        (:startgrouptag)
+        ("meta")
+        (:grouptags)
+        ("important")
+        (:endgrouptag)
+
+        (:startgrouptag)
+        ("agenda")
+        (:grouptags)
+        ("_SOMEDAY") ("_WAITNG") ("_LONGTERM") ("_PARTIAL") ("_ABANDONED") ("_INFEASIBLE") ("_MOOT")
+        (:endgrouptag)
+
+        (:startgrouptag)
+        ("reflection")
+        (:grouptags)
+        ("#reflection") ("#monthlyLookback") ("#yearlyLookback")
+        (:endgrouptag)))
 
 (provide 'my-org-mode)
 ;;; my-org-mode.el ends here

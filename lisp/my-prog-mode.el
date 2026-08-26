@@ -8,6 +8,11 @@
 ;;; Code:
 ;; (keymap-global-set "C-s" 'isearch-forward)
 
+(setq display-line-numbers-type 'relative)
+
+(dolist (hook '(prog-mode-hook dired-mode-hook))
+  (add-hook hook #'display-line-numbers-mode))
+
 ;; 类似包：iedit
 (use-package multiple-cursors
   :ensure t
@@ -288,6 +293,8 @@ The DWIM behaviour of this command is as follows:
   :demand t
   :config
  
+(define-key meow-normal-state-keymap (kbd "SPC") nil)
+(define-key meow-motion-state-keymap (kbd "SPC") nil)
   ;; (setq meow-keypad-ctrl-meta-prefix ?G)
   ;; (setq meow-keypad-meta-prefix ?M)
   (setq meow-mode-state-list
@@ -320,26 +327,27 @@ The DWIM behaviour of this command is as follows:
 
      ;; '("j" . meow-next)
      ;; '("k" . meow-prev)
-     '("<escape>" . ignore))
- 
- 
-    (meow-leader-define-key
-     ;; 在 Motion 中，通过 SPC j / SPC k 调用原来的按键
-     ;; '("J" . "H-j")
-     ;; '("K" . "H-k")
- 
-     ;; SPC 0-9 作为数字参数
-     ;; '("1" . meow-digit-argument)
-     ;; '("2" . meow-digit-argument)
-     ;; '("3" . meow-digit-argument)
-     ;; '("4" . meow-digit-argument)
-     ;; '("5" . meow-digit-argument)
-     ;; '("6" . meow-digit-argument)
-     ;; '("7" . meow-digit-argument)
-     ;; '("8" . meow-digit-argument)
-     ;; '("9" . meow-digit-argument)
-     ;; '("0" . meow-digit-argument)
+     ;; '("<escape>" . ignore)
      )
+ 
+ 
+    ;; (meow-leader-define-key
+    ;;  ;; 在 Motion 中，通过 SPC j / SPC k 调用原来的按键
+    ;;  ;; '("J" . "H-j")
+    ;;  ;; '("K" . "H-k")
+    ;; 
+    ;;  ;; SPC 0-9 作为数字参数
+    ;;  ;; '("1" . meow-digit-argument)
+    ;;  ;; '("2" . meow-digit-argument)
+    ;;  ;; '("3" . meow-digit-argument)
+    ;;  ;; '("4" . meow-digit-argument)
+    ;;  ;; '("5" . meow-digit-argument)
+    ;;  ;; '("6" . meow-digit-argument)
+    ;;  ;; '("7" . meow-digit-argument)
+    ;;  ;; '("8" . meow-digit-argument)
+    ;;  ;; '("9" . meow-digit-argument)
+    ;;  ;; '("0" . meow-digit-argument)
+    ;;  )
  
     (meow-normal-define-key
      ;; '("1" . meow-digit-argument)
@@ -444,8 +452,7 @@ The DWIM behaviour of this command is as follows:
      '("V" . meow-visit)
      '("v" . flash-jump)
      (cons "s" surround-keymap)
-     
-     
+     (cons "SPC" surround-keymap)
      ))
   ;; (cons "S" surround-keymap)
   (meow-setup)
