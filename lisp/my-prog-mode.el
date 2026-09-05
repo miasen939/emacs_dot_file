@@ -148,7 +148,10 @@
 
 (use-package expreg
   :bind( ("C-=" . expreg-expand)
-         ("C--" . expreg-ract)))
+         ("C--" . expreg-ract)
+         ("C-o" . expreg-expand)
+         ("C-S-O" . expreg-contract)
+         ))
 
 ;; (use-package mwim
 ;;     :ensure t
@@ -219,6 +222,7 @@
   ;;(global-set-key (kbd "C-c o") #'crux-open-with)
   (global-set-key (kbd "C-k") #'crux-smart-kill-line)
   (global-set-key (kbd "C-a") #'crux-move-beginning-of-line)
+  (global-set-key (kbd "C-x C-<backspace>") #'crux-kill-line-backwards)
   ;; (global-set-key (kbd "C-c o") #'crux-open-with)
   ;; (crux-reopen-as-root-mode)
   )
@@ -526,6 +530,12 @@ The DWIM behaviour of this command is as follows:
 ;;   :bind ("C-'" . iedit-mode))
 
 
+(use-package kdl-mode
+  )
+
+
+;; dapmode
+;; realgud
 
 (provide 'my-prog-mode)
 

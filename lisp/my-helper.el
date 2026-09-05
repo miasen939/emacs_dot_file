@@ -6,54 +6,54 @@
 ;;
 
 ;;; Code:
-(use-package casual-suite
-  :demand t
-  :bind
-  (("M-j" . casual-avy-tmenu)
-   ("C-o" . casual-editkit-main-tmenu)
-   ("M-m" . casual-suite-tmenu)
+;; (use-package casual-suite
+;;   :demand t
+;;   :bind
+;;   (("M-j" . casual-avy-tmenu)
+;;    ("C-o" . casual-editkit-main-tmenu)
+;;    ;; ("M-m" . casual-suite-tmenu)
+;; 
+;; 
+;;    
+;;    :map calc-mode-map
+;;    ("M-m" . casual-calc-tmenu)
+;; 
+;;    :map dired-mode-map
+;;    ("M-m" . casual-dired-tmenu)
+;; 
+;;    :map org-mode-map
+;;    ("M-m" . casual-org-tmenu)
+;; 
+;;    :map org-table-fedit-map
+;;    ("M-m" . casual-org-table-fedit-tmenu)
+;; 
+;;    :map org-agenda-mode-map
+;;    ("M-m" . casual-agenda-tmenu)
+;; 
+;;    :map ibuffer-mode-map
+;;    ("M-m" . casual-ibuffer-tmenu)
+;; 
+;;    :map bookmark-bmenu-mode-map
+;;    ("M-m" . casual-bookmarks-tmenu)
+;; 
+;;    :map calendar-mode-map
+;;    ("M-m" . casual-calendar-tmenu)
+;; 
+;;    :map compilation-mode-map
+;;    ("M-m" . casual-compile-tmenu)
+;; 
+;;    :map help-mode-map
+;;    ("M-m" . casual-help-tmenu)
+;; 
+;;    :map Info-mode-map
+;;    ("M-m" . casual-info-tmenu)
+;; 
+;;    :map image-mode-map
+;;    ("M-m" . casual-image-tmenu)))
 
-
-   
-   :map calc-mode-map
-   ("M-m" . casual-calc-tmenu)
-
-   :map dired-mode-map
-   ("M-m" . casual-dired-tmenu)
-
-   :map org-mode-map
-   ("M-m" . casual-org-tmenu)
-
-   :map org-table-fedit-map
-   ("M-m" . casual-org-table-fedit-tmenu)
-
-   :map org-agenda-mode-map
-   ("M-m" . casual-agenda-tmenu)
-
-   :map ibuffer-mode-map
-   ("M-m" . casual-ibuffer-tmenu)
-
-   :map bookmark-bmenu-mode-map
-   ("M-m" . casual-bookmarks-tmenu)
-
-   :map calendar-mode-map
-   ("M-m" . casual-calendar-tmenu)
-
-   :map compilation-mode-map
-   ("M-m" . casual-compile-tmenu)
-
-   :map help-mode-map
-   ("M-m" . casual-help-tmenu)
-
-   :map Info-mode-map
-   ("M-m" . casual-info-tmenu)
-
-   :map image-mode-map
-   ("M-m" . casual-image-tmenu)))
-
-(keymap-set org-agenda-mode-map "M-m" #'casual-agenda-tmenu)
-(keymap-set org-mode-map "M-m" #'casual-org-tmenu)
-
+;; (keymap-set org-agenda-mode-map "M-m" #'casual-agenda-tmenu)
+;; (keymap-set org-mode-map "M-m" #'casual-org-tmenu)
+;; TODO 不知道为什么这一段 casual 的代码一直报错
 
  ;; casual-image
  ;; casual-isearch-tmenu

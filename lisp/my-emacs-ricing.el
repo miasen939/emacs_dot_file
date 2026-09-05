@@ -4,7 +4,6 @@
 
 ;; 
 ;;
-
 ;;; Code:
 (use-package doom-themes
   :demand t
@@ -28,8 +27,7 @@
   (doom-themes-org-config)
   )
 (use-package doom-modeline
-  ;;:init (doom-modeline-mode 1)
-  :hook (after-init . doom-modeline-mode)
+  :init (doom-modeline-mode 1)
   )
 
 
@@ -71,21 +69,20 @@
 
 
 
-(use-package valign
-  :hook (org-mode . valign-mode))         ;解决像素级对齐，让org sheet可以用中日文也对齐了
 
 ;;(add-to-list 'default-frame-alist '(undecorated . t))
 
 
 
-;; (use-package beacon
-;;   :defer 0.5
-;;   :config
-;;   (beacon-mode 1)
-;;   ;; 可选配置
-;;   (setq beacon-color "#4a5060")
-;;   (setq beacon-size 20)
-;;   (setq beacon-blink-duration 0.3))
+(use-package beacon
+  :defer 3
+  :config
+  (beacon-mode 1)
+  ;; 可选配置
+  ;; (setq beacon-color "#4a5060")
+  ;; (setq beacon-size 20)
+  ;; (setq beacon-blink-duration 0.3)
+  )
 
 (use-package dashboard
   :demand t
@@ -163,6 +160,46 @@
         (set-frame-parameter nil 'alpha-background desired-alpha)
         (add-to-list 'default-frame-alist '(alpha-background . 92))))))
 
+
+;; (use-package ultra-scroll
+;;   :ensure (:host github
+;;            :repo "jdtsmith/ultra-scroll")
+;;   :init
+;;   (setq scroll-conservatively 3)
+;;   :config
+;;   (ultra-scroll-mode 1))
+
+;; (use-package centaur-tabs
+;;   :demand
+;;   :config
+;;   (centaur-tabs-mode t)
+;;   :bind
+;;   ("C-<prior>" . centaur-tabs-backward)
+;;   ("C-<next>" . centaur-tabs-forward))
+
+(use-package dimmer
+  :ensure t
+  :demand
+  :config
+  (dimmer-configure-which-key)
+  (dimmer-configure-helm)
+  (dimmer-mode t)
+  )
+
+(use-package indent-bars
+  :custom
+  (indent-bars-no-descend-lists 'skip) ; prevent extra bars in nested lists + skip intermediate bars
+  (indent-bars-treesit-support t)
+  (indent-bars-treesit-ignore-blank-lines-types '("module"))
+  ;; Add other languages as needed; check the wiki
+  (indent-bars-treesit-scope '((python function_definition class_definition for_statement
+	  if_statement with_statement while_statement)))
+  ;; Note: wrap likely not be needed if no-descend-list is enough
+  ;;(indent-bars-treesit-wrap '((python argument_list parameters ; for python, as an example
+  ;;				      list list_comprehension
+  ;;				      dictionary dictionary_comprehension
+  ;;				      parenthesized_expression subscript)))
+  :hook ((python-base-mode yaml-mode kdl-mode emacs-lisp-mode) . indent-bars-mode))
 
 (provide 'my-emacs-ricing)
 

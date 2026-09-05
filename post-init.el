@@ -7,6 +7,8 @@
  ;; :config
  ;; (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
+
+
 (setq use-package-always-ensure t)  ;; 默认自动安装包
 (setq use-package-always-defer t)   ;; 默认延迟加载
 
@@ -109,8 +111,6 @@
 (require ' my-windows-manage)
 (require ' my-file-management)
 (require ' my-living-in-emacs)
-
-
 
 (require ' my-DevOps)
 (require ' my-IME)
@@ -446,8 +446,13 @@
 
 
 
-(server-start)
+;; (server-start)
 
+;;; Some key macros funtion
+(fset 'ma/org-create-node-with-id
+      (key-parse "<escape> C-<return> <return> C-u C-c ! <return> C-p i SPC C-c n g <f4> <escape>"))
+
+(fset 'ma/dired-two-line-view (key-parse "<escape> C-x 1 C-x C-j C-x 3"))
 
 
 (provide 'post-init)

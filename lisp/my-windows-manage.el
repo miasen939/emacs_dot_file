@@ -7,6 +7,7 @@
 
 ;;; Code:
 (use-package emacs
+  :ensure nil
   :bind (("M-o" . other-window)
          ;; ("s-o" . other-frame)
          ;; ("C-x C-b" . previous-buffer)

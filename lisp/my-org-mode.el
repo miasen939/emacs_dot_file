@@ -23,10 +23,6 @@
   :mode ("\\.org\\'" . org-mode)
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
-         :map org-mode-map
-         ;; ("C-c <up>" . org-priority-up)
-         ;; ("C-c <down>" . org-priority-down)
-         ;; ("C-c C-g C-r" . org-shiftmetaright)
          )
   :hook (;;(org-mode . org-indent-mode)
          (org-mode . visual-line-mode)
@@ -57,8 +53,10 @@
         ;;; latex ends
   
   (setq org-archive-location "./archive.org::") ;archive
-
-  
+  ;; (setq org-ellipsis " ⤵")
+  ;; (setq org-ellipsis " ▾")
+  (setq org-ellipsis "...")
+ 
   ;; (setq org-startup-with-inline-images t)
 
   ;; phone refile
@@ -88,12 +86,8 @@
         org-habit-show-habits-only-for-today t
         org-habit-show-all-today t)
 
-
-                                        ;org-export
   (with-eval-after-load 'ox
     (require 'ox-md))
-
-
 
   ;; img
 
@@ -211,17 +205,11 @@
         ("s" "new subtree" entry
          (function my/org-capture-goto-current-heading)
          "* %?\n%U")
-        
-        ;; ("q" "QUESTION" entry
-        ;;  (file+headline "~/Documents/roam-note/daily/org-agenda/TODOs.org" "inbox:inbox:")
-        ;;  "* QUESTION %?\nSCHEDULED: %(format-time-string \"<%Y-%m-%d %a>\" (time-add (current-time) (days-to-time 1)))\n%U\n")
-        ;; ("s" "Someday" entry
-        ;;  (file+headline "~/D/org-agenda/TODOs.org" "inbox:inbox:")
-        ;;  "* SOMEDAY %?\n  %U\n")
-        ;; ("n" "Next" entry
-        ;;  (file+headline "~/D/org-agenda/TODOs.org" "inbox:inbox:")
-        ;;  "* NEXT %?\n  %U\n")
-        )))
+;; ("i" "inbox" entry
+;;  
+;;  "* %?\n:PROPERTIES:\n:ID:       %(org-id-new)\n::END:\n%U\n")
+
+           )))
 
 
 
@@ -235,8 +223,8 @@
         )
   )
 
-(use-package org-auto-tangle
-  :hook (org-mode . org-auto-tangle-mode))
+;; (use-package org-auto-tangle
+;;   :hook (org-mode . org-auto-tangle-mode))
 
 ;; (use-package org-transclusion
 ;;   :after org
@@ -276,6 +264,8 @@
 ;;   
 ;;   )
 
+
+
 (setq org-list-demote-modify-bullet
       '(("-" . "+")     ; 第一级是 - ，降级/嵌套后变成 +
         ("+" . "*")     ; 第二级 + 变成 *
@@ -285,12 +275,12 @@
 (use-package org-modern
   :hook (org-mode . org-modern-mode)
   :custom
-  (org-modern-block t)
-  (org-modern-table nil)          ; 如果你喜欢原生表格就关掉
+  ;; (org-modern-block t)
+  (org-modern-table nil)                
   (org-modern-timestamp nil)
   (org-modern-tag nil)
   (org-modern-priority nil)
-  (org-modern-star t)
+  ;; (org-modern-star t)
   (org-modern-checkbox nil)
   (org-modern-todo nil)
   ;; (org-modern-list nil)
@@ -705,15 +695,15 @@
 
 
 
-(use-package org-roam-timestamps
-  :after org-roam
-  :init
-  (require 'org-roam-timestamps)
-  (org-roam-timestamps-mode 1)
-  :config
-  (setq org-roam-timestamps-remember-timestamps t)
-  (setq org-roam-timestamps-minimum-gap 3600)
-  )
+;; (use-package org-roam-timestamps
+;;   :after org-roam
+;;   :init
+;;   (require 'org-roam-timestamps)
+;;   (org-roam-timestamps-mode 1)
+;;   :config
+;;   (setq org-roam-timestamps-remember-timestamps t)
+;;   (setq org-roam-timestamps-minimum-gap 3600)
+;;   )
 
 (use-package org-roam-ui
   :config
@@ -756,8 +746,8 @@
 
 (use-package valign
   :after markdown-mode
-  :hook (markdown-mode . valign-mode)
-  :custom
+  :hook ((org-mode markdown-mode) . valign-mode) 
+ :custom
   (valign-fancy-bar t))
 
 
@@ -897,7 +887,7 @@
   )
 
 (use-package tex
-  :ensure auctex
+  :ensure nil
   :config
   ;; 自动解析文件
   (setq TeX-auto-save t)
@@ -1068,7 +1058,7 @@
   (org-journal-file-type 'yearly)
 
   (org-journal-date-type 'datetree)
-  (org-journal-date-format "%Y-%m-%d %A: ") ; 每日标题格式
+  (org-journal-date-format "%Y-%m-%d %A ") ; 每日标题格式
 
   (org-journal-carryover-items "TODO=\"TODO\"|TODO=\"NEXT\"|TODO=\"WAITING\"")
 
@@ -1086,47 +1076,103 @@
   ;; 将 org-journal-dir 路径追加到已有的 org-agenda-files 列表中
   ;; add-to-list 会自动检查是否已存在，避免重复添加
   (add-to-list 'org-agenda-files org-journal-dir)
-
-
+  (define-key org-journal-mode-map (kbd "C-c C-s") nil)
+  ;; (define-key org-journal-mode-map (kbd "C-c C-f") nil)
+  ;; (define-key org-journal-mode-map (kbd "C-c C-b") nil)
+  (define-key org-journal-mode-map (kbd "C-c C-j") nil)
   )
 
+;; (use-package org-timegrid
+;;   :ensure (:host github :repo "Gleek/org-timegrid")
+;;     )
+  
 
-(setq org-tag-persistent-alist
-      '((:startgrouptag)
-        ("otaku")
-        (:grouptags)
-        ("Anime") ("Lnovel") ("VN") ("Game") ("Manga") ("Omusic")
-        (:endgrouptag)
 
-        (:startgrouptag)
-        ("review")
-        (:grouptags)
-        ("article") ("video") ("book") ("movie") ("drama")
-        (:endgrouptag)
+;; (use-package org-timegrid
+;;   :vc (:url "https://github.com/Gleek/org-timegrid")
+;;   :init
+;;   ;; The symbol `agenda' means: read events from `org-agenda-files'.
+;;   (setq org-timegrid-org-files 'agenda
+;;         org-timegrid-org-capture-file
+;;         (expand-file-name "calendar.org" org-directory)
+;;         org-timegrid-org-capture-template
+;;         '(:target file
+;;           :template "* %{title}\n%{time-range}\n%?")
+;; 
+;;         ;; Save Org buffers immediately after edits made in the calendar.
+;;         org-timegrid-org-auto-save t
+;; 
+;;         ;; Set this to nil if repeating entries should be hidden.
+;;         org-timegrid-org-show-repeaters t
+;; 
+;;         ;; The first matching tag supplies an event's colour.
+;;         org-timegrid-org-tag-color-alist
+;;         '(("work"     . indigo)
+;;           ("personal" . green)
+;;           ("reading"  . yellow)
+;;           ("errand"   . cyan)))
+;;   :config
+;;   (require 'org-timegrid-org))
 
-        (:startgrouptag)
-        ("people")
-        (:grouptags)
-        ("channel") ("person") ("figure")
-        (:endgrouptag)
+;; This is part of the same package. It adds a read-only day strip to Org
+;; Agenda; pressing RET on the strip opens the editable week view.
+;; (use-package org-timegrid-agenda
+;;   :ensure nil
+;;   :after org-agenda
+;;   :init
+;;   ;; nil inserts the strip at the top. To place it after a particular custom
+;;   ;; agenda block, use a regexp matching that block's heading instead.
+;;   (setq org-timegrid-agenda-insert-after nil
+;;         org-timegrid-agenda-separator t
+;;         org-timegrid-agenda-minutes-before 180
+;;         org-timegrid-agenda-minutes-after 180)
+;;   :config
+;;   (org-timegrid-agenda-mode 1))
 
-        (:startgrouptag)
-        ("meta")
-        (:grouptags)
-        ("important")
-        (:endgrouptag)
 
-        (:startgrouptag)
-        ("agenda")
-        (:grouptags)
-        ("_SOMEDAY") ("_WAITNG") ("_LONGTERM") ("_PARTIAL") ("_ABANDONED") ("_INFEASIBLE") ("_MOOT")
-        (:endgrouptag)
 
-        (:startgrouptag)
-        ("reflection")
-        (:grouptags)
-        ("#reflection") ("#monthlyLookback") ("#yearlyLookback")
-        (:endgrouptag)))
+;; (setq org-tag-persistent-alist
+;;       '((:startgrouptag)
+;;         ("otaku")
+;;         (:grouptags)
+;;         ("Anime") ("Lnovel") ("VN") ("Game") ("Manga") ("Omusic")
+;;         (:endgrouptag)
+;; 
+;;         (:startgrouptag)
+;;         ("review")
+;;         (:grouptags)
+;;         ("article") ("video") ("book") ("movie") ("drama")
+;;         (:endgrouptag)
+;; 
+;;         (:startgrouptag)
+;;         ("people")
+;;         (:grouptags)
+;;         ("channel") ("person") ("figure")
+;;         (:endgrouptag)
+;; 
+;;         (:startgrouptag)
+;;         ("meta")
+;;         (:grouptags)
+;;         ("important")
+;;         (:endgrouptag)
+;; 
+;;         (:startgrouptag)
+;;         ("agenda")
+;;         (:grouptags)
+;;         ("_SOMEDAY") ("_WAITNG") ("_LONGTERM") ("_PARTIAL") ("_ABANDONED") ("_INFEASIBLE") ("_MOOT")
+;;         (:endgrouptag)
+;; 
+;;         (:startgrouptag)
+;;         ("reflection")
+;;         (:grouptags)
+;;         ("#reflection") ("#monthlyLookback") ("#yearlyLookback")
+;;         (:endgrouptag)))
+
+;; vulpea?
+
+;; org draw
+
+(use-package ox-hugo)
 
 (provide 'my-org-mode)
 ;;; my-org-mode.el ends here

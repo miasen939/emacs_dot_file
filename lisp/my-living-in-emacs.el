@@ -12,12 +12,12 @@
 ;;; 一定不要忘了 安全备份私钥
 ;;; 一定不要忘了 pass phrase
 (use-package auth-source
-  :ensure t
+  :ensure nil
   :config
   (add-to-list 'auth-sources 'password-store))   ; 关键这行
 
 (use-package auth-source-pass
-  :ensure t
+  :ensure nil
   :after auth-source
   :config
   (auth-source-pass-enable))

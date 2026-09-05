@@ -5,6 +5,7 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]  这�
 
 
 * 配置目录
+
 ** minimal-emacs
 - early
 - init.el
@@ -138,6 +139,7 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]  这�
 
 
 注意如果换了开发环境要记得改一下镜像
+
 
 
 

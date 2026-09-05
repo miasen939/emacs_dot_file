@@ -2,6 +2,6 @@
 # name: default beancount templte
 # key: d
 # --
-`(format-time-string "%Y-%m-%d")` * "$1"
-  Expenses:$0                            $2 JPY
+`(format-time-string "%Y-%m-%d")` * "$1" "$2"
+  Expenses:$0                            $3 JPY
   Assets:Cash
