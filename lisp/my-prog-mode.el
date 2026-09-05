@@ -376,7 +376,7 @@ The DWIM behaviour of this command is as follows:
      '("2" . meow-expand-2)
      '("1" . meow-expand-1)
      '("-" . negative-argument)
-     '(";" . meow-reverse)
+     ;; '(";" . meow-reverse)
      '("," . meow-inner-of-thing)
      '("." . meow-bounds-of-thing)
      '("[" . meow-beginning-of-thing)

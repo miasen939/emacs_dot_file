@@ -66,48 +66,6 @@
  ;; casual compile
  ;; M-x man and casual man
 
-(use-package embark
-  :bind (("C-,"   . embark-act)
-         ("C-M-," . embark-dwim)        ; 智能猜测最可能的操作
-         ("C-h B" . embark-bindings)    ; 列出所有可用绑定
-         :map minibuffer-local-map
-         ("C-."   . embark-act)         ; minibuffer 里用 C-.
-         ("C-c C-e" . embark-export)
-         :map org-mode-map
-         ("C-," . embark-act))          ; 导出候选列表
-  :custom
-  (embark-quit-after-action nil)        ; 执行 action 后不退出，方便连续操作
-  (prefix-help-command #'embark-prefix-help-command)
-  :init
-  (defun embark-which-key-indicator ()
-    (lambda (&optional keymap targets prefix)
-      (if (null keymap)
-          (which-key--hide-popup-ignore-command)
-        (which-key--show-keymap
-         (if (eq (plist-get (car targets) :type) 'embark-become)
-             "Become"
-           (format "Act on %s '%s'%s"
-                   (plist-get (car targets) :type)
-                   (embark--truncate-target (plist-get (car targets) :target))
-                   (if (cdr targets) "…" "")))
-         keymap nil nil 'no-paging))
-      #'which-key--hide-popup-ignore-command)) ; ← 修复：移到外层括号之后
-  (setq embark-indicators
-        '(embark-which-key-indicator
-          embark-highlight-indicator
-          embark-isearch-highlight-indicator))
-  (setq embark-action-indicator #'embark-which-key-indicator
-        embark-become-indicator #'embark-which-key-indicator)
-  :config
-  (defun embark--truncate-target (target)
-    (if (and (stringp target) (> (length target) 30))
-        (concat (substring target 0 27) "...")
-      target)))
-
-(use-package embark-consult
-  :after (embark consult)
-  :demand t
-  :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package which-key
   :defer 0.2

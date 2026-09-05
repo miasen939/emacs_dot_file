@@ -6,7 +6,7 @@
 ;;
 
 ;;; Code:
-
+(setq enable-recursive-minibuffers t)
 
 ;; 关闭 小于号自动补全大于号
 (setq electric-pair-inhibit-predicate
@@ -38,7 +38,7 @@
   (setq yas-verbosity 1)
 
   ;; 允许在任意位置嵌套展开
-  (setq yas-triggers-in-field t))
+(setq enable-recursive-minibuffers t)  (setq yas-triggers-in-field t))
 
 (use-package yasnippet-snippets
   :ensure t
@@ -138,20 +138,32 @@
 (use-package vertico
   :demand t
   :bind (:map vertico-map
-              ("<escape>" . minibuffer-keyboard-quit))
+              ("<escape>" . minibuffer-keyboard-quit)
+              )
   :custom
   (vertico-scroll-margin 0)
   (vertico-count 15)
   (vertico-cycle t)
   :init
-  (vertico-mode))
+  (vertico-mode)
+  :config
+  (setq completion-ignore-case t
+      read-file-name-completion-ignore-case t
+      read-buffer-completion-ignore-case t)
+
+  (setq read-extended-command-predicate #'command-completion-default-include-p)
+  )
 
 (use-package orderless
   :demand t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
+  (completion-category-overrides '((file (styles partial-completion))))
+
+  (orderless-component-separator #'orderless-escapable-split-on-space)
+  (completion-pcm-leading-wildcard t)
+  )
 
 (use-package marginalia
   :demand t
@@ -200,6 +212,114 @@
    :preview-key "M-.")
   (setq consult-async-min-input 2)
   (setq consult-narrow-key "<"))
+
+
+;; 优化 dired 协作
+(use-package vertico-directory
+  :ensure nil
+  :after vertico
+  :bind (:map vertico-map
+         ("RET" . vertico-directory-enter)   ; 進入目錄/選定檔案
+         ("DEL" . vertico-directory-delete-char)   ; 在路徑末端時整段刪掉一個目錄層級,而非單一字元
+         ("M-DEL" . vertico-directory-delete-word))
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy)   ; 自動清掉被"蓋掉"的舊路徑殘骸
+  )
+
+(use-package consult-dir
+  :ensure t
+  :bind (("C-x C-r" . consult-dir)
+         :map vertico-map
+         ("C-x C-r" . consult-dir)
+         ("C-x C-j" . consult-dir-jump-file)))
+
+
+(use-package vertico-repeat
+  :ensure nil
+  :after vertico
+  :hook (minibuffer-setup . vertico-repeat-save)
+  :bind ("M-R" . vertico-repeat))
+
+
+
+;; (use-package embark
+;;   :bind (("C-,"   . embark-act)
+;;          ("C-M-," . embark-dwim)        ; 智能猜测最可能的操作
+;;          ("C-h B" . embark-bindings)    ; 列出所有可用绑定
+;;          :map minibuffer-local-map
+;;          ("C-."   . embark-act)         ; minibuffer 里用 C-.
+;;          ("C-c C-e" . embark-export)
+;;          :map org-mode-map
+;;          ("C-," . embark-act))          ; 导出候选列表
+;;   :custom
+;;   (embark-quit-after-action nil)        ; 执行 action 后不退出，方便连续操作
+;;   (prefix-help-command #'embark-prefix-help-command)
+;;   :init
+;;   (defun embark-which-key-indicator ()
+;;     (lambda (&optional keymap targets prefix)
+;;       (if (null keymap)
+;;           (which-key--hide-popup-ignore-command)
+;;         (which-key--show-keymap
+;;          (if (eq (plist-get (car targets) :type) 'embark-become)
+;;              "Become"
+;;            (format "Act on %s '%s'%s"
+;;                    (plist-get (car targets) :type)
+;;                    (embark--truncate-target (plist-get (car targets) :target))
+;;                    (if (cdr targets) "…" "")))
+;;          keymap nil nil 'no-paging))
+;;       #'which-key--hide-popup-ignore-command)) ; ← 修复：移到外层括号之后
+;;   (setq embark-indicators
+;;         '(embark-which-key-indicator
+;;           embark-highlight-indicator
+;;           embark-isearch-highlight-indicator))
+;;   (setq embark-action-indicator #'embark-which-key-indicator
+;;         embark-become-indicator #'embark-which-key-indicator)
+;;   :config
+;;   (defun embark--truncate-target (target)
+;;     (if (and (stringp target) (> (length target) 30))
+;;         (concat (substring target 0 27) "...")
+;;       target)))
+;;
+(setq embark-help-key "?")
+;; (setq embark-indicators
+;;       '(embark-minimal-indicator   ; 只在 echo area 顯示目前目標的類型,不彈鍵位表
+;;         embark-highlight-indicator ; 目標本身會被高亮,方便確認選對東西
+;;         embark-isearch-highlight-indicator))
+
+
+;; (use-package embark-consult
+;;   :after (embark consult)
+;;   :demand t
+;;   :hook (embark-collect-mode . consult-preview-at-point-mode))
+
+(use-package general
+  :demand t
+  :config
+  (define-prefix-command 'my-semicolon-map)
+  (keymap-global-set ";" 'my-semicolon-map)
+  (general-define-key
+   :keymaps 'my-semicolon-map
+   "SPC" (lambda () (interactive) (insert ";"))
+
+   "a" #'embark-act
+   "d" #'embark-dwim
+   "A" #'embark-act-all
+   "s" #'embark-select
+   "c" #'embark-collect
+   "l" #'embark-live
+   "e" #'embark-export
+   "b" #'embark-bindings
+   "B" #'embark-become
+
+   ";" #'meow-reverse
+   "r" #'consult-bookmark
+   )
+  
+  (setq prefix-help-command #'embark-prefix-help-command) ;; 這行不放進 leader,直接設全域變數:任何 prefix key(如 C-x)按完後按 C-h,
+
+  )
+;; 會跳出 completing-read 讓你直接在裡面搜尋並執行,而不是死板的 help buffer
+
+
 
 (provide 'my-autocomplete)
 
