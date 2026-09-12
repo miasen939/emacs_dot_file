@@ -103,7 +103,7 @@
 
 (use-package avy
   :bind (
-         ("C-;" . avy-goto-line)
+         ;; ("C-;" . avy-goto-line)
          ;; 
          ;; ("C-'" . avy-goto-line)
                                         ;           ("C-u C-;" . avy-goto-word-0)
@@ -123,7 +123,7 @@
   (avy-all-windows t)
   (avy-background t)
   (avy-single-candidate-jump t)
-  (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  ;; (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   :config
   ;;(define-key isearch-mode-map (kbd "C-'") 'avy-isearch)
 )
@@ -151,7 +151,18 @@
          ("C--" . expreg-ract)
          ("C-o" . expreg-expand)
          ("C-S-O" . expreg-contract)
-         ))
+         )
+
+  :config
+  (defvar expreg-repeat-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map "o" #'expreg-expand)
+      (define-key map "O" #'expreg-contract)
+      map))
+
+  (put 'expreg-expand 'repeat-map 'expreg-repeat-map)
+  (put 'expreg-contract 'repeat-map 'expreg-repeat-map)
+)
 
 ;; (use-package mwim
 ;;     :ensure t
@@ -170,14 +181,15 @@
     ;; (inferior-ess-mode . rainbow-delimiters-mode)   ;; R 的 REPL
     )
 
-;; (use-package symbol-overlay
-;;   :bind (("M-i" . symbol-overlay-put)
-;;          ("M-n" . symbol-overlay-jump-next)
-;;          ("M-p" . symbol-overlay-jump-prev)
-;;          ("M-N" . symbol-overlay-switch-forward)
-;;          ("M-P" . symbol-overlay-switch-backward)
-;;          ("M-C" . symbol-overlay-remove-all))
-;;   :hook (prog-mode . symbol-overlay-mode))
+(;; use-package symbol-overlay
+ ;;  :bind (("M-i" . symbol-overlay-put)
+ ;;         ("M-n" . symbol-overlay-jump-next)
+ ;;         ("M-p" . symbol-overlay-jump-prev)
+ ;;         ("M-N" . symbol-overlay-switch-forward)
+ ;;         ("M-P" . symbol-overlay-switch-backward)
+ ;;         ("M-C" . symbol-overlay-remove-all))
+ ;;   :hook (prog-mode . symbol-overlay-mode)
+  )
 
   (use-package colorful-mode
     ;; :diminish
@@ -269,208 +281,208 @@ The DWIM behaviour of this command is as follows:
 
 
 (use-package surround
-  :demand t
+  :ensure t
   :bind-keymap ("M-'" . surround-keymap))
 
 ;;; ===the meow modeling scheme===
 
-(defun my/disable-emacs-input-method ()
-  "Disable Emacs built-in input method if active."
-  (when current-input-method
-    (toggle-input-method)))
-
-(defun my/meow-disable-input-method-on-normal (state)
-  "Disable input method when Meow enters normal`state' STATE."
-  
-  (when (eq state 'normal)
-    (my/disable-emacs-input-method)))
-(add-hook 'meow-switch-state-hook
-          #'my/meow-disable-input-method-on-normal)
-(defun my/meow-insert-and-input-method-on ()
-  "Enter Meow insert state and enable Emacs input method."
-  (interactive)
-  (meow-insert)
-  (unless current-input-method
-    (toggle-input-method)))
-
-(use-package meow
-  :demand t
-  :config
- 
-(define-key meow-normal-state-keymap (kbd "SPC") nil)
-(define-key meow-motion-state-keymap (kbd "SPC") nil)
-  ;; (setq meow-keypad-ctrl-meta-prefix ?G)
-  ;; (setq meow-keypad-meta-prefix ?M)
-  (setq meow-mode-state-list
-        '((org-mode . normal)
- 
-          (erc-mode . insert)
-          (vterm-mode . insert)
-          (ghostel-mode . motion)
- 
-          (dired-mode . motion)
-          (elfeed-search-mode . motion)
-          (elfeed-show-mode . motion)
-          (pdf-view-mode . motion)
-          (calibredb-search-mode . motion)
-          (dirvish-mode . motion)
-          (messages-buffer-mode . motion)
-          (help-mode . motion)
-          (info-mode . motion)
-          (occur-mode . motion)
-          (pass-mode . motion)
-          (grep-mode . motion)
-          (compilation-mode . motion)
-          (messages-buffer-mode . motion)
-          (special-mode . motion)))
-  
-  (defun meow-setup ()
-    (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-    ;; 旧版 Meow 使用这个函数名
-    (meow-motion-overwrite-define-key
-
-     ;; '("j" . meow-next)
-     ;; '("k" . meow-prev)
-     ;; '("<escape>" . ignore)
-     )
- 
- 
-    ;; (meow-leader-define-key
-    ;;  ;; 在 Motion 中，通过 SPC j / SPC k 调用原来的按键
-    ;;  ;; '("J" . "H-j")
-    ;;  ;; '("K" . "H-k")
-    ;; 
-    ;;  ;; SPC 0-9 作为数字参数
-    ;;  ;; '("1" . meow-digit-argument)
-    ;;  ;; '("2" . meow-digit-argument)
-    ;;  ;; '("3" . meow-digit-argument)
-    ;;  ;; '("4" . meow-digit-argument)
-    ;;  ;; '("5" . meow-digit-argument)
-    ;;  ;; '("6" . meow-digit-argument)
-    ;;  ;; '("7" . meow-digit-argument)
-    ;;  ;; '("8" . meow-digit-argument)
-    ;;  ;; '("9" . meow-digit-argument)
-    ;;  ;; '("0" . meow-digit-argument)
-    ;;  )
- 
-    (meow-normal-define-key
-     ;; '("1" . meow-digit-argument)
-     ;; '("2" . meow-digit-argument)
-     ;; '("3" . meow-digit-argument)
-     ;; '("4" . meow-digit-argument)
-     ;; '("5" . meow-digit-argument)
-     ;; '("6" . meow-digit-argument)
-     ;; '("7" . meow-digit-argument)
-     ;; '("8" . meow-digit-argument)
-     ;; '("9" . meow-digit-argument)
-     ;; '("0" . meow-digit-argument)
-     
-     '("0" . meow-expand-0)
-     '("9" . meow-expand-9)
-     '("8" . meow-expand-8)
-     '("7" . meow-expand-7)
-     '("6" . meow-expand-6)
-     '("5" . meow-expand-5)
-     '("4" . meow-expand-4)
-     '("3" . meow-expand-3)
-     '("2" . meow-expand-2)
-     '("1" . meow-expand-1)
-     '("-" . negative-argument)
-     ;; '(";" . meow-reverse)
-     '("," . meow-inner-of-thing)
-     '("." . meow-bounds-of-thing)
-     '("[" . meow-beginning-of-thing)
-     '("]" . meow-end-of-thing)
-     '("a" . meow-append)
-     '("A" . meow-open-below)
-     '("b" . meow-back-word)
-     '("B" . meow-back-symbol)
-     '("c" . meow-change)
-     '("d" . meow-kill)
-     '("D" . meow-backward-delete)
-     '("e" . meow-next-word)
-     '("E" . meow-next-symbol)
-     '("f" . meow-find)
-     '("g" . meow-cancel-selection)
-     '("G" . meow-grab)
-     '("h" . meow-left)
-     ;; '("H" . meow-left-expand)
-     '("i" . meow-insert)
-     ;; '("I" . meow-open-above)
-     '("j" . meow-next)
-     ;; '("J" . meow-next-expand)
-     '("k" . meow-prev)
-     ;; '("K" . meow-prev-expand)
-     '("l" . meow-right)
-     '("L" . meow-right-expand)
-     '("m" . meow-join)
-     '("n" . meow-search)
-     ;; '("o" . meow-block)
-     ;; '("O" . meow-to-block)
-     '("p" . meow-yank)
-     '("P" . meow-replace)              ;无效果
-     ;; '("p" . yank)
-     '("q" . meow-quit)
-     ;; '("r" . meow-replace)
-     '("R" . meow-swap-grab)
-     ;; '("s" . meow-kill)
-     '("t" . meow-till)
-     '("u" . meow-undo)
-     ;; '("U" . meow-undo-in-selection)
-     ;; '("v" . meow-visit)
-     '("w" . meow-mark-word)
-     '("W" . meow-mark-symbol)
-     '("x" . meow-line)
-     '("X" . meow-goto-line)
-     '("y" . meow-save)
-     '("Y" . meow-sync-grab)
-     '("z" . meow-pop-selection)
-     '("'" . repeat)
-     '("<escape>" . ignore)
- 
-     ;; 自定义按键
-     '("\\" . my/meow-insert-and-input-method-on)
-     '("<" . beginning-of-buffer)
-     '(">" . end-of-buffer)
-     '("Q" . next-buffer)
-     ;; '("Z" . undo-redo)
-     '("U" . undo-redo)
-     ;; '(":" . execute-extended-command)
-     ;; '("C" . undo-redo)
-     ;; '("V" . undo-redo)
-     ;; '("M" . meow-start-kmacro-or-insert-counter)
-     ;; '("F" . meow-start-kmacro-or-insert-counter meow-start-kmacro-or-insert-counter)
-     ;; '("N" . meow-end-of-thing)
-     ;; '("P" . meow-beginning-of-thing)
-     ;; '("S" . my/meow-surround)
-     ;; '("/" . my/meow-surround)
-     '("?" . helpful-at-point)
-     
-     '("%" . evilmi-jump-items-native)
-     '("r" . meow-grab)
-     ;; '("g" . my-meow-g-prefix)
- 
-     '("o" . expreg-expand)
-     '("O" . expreg-contract)
- 
-     '("V" . meow-visit)
-     '("v" . flash-jump)
-     (cons "s" surround-keymap)
-     (cons "SPC" surround-keymap)
-     ))
-  ;; (cons "S" surround-keymap)
-  (meow-setup)
-  (meow-global-mode 1)
-  (setq -use-clipboard t)
- 
-  (setq meow-expand-hint-remove-delay 0)
- 
-  (with-eval-after-load 'meow
-  (setq meow-cursor-type-insert 'box
-        meow-cursor-type-normal '(hbar . 4)
-        ;; meow-cursor-type-normal 'hollow
-        ))
-  )
+;; (defun my/disable-emacs-input-method ()
+;;   "Disable Emacs built-in input method if active."
+;;   (when current-input-method
+;;     (toggle-input-method)))
+;; 
+;; (defun my/meow-disable-input-method-on-normal (state)
+;;   "Disable input method when Meow enters normal`state' STATE."
+;;   
+;;   (when (eq state 'normal)
+;;     (my/disable-emacs-input-method)))
+;; (add-hook 'meow-switch-state-hook
+;;           #'my/meow-disable-input-method-on-normal)
+;; (defun my/meow-insert-and-input-method-on ()
+;;   "Enter Meow insert state and enable Emacs input method."
+;;   (interactive)
+;;   (meow-insert)
+;;   (unless current-input-method
+;;     (toggle-input-method)))
+;; 
+;; (use-package meow
+;;   :demand t
+;;   :config
+;;  
+;; (define-key meow-normal-state-keymap (kbd "SPC") nil)
+;; (define-key meow-motion-state-keymap (kbd "SPC") nil)
+;;   ;; (setq meow-keypad-ctrl-meta-prefix ?G)
+;;   ;; (setq meow-keypad-meta-prefix ?M)
+;;   (setq meow-mode-state-list
+;;         '((org-mode . normal)
+;;  
+;;           (erc-mode . insert)
+;;           (vterm-mode . insert)
+;;           (ghostel-mode . motion)
+;;  
+;;           (dired-mode . motion)
+;;           (elfeed-search-mode . motion)
+;;           (elfeed-show-mode . motion)
+;;           (pdf-view-mode . motion)
+;;           (calibredb-search-mode . motion)
+;;           (dirvish-mode . motion)
+;;           (messages-buffer-mode . motion)
+;;           (help-mode . motion)
+;;           (info-mode . motion)
+;;           (occur-mode . motion)
+;;           (pass-mode . motion)
+;;           (grep-mode . motion)
+;;           (compilation-mode . motion)
+;;           (messages-buffer-mode . motion)
+;;           (special-mode . motion)))
+;;   
+;;   (defun meow-setup ()
+;;     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+;;     ;; 旧版 Meow 使用这个函数名
+;;     (meow-motion-overwrite-define-key
+;; 
+;;      ;; '("j" . meow-next)
+;;      ;; '("k" . meow-prev)
+;;      ;; '("<escape>" . ignore)
+;;      )
+;;  
+;;  
+;;     ;; (meow-leader-define-key
+;;     ;;  ;; 在 Motion 中，通过 SPC j / SPC k 调用原来的按键
+;;     ;;  ;; '("J" . "H-j")
+;;     ;;  ;; '("K" . "H-k")
+;;     ;; 
+;;     ;;  ;; SPC 0-9 作为数字参数
+;;     ;;  ;; '("1" . meow-digit-argument)
+;;     ;;  ;; '("2" . meow-digit-argument)
+;;     ;;  ;; '("3" . meow-digit-argument)
+;;     ;;  ;; '("4" . meow-digit-argument)
+;;     ;;  ;; '("5" . meow-digit-argument)
+;;     ;;  ;; '("6" . meow-digit-argument)
+;;     ;;  ;; '("7" . meow-digit-argument)
+;;     ;;  ;; '("8" . meow-digit-argument)
+;;     ;;  ;; '("9" . meow-digit-argument)
+;;     ;;  ;; '("0" . meow-digit-argument)
+;;     ;;  )
+;;  
+;;     (meow-normal-define-key
+;;      ;; '("1" . meow-digit-argument)
+;;      ;; '("2" . meow-digit-argument)
+;;      ;; '("3" . meow-digit-argument)
+;;      ;; '("4" . meow-digit-argument)
+;;      ;; '("5" . meow-digit-argument)
+;;      ;; '("6" . meow-digit-argument)
+;;      ;; '("7" . meow-digit-argument)
+;;      ;; '("8" . meow-digit-argument)
+;;      ;; '("9" . meow-digit-argument)
+;;      ;; '("0" . meow-digit-argument)
+;;      
+;;      '("0" . meow-expand-0)
+;;      '("9" . meow-expand-9)
+;;      '("8" . meow-expand-8)
+;;      '("7" . meow-expand-7)
+;;      '("6" . meow-expand-6)
+;;      '("5" . meow-expand-5)
+;;      '("4" . meow-expand-4)
+;;      '("3" . meow-expand-3)
+;;      '("2" . meow-expand-2)
+;;      '("1" . meow-expand-1)
+;;      '("-" . negative-argument)
+;;      ;; '(";" . meow-reverse)
+;;      '("," . meow-inner-of-thing)
+;;      '("." . meow-bounds-of-thing)
+;;      '("[" . meow-beginning-of-thing)
+;;      '("]" . meow-end-of-thing)
+;;      '("a" . meow-append)
+;;      '("A" . meow-open-below)
+;;      '("b" . meow-back-word)
+;;      '("B" . meow-back-symbol)
+;;      '("c" . meow-change)
+;;      '("d" . meow-kill)
+;;      '("D" . meow-backward-delete)
+;;      '("e" . meow-next-word)
+;;      '("E" . meow-next-symbol)
+;;      '("f" . meow-find)
+;;      '("g" . meow-cancel-selection)
+;;      '("G" . meow-grab)
+;;      '("h" . meow-left)
+;;      ;; '("H" . meow-left-expand)
+;;      '("i" . meow-insert)
+;;      ;; '("I" . meow-open-above)
+;;      '("j" . meow-next)
+;;      ;; '("J" . meow-next-expand)
+;;      '("k" . meow-prev)
+;;      ;; '("K" . meow-prev-expand)
+;;      '("l" . meow-right)
+;;      '("L" . meow-right-expand)
+;;      '("m" . meow-join)
+;;      '("n" . meow-search)
+;;      ;; '("o" . meow-block)
+;;      ;; '("O" . meow-to-block)
+;;      '("p" . meow-yank)
+;;      '("P" . meow-replace)              ;无效果
+;;      ;; '("p" . yank)
+;;      '("q" . meow-quit)
+;;      ;; '("r" . meow-replace)
+;;      '("R" . meow-swap-grab)
+;;      ;; '("s" . meow-kill)
+;;      '("t" . meow-till)
+;;      '("u" . meow-undo)
+;;      ;; '("U" . meow-undo-in-selection)
+;;      ;; '("v" . meow-visit)
+;;      '("w" . meow-mark-word)
+;;      '("W" . meow-mark-symbol)
+;;      '("x" . meow-line)
+;;      '("X" . meow-goto-line)
+;;      '("y" . meow-save)
+;;      '("Y" . meow-sync-grab)
+;;      '("z" . meow-pop-selection)
+;;      '("'" . repeat)
+;;      '("<escape>" . ignore)
+;;  
+;;      ;; 自定义按键
+;;      '("\\" . my/meow-insert-and-input-method-on)
+;;      '("<" . beginning-of-buffer)
+;;      '(">" . end-of-buffer)
+;;      '("Q" . next-buffer)
+;;      ;; '("Z" . undo-redo)
+;;      '("U" . undo-redo)
+;;      ;; '(":" . execute-extended-command)
+;;      ;; '("C" . undo-redo)
+;;      ;; '("V" . undo-redo)
+;;      ;; '("M" . meow-start-kmacro-or-insert-counter)
+;;      ;; '("F" . meow-start-kmacro-or-insert-counter meow-start-kmacro-or-insert-counter)
+;;      ;; '("N" . meow-end-of-thing)
+;;      ;; '("P" . meow-beginning-of-thing)
+;;      ;; '("S" . my/meow-surround)
+;;      ;; '("/" . my/meow-surround)
+;;      '("?" . helpful-at-point)
+;;      
+;;      '("%" . evilmi-jump-items-native)
+;;      '("r" . meow-grab)
+;;      ;; '("g" . my-meow-g-prefix)
+;;  
+;;      '("o" . expreg-expand)
+;;      '("O" . expreg-contract)
+;;  
+;;      '("V" . meow-visit)
+;;      '("v" . flash-jump)
+;;      (cons "s" surround-keymap)
+;;      (cons "SPC" surround-keymap)
+;;      ))
+;;   ;; (cons "S" surround-keymap)
+;;   (meow-setup)
+;;   (meow-global-mode 1)
+;;   (setq -use-clipboard t)
+;;  
+;;   (setq meow-expand-hint-remove-delay 0)
+;;  
+;;   (with-eval-after-load 'meow
+;;   (setq meow-cursor-type-insert 'box
+;;         meow-cursor-type-normal '(hbar . 4)
+;;         ;; meow-cursor-type-normal 'hollow
+;;         ))
+;;   )
 
 ;; C-o	meow-pop-to-mark	last position in jumplist; mark-ring based, only in current buffer
 ;; C-i	meow-unpop-to-mark	next position in jumplist; mark-ring based, only in current buffer
@@ -525,13 +537,12 @@ The DWIM behaviour of this command is as follows:
 
 (use-package evil-matchit)
 
-;; (use-package iedit
-;;   :ensure t
-;;   :bind ("C-'" . iedit-mode))
+(use-package iedit
+  :ensure t
+  :bind ("C-'" . iedit-mode))
 
 
-(use-package kdl-mode
-  )
+(use-package kdl-mode)
 
 
 ;; dapmode

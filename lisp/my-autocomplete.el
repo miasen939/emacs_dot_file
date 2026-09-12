@@ -296,6 +296,8 @@
   :config
   (define-prefix-command 'my-semicolon-map)
   (keymap-global-set ";" 'my-semicolon-map)
+  (keymap-global-set "；" 'my-semicolon-map)
+  
   (general-define-key
    :keymaps 'my-semicolon-map
    "SPC" (lambda () (interactive) (insert ";"))

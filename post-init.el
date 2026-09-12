@@ -449,10 +449,13 @@
 ;; (server-start)
 
 ;;; Some key macros funtion
-(fset 'ma/org-create-node-with-id
-      (key-parse "<escape> C-<return> <return> C-u C-c ! <return> C-p i SPC C-c n g <f4> <escape>"))
+(fset 'ma/org-create-node-with-id (key-parse " C-<return> <return> C-u C-c ! <return> C-p SPC C-c n g"))
 
-(fset 'ma/dired-two-line-view (key-parse "<escape> C-x 1 C-x C-j C-x 3"))
+(fset 'ma/dired-two-line-view (key-parse "C-x 1 C-x C-j C-x 3"))
+
+(fset 'ma/org-create-node-with-id (key-parse " C-<return> <return> C-u C-c ! <return> C-p SPC C-c n g"))
+
+(fset 'ma/org-create-node-with-id (key-parse " C-<return> <return> C-u C-c ! <return> C-p SPC C-c n g"))
 
 
 (provide 'post-init)
