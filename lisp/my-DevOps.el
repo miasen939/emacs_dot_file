@@ -70,29 +70,7 @@ Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
   (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
   (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
   (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer))
-
   )
-
-
-;; (use-package ghostel
-;;   :vc (:url "https://github.com/dakra/ghostel"
-;;        :lisp-dir "lisp"
-;;        :rev :newest))
-
-;; (defun my/disable-pangu-in-ghostel ()
-;;   "进入 ghostel buffer 时禁用 pangu-spacing-mode."
-;;   (when (bound-and-true-p pangu-spacing-mode)
-;;     (pangu-spacing-mode -1)))
-;; 
-;; (add-hook 'ghostel-mode-hook #'my/disable-pangu-in-ghostel)
-
-;; (defun my/disable-ime-in-ghostel ()
-;;   "进入 ghostel buffer 时强制关闭所有输入法."
-;;   (my/deactivate-all-input-methods)
-;;   (when (bound-and-true-p rime-mode)
-;;     (rime-mode -1)))
-;; 
-;; (add-hook 'ghostel-mode-hook #'my/disable-ime-in-ghostel)
 
 (use-package magit
   :bind

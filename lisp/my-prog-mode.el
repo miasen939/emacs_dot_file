@@ -154,15 +154,12 @@
          )
 
   :config
-  (defvar expreg-repeat-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map "o" #'expreg-expand)
-      (define-key map "O" #'expreg-contract)
-      map))
-
-  (put 'expreg-expand 'repeat-map 'expreg-repeat-map)
-  (put 'expreg-contract 'repeat-map 'expreg-repeat-map)
+  
 )
+
+
+
+
 
 ;; (use-package mwim
 ;;     :ensure t
@@ -520,12 +517,10 @@ The DWIM behaviour of this command is as follows:
         (":" . calc-grab-sum-down)
         ("_" . calc-grab-sum-across)
         (" " . delete-whitespace-rectangle)))
-;; Emacs 29+ 推荐写法
-(repeat-mode 1)
-(setq repeat-timeout 5)
-(setq  repeat-exit-key "<escape>")
 
-(keymap-set global-map "C-z" #'repeat)
+;; Emacs 29+ 推荐写法
+
+;; (keymap-set global-map "C-z" #'repeat)
 
 
 
@@ -539,7 +534,7 @@ The DWIM behaviour of this command is as follows:
 
 (use-package iedit
   :ensure t
-  :bind ("C-'" . iedit-mode))
+  :bind ("C-;" . iedit-mode))
 
 
 (use-package kdl-mode)
@@ -548,7 +543,158 @@ The DWIM behaviour of this command is as follows:
 ;; dapmode
 ;; realgud
 
+
+
+
+(setq repeat-keep-prefix t)
+(use-package repeat
+  :init
+  (repeat-mode 1)
+  :config
+  (setq  repeat-exit-key "<escape>")
+  
+  ;; (defvar-keymap my-line-repeat-map
+  ;;   :repeat t
+  ;;   "n" #'next-line
+  ;;   "p" #'previous-line)
+  (defvar-keymap my-word-repeat-map
+    :repeat t
+    "f" #'forward-word
+    "b" #'backward-word)
+  ;; (defvar-keymap my-char-repeat-map
+  ;;   :repeat t
+  ;;   "f" #'forward-char
+  ;;   "b" #'backward-char)
+
+  (defvar-keymap my-page-repeat-map
+    :repeat t
+    "v" #'scroll-up-command     ; 向下翻頁 (即 C-v)
+    "u" #'scroll-down-command)
+
+  (defvar expreg-repeat-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map "o" #'expreg-expand)
+      (define-key map "u" #'expreg-contract)
+      map))
+
+  (put 'expreg-expand 'repeat-map 'expreg-repeat-map)
+  (put 'expreg-contract 'repeat-map 'expreg-repeat-map)
+  ;; 
+  (defvar-keymap my-paren-repeat-map
+  :repeat t
+  "f" #'forward-sexp             ; 跳到下個括號/運算式 (C-M-f)
+  "b" #'backward-sexp            ; 跳到上個括號/運算式 (C-M-b)
+  "u" #'backward-up-list         ; 跳出當前括號外層 (C-M-u)
+  "d" #'down-list
+  "SPC" #'mark-sexp)
+
+
+  
+  ;; 只在 god-mode 下生效的 repeat map
+  (defvar my-god-only-repeat-maps
+    '(my-word-repeat-map my-page-repeat-map
+      ))
+
+  (defun my-repeat-filter-god-only (map)
+    "非 god-mode 时，屏蔽 `my-god-only-repeat-maps' 中的 map。"
+    (if (and map
+             (not (bound-and-true-p god-local-mode))
+             (memq map (mapcar #'symbol-value my-god-only-repeat-maps)))
+        nil
+      map))
+
+  (advice-add 'repeat-get-map :filter-return #'my-repeat-filter-god-only)
+  )
+
+
+;; god mode
+
+;;; god-mode
+;; ;;; the RSI and god mode
+(use-package god-mode
+  :demand t
+  :init
+  (setq god-mode-enable-function-key-translation nil)
+  ;; (god-mode-all 1)
+  :config
+  ;;  (god-mode-all)
+  (which-key-enable-god-mode-support)
+  (global-set-key (kbd "<escape>") #'(lambda () (interactive) (god-local-mode 1)))
+  (define-key god-local-mode-map (kbd "i") #'god-local-mode)
+
+  (define-key god-local-mode-map (kbd "\\") #'toggle-input-method)
+  (define-key god-local-mode-map (kbd "r") #'execute-extended-command)
+;; (define-key god-local-mode-map (kbd ";") #'toggle-input-method)
+  ;; ,
+  
+  ;; (global-set-key (kbd "<escape>") #'(lambda () (interactive) (god-mode-all 1)))
+  ;; (define-key god-local-mode-map (kbd "i") #'god-mode-all)
+  ;;    (setq god-exempt-major-modes nil)
+  ;;  (setq god-exempt-predicates nil)
+
+  
+  (setq god-mode-alist
+        '((nil . "C-")
+          ("m" . "M-")
+          ("j" . "C-M-")
+          ;; (";" . ";-")
+          ))
+
+  (define-key god-local-mode-map (kbd "z") #'repeat)
+  ;; (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
+  ;; (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
+
+  (defvar my--last-input-method nil
+    "记录进入 god-mode 之前最后使用的 input-method。")
+
+  (defun my-god-save-and-disable-ime ()
+    "进入 god-mode 时：保存当前输入法状态，然后强制关闭 Rime。"
+    (setq my--last-input-method current-input-method) ; 保存当前状态
+    (when (and current-input-method
+               (fboundp 'deactivate-input-method))
+      (deactivate-input-method)))
+
+  (defun my-god-restore-ime ()
+    "退出 god-mode 时：恢复之前保存的输入法（主要是 Rime）。"
+    (when (and my--last-input-method
+               (not current-input-method)) ; 只有当前没开启输入法时才恢复
+      (set-input-method my--last-input-method))) ;;
+  (add-hook 'god-mode-enabled-hook  #'my-god-save-and-disable-ime)
+ ;; (add-hook 'god-mode-disabled-hook #'my-god-restore-ime)
+
+  (custom-set-faces
+   '(god-mode-lighter ((t (:inherit error)))))
+
+  (defun my-god-mode-update-cursor-type ()
+    (setq cursor-type (if (or god-local-mode buffer-read-only) 'hollow 'box)))
+
+  (add-hook 'post-command-hook #'my-god-mode-update-cursor-type)
+  (add-hook 'read-only-mode-hook
+            (lambda () (when buffer-read-only (god-local-mode 1))))
+
+  (defun my-god-disable-on-input-method-activate ()
+    "当输入法（Rime）被激活时，自动退出 god-mode。"
+    (when god-local-mode
+      (god-local-mode -1)))
+  (add-hook 'input-method-activate-hook   #'my-god-disable-on-input-method-activate)
+
+  (add-hook 'skk-mode-hook
+            (lambda ()
+              (if skk-mode
+                  (god-local-mode -1)
+                (god-local-mode 1))))
+    )
+
+
+;; u 这个按键还没用上，想一个好方法给他安排上
+
+;; 一些特殊的buffer，比如dired、help、ibuffer、magit里，godmode的行为可能会有点奇怪
+;; 我认为要不magit和大部分类似的特殊buffer就暂时先不用god mode了
+;; G q Q 等按键还没用上
+;; multiple-cursors 有点小问题
+;; C-m 和C-j 都是newline？
+;; M-r 等等很多键我觉得都有点功能多余了 可以用来自定义
+
 (provide 'my-prog-mode)
 
 ;;; my-prog-mode.el ends here
-

@@ -1060,8 +1060,8 @@
   (org-journal-date-type 'datetree)
   (org-journal-date-format "%Y-%m-%d %A ") ; 每日标题格式
 
-  (org-journal-carryover-items "TODO=\"TODO\"|TODO=\"NEXT\"|TODO=\"WAITING\"")
-  ;; (org-journal-carryover-items "")
+  ;; (org-journal-carryover-items "TODO=\"TODO\"|TODO=\"NEXT\"|TODO=\"WAITING\"")
+  (org-journal-carryover-items "")
 
   :bind
   ;; 常用快捷键映射

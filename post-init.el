@@ -449,14 +449,25 @@
 ;; (server-start)
 
 ;;; Some key macros funtion
-(fset 'ma/org-create-node-with-id (key-parse " C-<return> <return> C-u C-c ! <return> C-p SPC C-c n g"))
 
 (fset 'ma/dired-two-line-view (key-parse "C-x 1 C-x C-j C-x 3"))
 
-(fset 'ma/org-create-node-with-id (key-parse " C-<return> <return> C-u C-c ! <return> C-p SPC C-c n g"))
+;; (fset 'ma/org-create-node-with-id (key-parse " C-<return> <return> C-u C-c ! <return> C-p SPC C-c n g"))
+;; 已经退役
 
-(fset 'ma/org-create-node-with-id (key-parse " C-<return> <return> C-u C-c ! <return> C-p SPC C-c n g"))
+(defun my/org-create-node-with-id ()
+  "在当前子树后插入同级标题，下方写入带时间的非活动时间戳，并生成 ID。"
+  (interactive)
+  (org-insert-heading-respect-content)          ; C-<return>
+  (save-excursion                               ; 写完时间戳后回到标题行（代替 C-p）
+    (end-of-line)
+    (insert "\n")
+    (org-insert-time-stamp nil t t))            ; C-u C-c !
+  (org-id-get-create))                          ; C-c n g
 
+(context-menu-mode)
+
+;; (load-theme 'newcomers-presets)
 
 (provide 'post-init)
 ;;; post-init.el ends here

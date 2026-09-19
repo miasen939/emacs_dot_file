@@ -620,6 +620,15 @@
 ;;          research os network)))
 
 
+(use-package tmr
+  :ensure t
+  :config
+  (define-key global-map (kbd "C-c T") #'tmr-prefix-map)
+  (setq tmr-sound-file "/usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga"
+        tmr-notification-urgency 'normal
+        tmr-description-list 'tmr-description-history))
+
+
 (provide 'my-living-in-emacs)
 
 ;;; my-living-in-emacs.el ends here

@@ -75,62 +75,62 @@
   (ibuffer-mode . nerd-icons-ibuffer-mode)
   )
 
-(use-package popper
-  :bind (("C-`"   . popper-toggle)
-         ("M-`"   . popper-cycle)
-         ("C-M-`" . popper-toggle-type))
-  :init
-    (setq popper-reference-buffers
-      '(;; 基础
-        ;; "\\*Messages\\*"                ;
-        "Output\\*$"
-        "\\*Async Shell Command\\*"
-        ;; "\\*Warnings\\*"
-        ;; "\\*Backtrace\\*"
-        calendar-mode
-        flymake-diagnostics-buffer-mode
-        flycheck-error-list-mode
-        pdf-outline-buffer-mode
-        ;; help-mode
-        ;; compilation-mode
-
-        ;; 终端
-        "^\\*eshell.*\\*$" eshell-mode
-        "^\\*shell.*\\*$"  shell-mode
-        "^\\*term.*\\*$"   term-mode
-        "^\\*vterm.*\\*$"  vterm-mode
-        "^\\*ghostel.*\\*$"  ghostel-mode
-
-        ;; LSP
-        "\\*eldoc.*\\*"    eldoc-mode
-        "\\*xref\\*"
-        "\\*Flymake diagnostics.*\\*"
-
-        ;; Org
-        ;;"\\*Org Agenda\\*"
-        ;; "\\*Capture\\*"
-        ;;"\\*org-roam\\*"
-
-        ;; 搜索
-        "\\*Occur\\*"      occur-mode
-        "\\*grep\\*"       grep-mode
-        "\\*ripgrep-search\\*"
-
-        ;; Magit
-        ;; "\\*magit-diff.*\\*"
-        ;; "\\*magit-process.*\\*"
-
-        ;; Helpful
-        ;; helpful-mode
-
-        ;; 其他
-        "\\*Dictionary\\*"
-        ;; "^\\*sdcv:.*\\*$"  sdcv-mode
-        "\\.gpg$"
-        "\\*Python\\*"     inferior-python-mode))
-  
-  (popper-mode +1)
-  (popper-echo-mode +1))
+;; (use-package popper
+;;   :bind (("C-`"   . popper-toggle)
+;;          ("M-`"   . popper-cycle)
+;;          ("C-M-`" . popper-toggle-type))
+;;   :init
+;;     (setq popper-reference-buffers
+;;       '(;; 基础
+;;         ;; "\\*Messages\\*"                ;
+;;         "Output\\*$"
+;;         "\\*Async Shell Command\\*"
+;;         ;; "\\*Warnings\\*"
+;;         ;; "\\*Backtrace\\*"
+;;         calendar-mode
+;;         flymake-diagnostics-buffer-mode
+;;         flycheck-error-list-mode
+;;         pdf-outline-buffer-mode
+;;         ;; help-mode
+;;         ;; compilation-mode
+;; 
+;;         ;; 终端
+;;         "^\\*eshell.*\\*$" eshell-mode
+;;         "^\\*shell.*\\*$"  shell-mode
+;;         "^\\*term.*\\*$"   term-mode
+;;         "^\\*vterm.*\\*$"  vterm-mode
+;;         "^\\*ghostel.*\\*$"  ghostel-mode
+;; 
+;;         ;; LSP
+;;         "\\*eldoc.*\\*"    eldoc-mode
+;;         "\\*xref\\*"
+;;         "\\*Flymake diagnostics.*\\*"
+;; 
+;;         ;; Org
+;;         ;;"\\*Org Agenda\\*"
+;;         ;; "\\*Capture\\*"
+;;         ;;"\\*org-roam\\*"
+;; 
+;;         ;; 搜索
+;;         "\\*Occur\\*"      occur-mode
+;;         "\\*grep\\*"       grep-mode
+;;         "\\*ripgrep-search\\*"
+;; 
+;;         ;; Magit
+;;         ;; "\\*magit-diff.*\\*"
+;;         ;; "\\*magit-process.*\\*"
+;; 
+;;         ;; Helpful
+;;         ;; helpful-mode
+;; 
+;;         ;; 其他
+;;         "\\*Dictionary\\*"
+;;         ;; "^\\*sdcv:.*\\*$"  sdcv-mode
+;;         "\\.gpg$"
+;;         "\\*Python\\*"     inferior-python-mode))
+;;   
+;;   (popper-mode +1)
+;;   (popper-echo-mode +1))
 
 ;; todo: 书签相关
 
