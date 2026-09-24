@@ -1173,7 +1173,44 @@
 
 ;; org draw
 
+
 (use-package ox-hugo)
+
+;; org bookmarks
+
+(defvar my/bookmarks-file (expand-file-name "~/org/bookmarks.org"))
+
+(use-package org-cliplink
+  :ensure t
+  :after org)
+
+(with-eval-after-load 'org-capture
+  ;; 浏览器扩展调用：扩展设置里把模板键改成 "b"
+  (add-to-list 'org-capture-templates
+               `("b" "Bookmark (browser)" entry
+                 (file+headline ,my/bookmarks-file "Inbox")
+                 "* [[%:link][%:description]]\n:PROPERTIES:\n:CREATED: %U\n:END:\n%i%?"
+                 :empty-lines 1))
+  ;; Emacs 内调用：先在浏览器复制 URL
+  (add-to-list 'org-capture-templates
+               `("l" "Bookmark (clipboard)" entry
+                 (file+headline ,my/bookmarks-file "Inbox")
+                 "* %(org-cliplink-capture)\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?"
+                 :empty-lines 1)))
+
+;; refile 目标：书签文件的前三层，即分类和其下的具体项目
+;; (setq org-refile-targets `((,my/bookmarks-file :maxlevel . 2))
+;;       org-refile-use-outline-path 'file
+;;       org-outline-path-complete-in-steps nil)
+;; 
+;; (defun my/bookmark-triage ()
+;;   "给当前书签打标签，然后 refile 到对应分类。"
+;;   (interactive)
+;;   (org-back-to-heading t)
+;;   (org-set-tags-command)
+;;   (org-refile))
+
+
 
 (provide 'my-org-mode)
 ;;; my-org-mode.el ends here

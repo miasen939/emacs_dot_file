@@ -7,8 +7,6 @@
  ;; :config
  ;; (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
-
-
 (setq use-package-always-ensure t)  ;; 默认自动安装包
 (setq use-package-always-defer t)   ;; 默认延迟加载
 
@@ -102,6 +100,7 @@
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
+(require ' my-evil)
 (require ' my-emacs-ricing)
 (require ' my-prog-mode)
 (require ' my-org-mode)

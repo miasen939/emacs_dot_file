@@ -74,20 +74,22 @@
 
 
 
-(use-package beacon
-  :defer 3
-  :config
-  (beacon-mode 1)
-  ;; 可选配置
-  ;; (setq beacon-color "#4a5060")
-  ;; (setq beacon-size 20)
-  ;; (setq beacon-blink-duration 0.3)
-  )
+;; (use-package beacon
+;;   :defer 3
+;;   :config
+;;   (beacon-mode 1)
+;;   ;; 可选配置
+;;   ;; (setq beacon-color "#4a5060")
+;;   ;; (setq beacon-size 20)
+;;   ;; (setq beacon-blink-duration 0.3)
+;;   )
 
 (use-package dashboard
   :demand t
   :custom
-  (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.\n\t")
+  ;; (dashboard-banner-logo-title "事情总是越想越困难，越做越简单，越拖越想放弃。\n\t\t\tStay Stong my friend.\n\t")
+  (dashboard-banner-logo-title "You Only Live Once.")
+  
   (dashboard-startup-banner
    (let* ((image-dir (expand-file-name "~/Pictures/icon/"))
           (images (directory-files image-dir t "\\.\\(png\\|jpg\\|jpeg\\|gif\\|webp\\)$" t)))
@@ -126,24 +128,8 @@
 (use-package keycast)
 
 
-(use-package volatile-highlights
-  :demand 1.0
-  :custom
-  ;; Animation: choose one of 'static, 'fade-in, or 'pulse
-  (vhl/animation-style 'fade-in)
-  ;; Also mark deletion points (zero-width ranges)
-  (vhl/highlight-zero-width-ranges t)
-  :config
-  (volatile-highlights-mode 1)
-  ;; Prefer customize-set-variable (or setopt on Emacs 29.1+) so :set hooks run
-  (customize-set-variable 'vhl/animation-mid-frames 4)
-  (customize-set-variable 'vhl/animation-frame-interval 0.03)
-  ;; On Emacs 29.1+ you can instead use:
-  ;; (setopt vhl/animation-mid-frames 4
-  ;;         vhl/animation-frame-interval 0.03)
-  )
 
-(use-package minimap)
+
 
 (set-frame-parameter nil 'alpha-background 92)              ; make current frame transparent
 (add-to-list 'default-frame-alist '(alpha-background . 92)) ; make new frames transparent
@@ -200,6 +186,25 @@
   ;;				      dictionary dictionary_comprehension
   ;;				      parenthesized_expression subscript)))
   :hook ((python-base-mode yaml-mode kdl-mode emacs-lisp-mode) . indent-bars-mode))
+
+
+(defun my/time-until-bedtime ()
+  "显示距离今晚 23:00 还有多久。"
+  (interactive)
+  (let* ((now (decode-time))
+         (target (encode-time
+                  (list 0 0 23
+                        (decoded-time-day now)
+                        (decoded-time-month now)
+                        (decoded-time-year now)
+                        nil -1 (decoded-time-zone now))))
+         (secs (floor (float-time (time-subtract target (current-time))))))
+    ;; 已过 23:00 则顺延到明天
+    (when (< secs 0)
+      (setq secs (+ secs 86400)))
+    (message "距离 23:00 睡觉还有 %d 小时 %d 分钟"
+             (/ secs 3600)
+             (/ (% secs 3600) 60))))
 
 (provide 'my-emacs-ricing)
 
