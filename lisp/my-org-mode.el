@@ -1178,7 +1178,8 @@
 
 ;; org bookmarks
 
-(defvar my/bookmarks-file (expand-file-name "~/org/bookmarks.org"))
+;; (defvar my/bookmarks-file (expand-file-name "~/org/bookmarks.org"))
+(defvar my/bookmarks-file (expand-file-name "~/Documents/roam-note/org-bookmarks.org"))
 
 (use-package org-cliplink
   :ensure t

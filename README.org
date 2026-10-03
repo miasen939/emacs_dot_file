@@ -53,40 +53,6 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]  这�
 :LOGBOOK:
 - State "TODO"       from              [2026-07-16 木 14:30]
 :END:
-** NEXT more capture template
-:LOGBOOK:
-- State "NEXT"       from              [2026-07-16 木 14:30]
-:END:
-** TODO emacs dired/dirvish
-:LOGBOOK:
-- State "TODO"       from              [2026-07-16 木 14:34]
-:END:
-** TODO calc
-** SOMEDAY 用二分法来进行 vertical move
-:LOGBOOK:
-- State "SOMEDAY"    from              [2026-07-14 火 18:30]
-:END:
-
-** SOMEDAY elpha
-:LOGBOOK:
-- State "SOMEDAY"    from              [2026-07-16 木 14:29]
-:END:
-
-** SOMEDAY general.el
-
-** TODO embark
-:LOGBOOK:
-- State "TODO"       from "SOMEDAY"    [2026-07-19 日 07:28]
-:END:
-
-** DONE 把C-\ 和 \ 的映射兑换，实现快速切换输入法
-:LOGBOOK:
-- State "DONE"       from "TODO"       [2026-07-18 土 21:18]
-- State "TODO"       from "SOMEDAY"    [2026-07-18 土 10:21]
-:END:
-
-** TODO mark ring？
-
 * emacs killer feature
 ** org-mode
 
@@ -95,6 +61,8 @@ fork自 [[https://github.com/jamescherti/minimal-emacs.d][minimal-emacs]]  这�
 ** dired
 
 ** elfeed
+
+** 拓展性和帮助系统 
 
 * 住在emacs里
 

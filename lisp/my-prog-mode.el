@@ -335,6 +335,7 @@ The DWIM behaviour of this command is as follows:
 
 (setq repeat-keep-prefix t)
 (use-package repeat
+  :ensure nil
   :init
   (repeat-mode 1)
   :config

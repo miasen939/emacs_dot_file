@@ -18,23 +18,27 @@
   (setq evil-want-integration t
         evil-want-keybinding nil          ; 交给 evil-collection
         evil-want-C-u-scroll t            ; C-u 向上翻半页（Vim 习惯）
-        evil-want-C-i-jump nil            ; 避免 TAB 在 org 里被抢
+        ;; evil-want-C-i-jump nil            ; 避免 TAB 在 org 里被抢
         evil-undo-system 'undo-redo       ; Emacs 28+ 内建
         evil-respect-visual-line-mode t
         evil-split-window-below t
         evil-vsplit-window-right t)
+
+  (setq evil-disable-insert-state-bindings t)
   :config
   (evil-mode 1)
   ;; 这些 buffer 里保持 Emacs state，不进 Evil
-  (dolist (m '(eshell-mode vterm-mode))
-    (evil-set-initial-state m 'emacs)))
+  (dolist (m '(eshell-mode vterm-mode ghostel-mode))
+    (evil-set-initial-state m 'emacs))
+  )
  
 ;;;; 2. evil-collection：给 magit / dired / help / vertico 等补 Evil 键位
-;; (use-package evil-collection
-;;   :ensure t
-;;   :after evil
-;;   :config
-;;   (evil-collection-init))
+(use-package evil-collection
+  :ensure t
+  :demand t
+  ;; :after evil
+  :config
+  (evil-collection-init))
  
 ;;;; 3. general.el：SPC 作为 leader
 ;; 关键点：
@@ -51,7 +55,14 @@
     :states '(normal visual motion emacs insert)
     :keymaps 'override
     :prefix "SPC"
-    :global-prefix "M-SPC"))
+    :global-prefix "M-SPC")
+
+  (with-eval-after-load 'dired
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-up-directory
+    "l" 'dired-find-file))
+
+  )
  
 ;; Elpaca 是异步安装的：必须等 general 装好，下面才能用 my/leader
 (elpaca-wait)
@@ -96,11 +107,16 @@
              (setq my/--saved-wconf nil))
     (setq my/--saved-wconf (current-window-configuration))
     (delete-other-windows)))
- 
+
+(general-def
+  :states '(normal motion)
+  "g SPC" '(dired :wk "dired")
+  "s" 'flash-jump)
+
 ;;;; Leader 键位
 (my/leader
   ;; ── 顶层 ──────────────────────────────
-  "SPC" '(project-find-file        :wk "find file (root)")
+  ;; "SPC" '(project-find-file        :wk "find file (root)")
   ","   '(consult-buffer           :wk "switch buffer")
   "/"   '(consult-ripgrep          :wk "grep (root)")
   ":"   '(consult-complex-command  :wk "command history")
@@ -111,7 +127,10 @@
   "n"   '(view-echo-area-messages  :wk "messages")
   "l"   '(elpaca-manager           :wk "Elpaca")        ; 对应 <leader>l = Lazy
   "L"   '(elpaca-log               :wk "Elpaca log")
+  "SPC" '(execute-extended-command :wk "M-x")
   ";" '(execute-extended-command :wk "M-x")
+  "RET" '(org-capture :wk "org-capture")
+  "a" '(org-agenda :wk "agenda")
 
   ;; ── b: buffer ─────────────────────────
   "b"   '(:ignore t                :wk "buffer")
@@ -137,6 +156,8 @@
   "fe"  '(project-dired            :wk "explorer (root)")
   "fE"  '(dired-jump               :wk "explorer (cwd)")
   "ft"  '(ghostel                   :wk "terminal")
+
+  "fs"  '(save-buffer                  :wk "C-x C-s")
  
   ;; ── g: git（magit 替代 lazygit）───────
   "g"   '(:ignore t                :wk "git")
@@ -213,12 +234,31 @@
   "hv"  '(describe-variable        :wk "variable")
   "hk"  '(describe-key             :wk "key")
   "hm"  '(describe-mode            :wk "mode")
+  "hc"  '(describe-key-briefly            :wk "mode")
   "hi"  '(info                     :wk "info")
 
-  ;; -- j: journal
-  "j"   '(:ignore t                :wk "journal")
+
+  ;; -- j: journal and org roam
+  "j"   '(:ignore t                :wk "journal&roam")
   "jj"  '(org-journal-new-entry                     :wk "new j entry")
   "jo"  '(org-journal-open-current-journal-file                     :wk "open journal")
+
+  "jf"  '(org-roam-node-find     :wk "roam find node")
+  "ji"  '(org-roam-node-insert   :wk "roam insert node")
+  "jb"  '(org-roam-buffer-toggle :wk "roam backlinks")
+  "jt"  '(org-set-tags-command :wk "org tag")
+  "jT"  '(org-roam-tag-add :wk "roam tag")
+  "ja"  '(org-roam-alias-add :wk "roam alias")
+
+  "js"  '(org-roam-db-sync :wk "roam sync")
+
+  ;; -- m: bookmarks
+  "m"  '(:ignore t            :wk "bookmark")
+  "mm" '(consult-bookmark     :wk "jump")
+  "ma" '(bookmark-set         :wk "add")
+  "md" '(bookmark-delete      :wk "delete")
+  "mr" '(bookmark-rename      :wk "rename")
+  "ml" '(bookmark-bmenu-list  :wk "list")
   )
 
  
@@ -226,36 +266,45 @@
 ;; 注意：C-h 在 normal/motion state 下会被覆盖成“向左切窗口”，
 ;;       Emacs 的帮助前缀请用 F1 或 SPC h。
 (evil-define-key '(normal motion) 'global
-  (kbd "C-h") #'evil-window-left
-  (kbd "C-j") #'evil-window-down
-  (kbd "C-k") #'evil-window-up
-  (kbd "C-l") #'evil-window-right
+  ;; (kbd "C-h") #'evil-window-left
+  ;; (kbd "C-j") #'evil-window-down
+  ;; (kbd "C-k") #'evil-window-up
+  ;; (kbd "C-l") #'evil-window-right
   (kbd "H")   #'previous-buffer          ; LazyVim: <S-h>
   (kbd "L")   #'next-buffer              ; LazyVim: <S-l>
   (kbd "]d")  #'flymake-goto-next-error  ; LazyVim: ]d
   (kbd "[d")  #'flymake-goto-prev-error) ; LazyVim: [d
 ;; ]b / [b 不用写：evil-collection 的 unimpaired 已经绑好了
  
-;; gc / gcc 注释（LazyVim 内建同名操作）
-(use-package evil-commentary
-  :ensure t
-  :after evil
-  :config (evil-commentary-mode 1))
  
 
 
-;; (use-package evil-surround
-;;   :ensure t
-;;   :after evil
-;;   :config
-;;   (evil-define-key 'normal 'global
-;;     (kbd "gsa") #'evil-surround-region   ; gsa iw "   给 inner word 加双引号
-;;     (kbd "gsd") #'evil-surround-delete   ; gsd "      删除外层双引号
-;;     (kbd "gsr") #'evil-surround-change)  ; gsr " '    把双引号换成单引号
-;;   (evil-define-key 'visual 'global
-;;     (kbd "gsa") #'evil-surround-region))
+(use-package evil-surround
+  :ensure t
+  :demand t
+  :config
+  (evil-define-key 'normal 'global
+    (kbd "gsa") #'evil-surround-region   ; gsa iw "   给 inner word 加双引号
+    (kbd "gsd") #'evil-surround-delete   ; gsd "      删除外层双引号
+    (kbd "gsr") #'evil-surround-change)  ; gsr " '    把双引号换成单引号
+  (evil-define-key 'visual 'global
+    (kbd "gsa") #'evil-surround-region))
                                         ; 选中后 gsa "
  
+
+(use-package evil-nerd-commenter
+  :ensure t
+  :demand t
+  ;; :after evil            ; 必须在 evil 之后加载，否则 evilnc-comment-operator 可能没定义
+  :config
+  (evil-define-key '(normal visual) 'global
+    (kbd "gc") #'evilnc-comment-operator)          ; gc{motion} / visual 下 gc
+  ;; (global-set-key (kbd "M-;") #'evilnc-comment-or-uncomment-lines)
+  )
+
+
+;; TODO evil 的 repeat map
+
 
 (provide 'my-evil)
 
