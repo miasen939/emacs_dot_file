@@ -378,6 +378,21 @@ The DWIM behaviour of this command is as follows:
 )
 
   
+
+(defun my/python-compile-setup ()
+  (when buffer-file-name
+    (setq-local compile-command
+                (concat "python3 -u "
+                        (shell-quote-argument buffer-file-name)))))
+
+(add-hook 'python-mode-hook #'my/python-compile-setup)
+(add-hook 'python-ts-mode-hook #'my/python-compile-setup) ; 使用 tree-sitter 时
+
+;; 输出时自动滚动到底部
+(setq compilation-scroll-output t)
+
+;; 绑定 F5 一键运行
+(global-set-key (kbd "<f5>") #'compile)
   
 
 (provide 'my-prog-mode)

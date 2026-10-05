@@ -7,6 +7,9 @@
  ;; :config
  ;; (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
+
+
+
 (setq use-package-always-ensure t)  ;; 默认自动安装包
 (setq use-package-always-defer t)   ;; 默认延迟加载
 
@@ -392,8 +395,6 @@
 
 ;; (require ' sedentary-reminder) 
 ;; (sedentary-reminder-mode 1)
-
-
 
 (provide ' post-init)
 ;;; post-init.el ends here

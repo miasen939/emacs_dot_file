@@ -22,7 +22,7 @@
                (file-name-directory (or (buffer-file-name) default-directory)))))
     (start-process "xdg-open" nil "xdg-open" (expand-file-name dir))))
 
-;; w dired copy current dir 
+;; w dired copy current dir
 
 (use-package async
   :ensure t

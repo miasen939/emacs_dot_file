@@ -19,6 +19,7 @@
         evil-want-keybinding nil          ; 交给 evil-collection
         evil-want-C-u-scroll t            ; C-u 向上翻半页（Vim 习惯）
         ;; evil-want-C-i-jump nil            ; 避免 TAB 在 org 里被抢
+        ;; 有可能把C-i在org mode改为jumplist吗
         evil-undo-system 'undo-redo       ; Emacs 28+ 内建
         evil-respect-visual-line-mode t
         evil-split-window-below t
@@ -31,6 +32,7 @@
   (dolist (m '(eshell-mode vterm-mode ghostel-mode))
     (evil-set-initial-state m 'emacs))
   )
+;; #todo org RET 正常打开链接
  
 ;;;; 2. evil-collection：给 magit / dired / help / vertico 等补 Evil 键位
 (use-package evil-collection
@@ -110,10 +112,14 @@
 
 (general-def
   :states '(normal motion)
-  "g SPC" '(dired :wk "dired")
+  "g SPC" '(find-file :wk "find file")
+  "g a" '(crux-move-beginning-of-line :wk "go begining of line")
+  "g e" '(move-end-of-line :wk "go End of line")
+  "g l" '(evil-goto-line :wk "go Last")
+
   "s" 'flash-jump)
 
-;;;; Leader 键位
+;;;; Leader keymap 键位
 (my/leader
   ;; ── 顶层 ──────────────────────────────
   ;; "SPC" '(project-find-file        :wk "find file (root)")
@@ -124,11 +130,12 @@
   "E"   '(dired-jump               :wk "explorer (cwd)")
   "-"   '(evil-window-split        :wk "split below")
   "|"   '(evil-window-vsplit       :wk "split right")
-  "n"   '(view-echo-area-messages  :wk "messages")
-  "l"   '(elpaca-manager           :wk "Elpaca")        ; 对应 <leader>l = Lazy
-  "L"   '(elpaca-log               :wk "Elpaca log")
+  "."   '(other-window                    :wk "other window")
+  "u"   '(universal-argument                    :wk "universal-argument")
+
   "SPC" '(execute-extended-command :wk "M-x")
-  ";" '(execute-extended-command :wk "M-x")
+  ;; ";" '(execute-extended-command :wk "M-x")
+
   "RET" '(org-capture :wk "org-capture")
   "a" '(org-agenda :wk "agenda")
 
@@ -138,6 +145,10 @@
   "bd"  '(kill-current-buffer      :wk "delete")
   "bD"  '(kill-buffer-and-window   :wk "delete + window")
   "bo"  '(my/kill-other-buffers    :wk "delete others")
+
+  "bs"  '(save-buffer    :wk "save-buffer")
+  "bi"  '(ibuffer    :wk "ibuffer")
+  "be"  '(eval-buffer    :wk "eval-buffer")
  
   ;; ── c: code（eglot）───────────────────
   "c"   '(:ignore t                :wk "code")
@@ -145,6 +156,8 @@
   "cr"  '(eglot-rename             :wk "rename")
   "cf"  '(eglot-format             :wk "format")
   "cs"  '(consult-imenu            :wk "symbols")
+  "cc"  '(compile            :wk "compile")
+  "cC"  '(recompile            :wk "recompile")
  
   ;; ── f: file / find ────────────────────
   "f"   '(:ignore t                :wk "file/find")
@@ -189,15 +202,6 @@
   "sy"  '(consult-yank-from-kill-ring :wk "kill ring")
   "sM"  '(consult-man              :wk "man pages")
  
-  ;; ── u: ui / toggle ────────────────────
-  "u"   '(:ignore t                :wk "ui/toggle")
-  "us"  '(flyspell-mode            :wk "spelling")
-  "uw"  '(visual-line-mode         :wk "wrap")
-  "ul"  '(display-line-numbers-mode :wk "line numbers")
-  "uL"  '(my/toggle-relative-numbers :wk "relative numbers")
-  "ud"  '(flymake-mode             :wk "diagnostics")
-  "uh"  '(eglot-inlay-hints-mode   :wk "inlay hints")
-  "ur"  '(evil-ex-nohighlight      :wk "clear highlight")
  
   ;; ── w: windows ────────────────────────
   "w"   '(:ignore t                :wk "windows")
@@ -206,11 +210,14 @@
   "w-"  '(evil-window-split        :wk "split below")
   "w|"  '(evil-window-vsplit       :wk "split right")
   "wm"  '(my/toggle-maximize-window :wk "maximize")
-  "wh"  '(evil-window-left         :wk "left")
-  "wj"  '(evil-window-down         :wk "down")
-  "wk"  '(evil-window-up           :wk "up")
-  "wl"  '(evil-window-right        :wk "right")
+
+  "wb"  '(evil-window-left         :wk "left")
+  "wn"  '(evil-window-down         :wk "down")
+  "wp"  '(evil-window-up           :wk "up")
+  "wf"  '(evil-window-right        :wk "right")
  
+  "wj"  '(evil-window-split        :wk "split below")
+  "wl"  '(evil-window-vsplit       :wk "split right")
   ;; ── x: diagnostics（flymake 替代 trouble）
   "x"   '(:ignore t                :wk "diagnostics")
   "xx"  '(flymake-show-project-diagnostics :wk "project")
@@ -227,6 +234,8 @@
   ;; ── q: quit ───────────────────────────
   "q"   '(:ignore t                :wk "quit")
   "qq"  '(save-buffers-kill-terminal :wk "quit Emacs")
+  "qr"  '(restart-emacs :wk "restart Emacs")
+  ;; TODO copy/delete/rename/move file,copy file route.
  
   ;; ── h: help（LazyVim 没有，Emacs 特有）─
   "h"   '(:ignore t                :wk "help")
@@ -238,27 +247,29 @@
   "hi"  '(info                     :wk "info")
 
 
-  ;; -- j: journal and org roam
-  "j"   '(:ignore t                :wk "journal&roam")
-  "jj"  '(org-journal-new-entry                     :wk "new j entry")
-  "jo"  '(org-journal-open-current-journal-file                     :wk "open journal")
+  ;; -- n: Note: org mode journal and roam
+  "n"   '(:ignore t                :wk "journal&roam")
+  "nj"  '(org-journal-new-entry                     :wk "new j entry")
+  "no"  '(org-journal-open-current-journal-file                     :wk "open journal")
 
-  "jf"  '(org-roam-node-find     :wk "roam find node")
-  "ji"  '(org-roam-node-insert   :wk "roam insert node")
-  "jb"  '(org-roam-buffer-toggle :wk "roam backlinks")
-  "jt"  '(org-set-tags-command :wk "org tag")
-  "jT"  '(org-roam-tag-add :wk "roam tag")
-  "ja"  '(org-roam-alias-add :wk "roam alias")
+  "nf"  '(org-roam-node-find     :wk "roam find node")
+  "ni"  '(org-roam-node-insert   :wk "roam insert node")
+  "nb"  '(org-roam-buffer-toggle :wk "roam backlinks")
+  "nt"  '(org-set-tags-command :wk "org tag")
+  "nT"  '(org-roam-tag-add :wk "roam tag")
+  "na"  '(org-roam-alias-add :wk "roam alias")
 
-  "js"  '(org-roam-db-sync :wk "roam sync")
+  "ns"  '(org-roam-db-sync :wk "roam sync")
 
-  ;; -- m: bookmarks
-  "m"  '(:ignore t            :wk "bookmark")
-  "mm" '(consult-bookmark     :wk "jump")
-  "ma" '(bookmark-set         :wk "add")
-  "md" '(bookmark-delete      :wk "delete")
-  "mr" '(bookmark-rename      :wk "rename")
-  "ml" '(bookmark-bmenu-list  :wk "list")
+  ;; -- r: register&bookmark
+  "r"  '(:ignore t            :wk "bookmark")
+  "rr" '(consult-bookmark     :wk "jump")
+  "ra" '(bookmark-set         :wk "add")
+  "rd" '(bookmark-delete      :wk "delete")
+  "rn" '(bookmark-rename      :wk "rename")
+  "rl" '(bookmark-bmenu-list  :wk "list")
+
+  ;; TODO org mode text object
   )
 
  
@@ -303,8 +314,11 @@
   )
 
 
-;; TODO evil 的 repeat map
+;; #TODO evil 的 repeat map
 
+;; #TODO SPC m major mode keymap
+
+;; #TODO vim marks highlight
 
 (provide 'my-evil)
 

@@ -388,19 +388,47 @@
 (use-package org-agenda
   :ensure nil
   :config
+  (defun my/org-skip-habit ()
+    "跳过 habit 条目。"
+    (when (org-is-habit-p)
+      (or (outline-next-heading) (point-max))))
+
+  (defun my/org-skip-non-habit ()
+    "只保留 habit 条目。"
+    (unless (org-is-habit-p)
+      (or (outline-next-heading) (point-max))))
+
   (setq org-agenda-custom-commands
-      '(("w" "我的周视图"
-         ((agenda "" ((org-agenda-span 'week)
-                       (org-agenda-skip-function
-                        '(org-agenda-skip-entry-if 'todo '("IN-PROGRESS" "WAITING")))))
-          (todo "IN-PROGRESS"
-                ((org-agenda-overriding-header "🔄 进行中")))
-          (todo "WAITING"
-                ((org-agenda-overriding-header "⏳ 等待中")))))
-          )
-        
-      
-      ))
+        '(("w" "我的周视图"
+           ((agenda ""
+                    ((org-agenda-span 'week)
+                     (org-agenda-skip-function
+                      '(or (my/org-skip-habit)
+                           (org-agenda-skip-entry-if 'todo '("IN-PROGRESS" "WAITING"))))))
+            (agenda ""
+                    ((org-agenda-span 'day)
+                     (org-agenda-overriding-header "🔁 习惯")
+                     (org-agenda-skip-function 'my/org-skip-non-habit)
+                     (org-habit-show-all-today t)))
+            (todo "IN-PROGRESS"
+                  ((org-agenda-overriding-header "🔄 进行中")))
+            (todo "WAITING"
+                  ((org-agenda-overriding-header "⏳ 等待中")))))))
+
+  ;; (setq org-agenda-custom-commands
+  ;;     '(("w" "我的周视图"
+  ;;        ((agenda "" ((org-agenda-span 'week)
+  ;;                      (org-agenda-skip-function
+  ;;                       '(org-agenda-skip-entry-if 'todo '("IN-PROGRESS" "WAITING")))))
+  ;;         (todo "IN-PROGRESS"
+  ;;               ((org-agenda-overriding-header "🔄 进行中")))
+  ;;         (todo "WAITING"
+  ;;               ((org-agenda-overriding-header "⏳ 等待中")))))
+  ;;         )
+  ;;       
+  ;;     
+  ;;     )
+  )
 
 
 (use-package org-super-agenda

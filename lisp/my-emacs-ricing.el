@@ -108,9 +108,9 @@
   
   ;; show agenda
   (setq dashboard-week-agenda t)
-  (setq dashboard-items '(
-                          (agenda    . 20)
-                          ))
+  ;; (setq dashboard-items '(
+  ;;                         (agenda    . 20)
+  ;;                         ))
   (dashboard-setup-startup-hook)
   )
 
