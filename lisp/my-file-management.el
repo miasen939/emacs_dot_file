@@ -35,7 +35,7 @@
 (keymap-global-set "C-x C-r" 'crux-recentf-find-directory)
 
 (use-package dired-open
-  :ensure nil
+  :ensure t
   :config
   ;; Doesn't work as expected!
   ;; (add-to-list 'dired-open-functions #'dired-open-xdg t)

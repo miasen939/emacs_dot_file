@@ -286,10 +286,7 @@ The DWIM behaviour of this command is as follows:
 
 
 
-(use-package goto-chg
-  :bind
-  (("C-(" . goto-last-change)
-   ("C-)" . goto-last-change-reverse)))
+
 
 (use-package rect  ; built-in
   :ensure nil

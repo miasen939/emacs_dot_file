@@ -12,7 +12,7 @@
   (doom-themes-enable-bold t)   ; if nil, bold is universally disabled
   (doom-themes-enable-italic t) ; if nil, italics is universally disabled
   ;; for treemacs users
-  (doom-themes-treemacs-theme "doom-one") ; use "doom-colors" for less minimal icon theme
+  ;; (doom-themes-treemacs-theme "doom-one") ; use "doom-colors" for less minimal icon theme
   :config
   (load-theme 'doom-vibrant t)
                                         ;  (load-theme 'doom-nord t)

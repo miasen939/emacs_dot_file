@@ -291,34 +291,6 @@
 ;;   :demand t
 ;;   :hook (embark-collect-mode . consult-preview-at-point-mode))
 
-(use-package general
-  :demand t
-  :config
-  (define-prefix-command 'my-semicolon-map)
-  (keymap-global-set ";" 'my-semicolon-map)
-  (keymap-global-set "；" 'my-semicolon-map)
-  
-  (general-define-key
-   :keymaps 'my-semicolon-map
-   "SPC" (lambda () (interactive) (insert ";"))
-
-   "a" #'embark-act
-   "d" #'embark-dwim
-   "A" #'embark-act-all
-   "s" #'embark-select
-   "c" #'embark-collect
-   "l" #'embark-live
-   "e" #'embark-export
-   "b" #'embark-bindings
-   "B" #'embark-become
-
-   ";" #'meow-reverse
-   "r" #'consult-bookmark
-   )
-  
-  (setq prefix-help-command #'embark-prefix-help-command) ;; 這行不放進 leader,直接設全域變數:任何 prefix key(如 C-x)按完後按 C-h,
-
-  )
 ;; 會跳出 completing-read 讓你直接在裡面搜尋並執行,而不是死板的 help buffer
 
 

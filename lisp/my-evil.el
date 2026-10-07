@@ -6,11 +6,17 @@
 ;;
 
 ;;; Code:
+;; 0. dependcy
 
+(use-package goto-chg
+  :bind
+  (("C-(" . goto-last-change)
+   ("C-)" . goto-last-change-reverse)))
 
 ;;;; 1. Evil 本体
 ;; evil-want-keybinding 必须在 evil 加载“之前”设为 nil，
 ;; 否则 evil 会先自带一套 keybinding，evil-collection 就接不上了。
+
 (use-package evil
   :ensure t
   :demand t
@@ -53,6 +59,33 @@
   :demand t
   :config
   (general-evil-setup)
+
+  ;; semicolon map
+  (define-prefix-command 'my-semicolon-map)
+  (keymap-global-set ";" 'my-semicolon-map)
+  (keymap-global-set "；" 'my-semicolon-map)
+  (general-define-key
+   :keymaps 'my-semicolon-map
+   "SPC" (lambda () (interactive) (insert ";"))
+
+   "a" #'embark-act
+   "d" #'embark-dwim
+   "A" #'embark-act-all
+   "s" #'embark-select
+   "c" #'embark-collect
+   "l" #'embark-live
+   "e" #'embark-export
+   "b" #'embark-bindings
+   "B" #'embark-become
+
+   ";" #'meow-reverse
+   "r" #'consult-bookmark
+   )
+  
+  (setq prefix-help-command #'embark-prefix-help-command) ;; 這行不放進 leader,直接設全域變數:任何 prefix key(如 C-x)按完後按 C-h,
+
+
+  ;; #todo normal mode tab indentation
   (general-create-definer my/leader
     :states '(normal visual motion emacs insert)
     :keymaps 'override
