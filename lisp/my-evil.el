@@ -136,7 +136,8 @@
   "SPC" '(execute-extended-command :wk "M-x")
   ;; ";" '(execute-extended-command :wk "M-x")
 
-  "RET" '(org-capture :wk "org-capture")
+  "x" '(org-capture :wk "org-capture")
+  "RET" '(bookmark-jump :wk "bookmark")
   "a" '(org-agenda :wk "agenda")
 
   ;; ── b: buffer ─────────────────────────
@@ -149,6 +150,7 @@
   "bs"  '(save-buffer    :wk "save-buffer")
   "bi"  '(ibuffer    :wk "ibuffer")
   "be"  '(eval-buffer    :wk "eval-buffer")
+  ;; #todo narrow
  
   ;; ── c: code（eglot）───────────────────
   "c"   '(:ignore t                :wk "code")
@@ -208,7 +210,9 @@
   "ww"  '(other-window             :wk "other")
   "wd"  '(delete-window            :wk "delete")
   "w-"  '(evil-window-split        :wk "split below")
+  "ws"  '(evil-window-split        :wk "split below")
   "w|"  '(evil-window-vsplit       :wk "split right")
+  "wv"  '(evil-window-vsplit       :wk "split right")
   "wm"  '(my/toggle-maximize-window :wk "maximize")
 
   "wb"  '(evil-window-left         :wk "left")
@@ -218,18 +222,17 @@
  
   "wj"  '(evil-window-split        :wk "split below")
   "wl"  '(evil-window-vsplit       :wk "split right")
-  ;; ── x: diagnostics（flymake 替代 trouble）
-  "x"   '(:ignore t                :wk "diagnostics")
-  "xx"  '(flymake-show-project-diagnostics :wk "project")
-  "xX"  '(flymake-show-buffer-diagnostics  :wk "buffer")
+  ;; 参考 doom 的窗口键位
+  ;; #todo 使用 C-x 4
+  
  
   ;; ── <tab>: tabs（tab-bar）────────────
-  "TAB"     '(:ignore t            :wk "tab")
-  "TAB TAB" '(tab-new              :wk "new tab")
-  "TAB d"   '(tab-close            :wk "close tab")
-  "TAB j"   '(tab-next             :wk "next tab")
-  "TAB k"   '(tab-previous         :wk "prev tab")
-  "TAB o"   '(tab-close-other      :wk "close others")
+  "t"     '(:ignore t            :wk "tab")
+  "t t" '(tab-new              :wk "new tab")
+  "t d"   '(tab-close            :wk "close tab")
+  "t j"   '(tab-next             :wk "next tab")
+  "t k"   '(tab-previous         :wk "prev tab")
+  "t o"   '(tab-close-other      :wk "close others")
  
   ;; ── q: quit ───────────────────────────
   "q"   '(:ignore t                :wk "quit")
@@ -269,7 +272,14 @@
   "rn" '(bookmark-rename      :wk "rename")
   "rl" '(bookmark-bmenu-list  :wk "list")
 
-  ;; TODO org mode text object
+
+  ;; ---- i: insert
+  "i"   '(:ignore t :which-key "insert")
+  "is"  '(consult-yasnippet          :which-key "yasnippet")
+  "iy"  '(consult-yank-replace          :which-key "yank-replace")
+
+  ;; #TODO org mode text object
+  ;; #TODO 把org emphasis 改造成类似 word 的感觉
   )
 
  
@@ -319,6 +329,218 @@
 ;; #TODO SPC m major mode keymap
 
 ;; #TODO vim marks highlight
+;; #TODO ghostel evil keybinding
+
+
+
+
+(general-create-definer my/local-leader
+  :states '(normal visual motion insert emacs)
+  :prefix "SPC m"               ; normal / visual / motion 状态
+  :non-normal-prefix "M-SPC m") ; insert / emacs 状态
+ 
+;;;; ---------------------------------------------------------------------------
+;;;; 辅助命令：替代 Doom 的 +org/* 函数
+;;;; ---------------------------------------------------------------------------
+ 
+(defun my/org-remove-link ()
+  "删除光标处的链接，保留描述文本；没有描述时保留原始链接。"
+  (interactive)
+  (let ((ctx (org-element-context)))
+    (unless (eq (org-element-type ctx) 'link)
+      (user-error "光标处没有链接"))
+    (let* ((beg  (org-element-property :begin ctx))
+           (end  (- (org-element-property :end ctx)
+                    (org-element-property :post-blank ctx)))
+           (cbeg (org-element-property :contents-begin ctx))
+           (cend (org-element-property :contents-end ctx))
+           ;; 在删除之前取出文本，否则位置会失效
+           (text (if cbeg
+                     (buffer-substring-no-properties cbeg cend)
+                   (org-element-property :raw-link ctx))))
+      (delete-region beg end)
+      (insert text))))
+ 
+(defun my/org-babel-remove-all-results ()
+  "删除当前 buffer 中所有 src block 的结果。"
+  (interactive)
+  (org-babel-remove-result-one-or-many t))
+ 
+(defun my/org-table-recalculate-all ()
+  "重新计算当前表格的所有行。"
+  (interactive)
+  (org-table-recalculate t))
+ 
+(defun my/org-refile-to-current-file ()
+  "只在当前文件的标题中选择 refile 目标。"
+  (interactive)
+  (let ((org-refile-targets '((nil :maxlevel . 9))))
+    (call-interactively #'org-refile)))
+ 
+(defun my/org-refile-to-file (file)
+  "选择一个 org 文件，在它的标题中选择 refile 目标。"
+  (interactive (list (read-file-name "Refile 到文件: " org-directory nil t)))
+  (let ((org-refile-targets `((,file :maxlevel . 9))))
+    (call-interactively #'org-refile)))
+ 
+(defun my/org-refile-to-clock ()
+  "Refile 到正在计时的任务下。"
+  (interactive)
+  (org-refile 2))   ; 数字前缀参数 2 = 目标为当前 clock
+ 
+(defun my/org-goto-last-refile ()
+  "跳到上次 refile 的位置。"
+  (interactive)
+  (org-refile-goto-last-stored))
+ 
+;;;; ---------------------------------------------------------------------------
+;;;; 键位
+;;;; ---------------------------------------------------------------------------
+ 
+(with-eval-after-load 'org
+  (my/local-leader
+    :keymaps 'org-mode-map
+ 
+    ;; ---- 单键 ----
+    "#" '(org-update-statistics-cookies :which-key "update cookies")
+    "'" '(org-edit-special              :which-key "edit special")
+    "*" '(org-ctrl-c-star               :which-key "C-c *")
+    "-" '(org-ctrl-c-minus              :which-key "C-c -")
+    "," '(org-switchb                   :which-key "switch org buffer")
+    "." '(consult-org-heading           :which-key "goto heading")
+    "/" '(consult-org-agenda            :which-key "goto agenda heading")
+    "@" '(org-cite-insert               :which-key "insert citation")
+    "A" '(org-archive-subtree-default   :which-key "archive subtree")
+    "e" '(org-export-dispatch           :which-key "export")
+    "f" '(org-footnote-action           :which-key "footnote")
+    "h" '(org-toggle-heading            :which-key "toggle heading")
+    "i" '(org-toggle-item               :which-key "toggle item")
+    "I" '(org-id-get-create             :which-key "create ID")
+    "k" '(org-babel-remove-result       :which-key "remove result")
+    "K" '(my/org-babel-remove-all-results :which-key "remove all results")
+    "n" '(org-store-link                :which-key "store link")
+    "o" '(org-set-property              :which-key "set property")
+    "q" '(org-set-tags-command          :which-key "set tags")
+    "t" '(org-todo                      :which-key "todo")
+    "T" '(org-todo-list                 :which-key "todo list")
+    "x" '(org-toggle-checkbox           :which-key "toggle checkbox")
+ 
+    ;; ---- d: date ----
+    "d"  '(:ignore t :which-key "date")
+    "dd" '(org-deadline                 :which-key "deadline")
+    "ds" '(org-schedule                 :which-key "schedule")
+    "dt" '(org-time-stamp               :which-key "timestamp")
+    "dT" '(org-time-stamp-inactive      :which-key "inactive timestamp")
+ 
+    ;; ---- s: subtree ----
+    "s"  '(:ignore t :which-key "subtree")
+    "sh" '(org-promote-subtree          :which-key "promote")
+    "sl" '(org-demote-subtree           :which-key "demote")
+    "sj" '(org-move-subtree-down        :which-key "move down")
+    "sk" '(org-move-subtree-up          :which-key "move up")
+    "sd" '(org-cut-subtree              :which-key "cut")
+    "sc" '(org-clone-subtree-with-time-shift :which-key "clone")
+    "sn" '(org-narrow-to-subtree        :which-key "narrow")
+    "sN" '(widen                        :which-key "widen")
+    "sb" '(org-tree-to-indirect-buffer  :which-key "indirect buffer")
+    "sr" '(org-refile                   :which-key "refile")
+    "ss" '(org-sparse-tree              :which-key "sparse tree")
+    "sS" '(org-sort                     :which-key "sort")
+    "sa" '(org-toggle-archive-tag       :which-key "toggle ARCHIVE tag")
+    "sA" '(org-archive-subtree          :which-key "archive")
+ 
+    ;; ---- r: refile ----
+    "r"  '(:ignore t :which-key "refile")
+    "rr" '(org-refile                   :which-key "refile")
+    "rR" '(org-refile-reverse           :which-key "refile (reverse)")
+    "r." '(my/org-refile-to-current-file :which-key "to current file")
+    "rf" '(my/org-refile-to-file        :which-key "to file")
+    "rc" '(my/org-refile-to-clock       :which-key "to running clock")
+ 
+    ;; ---- l: link ----
+    "l"  '(:ignore t :which-key "link")
+    "ll" '(org-insert-link              :which-key "insert link")
+    "lL" '(org-insert-all-links         :which-key "insert all stored")
+    "ls" '(org-store-link               :which-key "store link")
+    "lS" '(org-insert-last-stored-link  :which-key "insert last stored")
+    "li" '(org-id-store-link            :which-key "store ID link")
+    "ld" '(my/org-remove-link           :which-key "remove link")
+    "lt" '(org-toggle-link-display      :which-key "toggle display")
+    "lc" '(org-cliplink                 :which-key "cliplink") ; 需要 org-cliplink 包
+ 
+    ;; ---- c: clock ----
+    "c"  '(:ignore t :which-key "clock")
+    "ci" '(org-clock-in                 :which-key "clock in")
+    "cI" '(org-clock-in-last            :which-key "clock in last")
+    "co" '(org-clock-out                :which-key "clock out")
+    "cc" '(org-clock-cancel             :which-key "cancel")
+    "cg" '(org-clock-goto               :which-key "goto clock")
+    "ce" '(org-set-effort               :which-key "set effort")
+    "cr" '(org-resolve-clocks           :which-key "resolve")
+    "cR" '(org-clock-report             :which-key "report")
+ 
+    ;; ---- b: table ----
+    "b"   '(:ignore t :which-key "table")
+    "bc"  '(org-table-create-or-convert-from-region :which-key "create")
+    "ba"  '(org-table-align             :which-key "align")
+    "b-"  '(org-table-insert-hline      :which-key "hline")
+    "br"  '(org-table-recalculate       :which-key "recalc line")
+    "bR"  '(my/org-table-recalculate-all :which-key "recalc table")
+    "bs"  '(org-table-sort-lines        :which-key "sort")
+    "bf"  '(org-table-edit-formulas     :which-key "edit formulas")
+    "bd"  '(:ignore t :which-key "delete")
+    "bdc" '(org-table-delete-column     :which-key "column")
+    "bdr" '(org-table-kill-row          :which-key "row")
+    "bi"  '(:ignore t :which-key "insert")
+    "bic" '(org-table-insert-column     :which-key "column")
+    "bir" '(org-table-insert-row        :which-key "row")
+    "bih" '(org-table-insert-hline      :which-key "hline")
+ 
+    ;; ---- a: attachment ----
+    "a"  '(:ignore t :which-key "attach")
+    "aa" '(org-attach                   :which-key "attach menu")
+    "an" '(org-attach-new               :which-key "new")
+    "ao" '(org-attach-open              :which-key "open")
+    "aO" '(org-attach-open-in-emacs     :which-key "open in emacs")
+    "af" '(org-attach-reveal-in-emacs   :which-key "attach dir")
+    "au" '(org-attach-url               :which-key "from URL")
+    "ad" '(org-attach-delete-one        :which-key "delete")
+    "aD" '(org-attach-delete-all        :which-key "delete all")
+ 
+    ;; ---- p: priority ----
+    "p"  '(:ignore t :which-key "priority")
+    "pp" '(org-priority                 :which-key "set")
+    "pu" '(org-priority-up              :which-key "up")
+    "pd" '(org-priority-down            :which-key "down")
+ 
+    ;; ---- g: goto ----
+    "g"  '(:ignore t :which-key "goto")
+    "gg" '(consult-org-heading          :which-key "heading")
+    "gc" '(org-clock-goto               :which-key "running clock")
+    "gi" '(org-id-goto                  :which-key "by ID")
+    "gr" '(my/org-goto-last-refile      :which-key "last refile")
+ 
+    ;; ---- P: publish ----
+    "P"  '(:ignore t :which-key "publish")
+    "Pp" '(org-publish-current-project  :which-key "project")
+    "Pf" '(org-publish-current-file     :which-key "file")
+    "Pa" '(org-publish-all              :which-key "all")
+ 
+    ;; ---- m: org-roam ----
+    "m"   '(:ignore t :which-key "roam")
+    "mf"  '(org-roam-node-find          :which-key "find node")
+    "mi"  '(org-roam-node-insert        :which-key "insert node")
+    "mm"  '(org-roam-buffer-toggle      :which-key "backlinks buffer")
+    "mt"  '(org-roam-tag-add            :which-key "add tag")
+    "mT"  '(org-roam-tag-remove         :which-key "remove tag")
+    "ma"  '(org-roam-alias-add          :which-key "add alias")
+    "mA"  '(org-roam-alias-remove       :which-key "remove alias")
+    "mr"  '(org-roam-refile             :which-key "refile to node")
+
+    ))
+ 
+
+
 
 (provide 'my-evil)
 

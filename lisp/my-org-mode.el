@@ -217,7 +217,7 @@
   :hook (org-mode . org-appear-mode)
   :config
   (setq org-appear-autoemphasis t   ;; *bold* / /italic/
-        org-appear-autolinks nil      ;; 链接
+        org-appear-autolinks t      ;; 链接
         org-appear-autosubmarkers t
         org-appear-autokeywords t
         )
@@ -1240,6 +1240,7 @@
 ;;   (org-refile))
 
 
+;; #todo vulpea
 
 (provide 'my-org-mode)
 ;;; my-org-mode.el ends here
